@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CardCraft Felhasználói Kézikönyv</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            line-height: 1.7;
+            padding: 20px 40px;
+            max-width: 800px;
+            margin: 40px auto;
+            border: 1px solid #333;
+            border-radius: 8px;
+        }
+        h1, h2, h3 {
+            font-family: 'Poppins', sans-serif;
+            color: #1DB954;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+        h1 { font-size: 2.5em; }
+        h2 { font-size: 2em; }
+        h3 { font-size: 1.5em; border-bottom-style: dashed; }
+        p { margin-bottom: 15px; }
+        code, kbd {
+            background-color: #2a2a2a;
+            color: #f8f8f2;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            border: 1px solid #444;
+        }
+        strong { color: #fff; font-weight: 700; }
+        ul {
+            list-style-type: square;
+            padding-left: 20px;
+        }
+        li { margin-bottom: 10px; }
+        hr {
+            border: 0;
+            height: 1px;
+            background: #333;
+            margin: 40px 0;
+        }
+        .note {
+            background: #1a1a1a;
+            border-left: 4px solid #1DB954;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>CardCraft Felhasználói Kézikönyv</h1>
+
+    <p class="note">Üdvözlünk a CardCraft alkalmazásban! Ez az útmutató segít megismerni és teljes mértékben kihasználni az alkalmazás funkcióit, amellyel egyedi, vinyl-stílusú kártyákat és zsetonokat tervezhetsz és nyomtathatsz.</p>
+
+    <h2>1. Első Lépések</h2>
+    <p>Az alkalmazás egy belépési képernyővel indul. A folytatáshoz add meg a kapott belépési kódot.</p>
+
+    <hr>
+
+    <h2>2. A Kezelőfelület Áttekintése</h2>
+    <p>A felület két fő részre oszlik:</p>
+    <ul>
+        <li><strong>Beállítások Panel (balra):</strong> Itt található minden vezérlő és beállítási lehetőség.</li>
+        <li><strong>Munkaterület (jobbra):</strong> Itt jelenik meg a kártyák élő előnézete vagy a nyomtatásra kész rácsnézet.</li>
+    </ul>
+
+    <h3>Fő Műveleti Gombok (a panel tetején)</h3>
+    <ul>
+        <li><code>SPOTIFY / XLS:</code> Adatok betöltése Zene módban.</li>
+        <li><code>VALIDÁL:</code> A betöltött dalok évszámainak ellenőrzése és javítása.</li>
+        <li><code>LETÖLTÉS:</code> Az aktuális (validált) adatlista lementése <code>.xlsx</code> fájlba.</li>
+        <li><code>NÉZET:</code> Váltás az interaktív előnézet és a nyomtatási rácsnézet között.</li>
+        <li><code>NYOMTAT:</code> A teljes nyomtatási folyamat indítása.</li>
+    </ul>
+
+    <hr>
+
+    <h2>3. Üzemmódok</h2>
+    <p>Az alkalmazás két fő üzemmódban használható, amelyeket a panel tetején válthatsz.</p>
+
+    <h3>🎵 Zene Mód</h3>
+    <p>Ez az alapértelmezett mód, amely egyedi zeneszámokból álló kártyák létrehozására szolgál. Minden kártya egyedi adatokat tartalmaz (előadó, cím, év, QR-kód).</p>
+
+    <h4>Adatkezelés Zene Módban</h4>
+    <ol>
+        <li><strong>Adatbetöltés:</strong>
+            <ul>
+                <li><strong>Spotify Import (Ajánlott):</strong> Kattints a <code>SPOTIFY</code> gombra, és másold be a Spotify lejátszási lista vagy album URL-jét. Az alkalmazás automatikusan beolvassa a dalokat.</li>
+                <li><strong>XLS Import:</strong> Kattints az <code>XLS</code> gombra egy <code>.xls</code> vagy <code>.xlsx</code> fájl feltöltéséhez. A rendszer intelligensen felismeri a fejléceket, de a javasolt oszlopsorrend: <code>Artist</code>, <code>Title</code>, <code>Year</code>, <code>QR Data</code>, <code>Code1</code>, <code>Code2</code>.</li>
+            </ul>
+        </li>
+        <li><strong>Évszámok Validálása:</strong>
+            <ul>
+                <li>A Spotify vagy a feltöltött XLS fájlok esetenként pontatlan megjelenési éveket tartalmazhatnak. Adatbetöltés után a <code>VALIDÁL</code> gomb aktívvá válik.</li>
+                <li><strong>Folyamat:</strong> Kattintásra egy felugró ablak jelenik meg. Az alkalmazás a <strong>MusicBrainz</strong> nyílt zenei adatbázisában, egyenként ellenőrzi a dalokat (előadó és cím alapján), és ha pontosabb évszámot talál, frissíti azt.</li>
+                <li><strong>Interaktivitás:</strong> A felugró ablakban egy folyamatjelző sáv és egy számláló mutatja, hol tart a folyamat.</li>
+                <li><strong>Megszakítás:</strong> Ha a folyamat túl sokáig tart, a <code>Megszakítás</code> gombbal bármikor leállíthatod. Az addig elvégzett frissítések megmaradnak.</li>
+            </ul>
+        </li>
+        <li><strong>Adatok Letöltése:</strong>
+            <ul>
+                <li>Adatbetöltés után a <code>LETÖLTÉS</code> gombra kattintva lementheted az aktuális (akár már validált) adatlistát.</li>
+                <li>A fájl <code>cardcraft_data.xlsx</code> néven töltődik le, rendezett oszlopokkal, ami kiválóan alkalmas archiválásra vagy további feldolgozásra.</li>
+            </ul>
+        </li>
+    </ol>
+
+    <h3>🪙 Zseton Mód</h3>
+    <p>Ez a mód egységes kinézetű kártyák (zsetonok, kuponok) tömeges generálására szolgál.</p>
+    <ul>
+        <li><strong>Működése:</strong> A beállítások alapján egyetlen előlap- és egy hátlap-dizájnt hoz létre.</li>
+        <li><strong>Nyomtatás:</strong> A nyomtatási nézetben az első oldalra csak előlapokat, a másodikra pedig csak hátlapokat generál. Ez megkönnyíti a kétoldalas nyomtatást nagy mennyiségben.</li>
+    </ul>
+
+    <hr>
+
+    <h2>4. Részletes Beállítások (Tabok)</h2>
+    <p>A beállításokat fülekre bontva érheted el az oldalsávon.</p>
+    
+    <h3>🎚️ Méretek</h3>
+    <p>Itt állíthatod be a fizikai méreteket.</p>
+    <ul>
+        <li><strong>Papír:</strong> Válaszd ki a nyomtatáshoz használt papírméretet (A4/A3).</li>
+        <li><strong>Oldal Padding:</strong> A lap széle és a kártyák közötti margó (mm).</li>
+        <li><strong>Kártya:</strong> A kártya végső, vágott mérete (mm).</li>
+        <li><strong>Sarok:</strong> A kártya sarkainak lekerekítése (mm).</li>
+        <li><strong>Keret:</strong> A vágást segítő keret tulajdonságai. Állítható a színe, vastagsága, átlátszósága és megjelenési módja (csak elől, csak hátul, stb.).</li>
+    </ul>
+
+    <h3>🅰️ Tipográfia</h3>
+    <p>A szövegek kinézetének testreszabása.</p>
+    <ul>
+        <li><strong>Betűtípus:</strong> Globális betűtípus az összes szövegelemhez.</li>
+        <li><strong>Év / Fő (Token):</strong> Az évszám (Zene mód) vagy a fő szöveg (Zseton mód) beállításai.</li>
+        <li><strong>Előadó / Al (Token):</strong> Az előadó (Zene mód) vagy az alcím (Zseton mód) beállításai.</li>
+        <li><strong>Cím (csak Zene mód):</strong> A dalcím beállításai.</li>
+        <li><strong>Opciók elemenként:</strong>
+            <ul>
+                <li>Méret (pt), Bold (félkövér).</li>
+                <li><strong>Glow:</strong> Bepipálva egy "ragyogás" effektet ad a szövegnek. A lenyíló menüben állítható a színe és az elmosás mértéke.</li>
+                <li><strong>Aa/AA (Text Transform):</strong> Kis- vagy nagybetűs megjelenítés.</li>
+                <li><strong>Max sorok (Címnél):</strong> Meghatározza, hány sorba tördelje a hosszú címeket, mielőtt csökkentené a betűméretet.</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h3>📐 Elhelyezés</h3>
+    <p>A szövegelemek pozicionálása Zene módban.</p>
+    <ul>
+        <li><strong>Margók (pt):</strong> Az előadó (felső) és a cím (alsó) távolsága a kártya szélétől.</li>
+        <li><strong>Kód Elhelyezés:</strong> Az XLS-ből betöltött egyedi kódok (<code>Code1</code>, <code>Code2</code>) pozíciója. Lehet középen (90 fokban elforgatva) vagy a kártya alsó sarkában.</li>
+    </ul>
+
+    <h3>💿 Vinyl & QR</h3>
+    <p>A kártya hátlapjának dizájnja.</p>
+    <ul>
+        <li><strong>Vinyl (Bakelit) Effekt:</strong> A bakelitlemez-illúzió beállításai.
+            <ul>
+                <li><strong>Neon Mód:</strong> Bepipálva a barázdák véletlenszerű neon színekben fognak ragyogni. A lenyíló menüben állítható a ragyogás erőssége.</li>
+                <li><strong>Vastagság variálás:</strong> A barázdák vastagsága kissé eltérő lesz a természetesebb hatásért.</li>
+            </ul>
+        </li>
+        <li><strong>Glitch Effekt:</strong> A barázdákon véletlenszerű "kihagyások" jelennek meg. Állítható a darabszám és a méret.</li>
+        <li><strong>QR Kód (csak Zene mód):</strong>
+            <ul>
+                <li><strong>QR kód látható:</strong> Ki/be kapcsolja a QR kódot.</li>
+                <li><strong>Logó:</strong> Maximum 3 karakteres szöveg, ami a QR kód közepén jelenik meg.</li>
+            </ul>
+        </li>
+    </ul>
+
+    <hr>
+    
+    <h2>5. Előnézet és Nyomtatás</h2>
+    <ul>
+        <li><strong>NÉZET Gomb:</strong> Ezzel tudsz váltani a két nézet között:
+            <ol>
+                <li><strong>Előnézet:</strong> Egy kártyapárt (elő- és hátlap) mutat nagy méretben. A kártyára kattintva tovább nagyíthatod. Az előnézet 8 másodpercenként automatikusan a következő dalra vált.</li>
+                <li><strong>Rácsnézet:</strong> A nyomtatásra előkészített teljes íveket mutatja.</li>
+            </ol>
+        </li>
+        <li><strong>NYOMTAT Gomb:</strong>
+            <p>Automatikusan átvált Rácsnézetbe, felkészíti az oldalt a nyomtatásra, és megnyitja a böngésző nyomtatási ablakát.</p>
+            <p class="note"><strong>Fontos:</strong> A kétoldalas nyomtatás pontosságáért az alkalmazás a hátlapok sorrendjét automatikusan tükrözi. Nyomtatáskor válassz kétoldalas ("short-edge binding") opciót!</p>
+        </li>
+    </ul>
+
+    <h2>Tippek</h2>
+    <ul>
+        <li><strong>Mentés:</strong> A beállításaidat a böngésző automatikusan elmenti (LocalStorage). Amikor változtatsz valamin, egy "Beállítások mentve!" üzenet jelenik meg.</li>
+        <li><strong>Reset:</strong> Ha vissza szeretnél térni az alapbeállításokhoz, használd a fejlécben található visszaállítás ikont.</li>
+    </ul>
+
+</body>
+</html>

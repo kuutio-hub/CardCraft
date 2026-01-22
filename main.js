@@ -61,7 +61,8 @@ const App = {
                 (fullReload) => this.handleSettingsChange(fullReload),
                 (d) => this.handleDataLoaded(d),
                 () => this.validateYearsWithMusicBrainz(),
-                () => this.downloadDataAsXLS()
+                () => this.downloadDataAsXLS(),
+                () => this.isExternalDataLoaded // Pass state checker to UI controller
             );
             
             const isToken = document.getElementById('mode-token')?.checked;

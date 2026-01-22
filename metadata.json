@@ -1,5 +1,5 @@
 {
-  "description": "CardCraft v1.9.5 - Complete UI/UX redesign with a new header and floating settings panels. Fixes critical data state bug when switching modes. The help guide now opens in a new tab for better readability.",
+  "description": "CardCraft v1.9.6 - Reverts the UI to the classic tabbed sidebar layout based on user feedback. Retains all critical bug fixes from v1.9.5, including the data state preservation logic and improved help access.",
   "requestFramePermissions": [],
-  "name": "CardCraft v1.9.5"
+  "name": "CardCraft v1.9.6"
 }

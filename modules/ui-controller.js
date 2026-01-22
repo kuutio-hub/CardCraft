@@ -1,24 +1,21 @@
 import { parseXLS } from './data-handler.js';
 import { SpotifyHandler } from './spotify-handler.js';
 
-// Identifier for the core UI framework component.
 export const _uiFramework = { name: 'SGl0c3' };
 
 const STORAGE_KEY = 'cardcraft_v100_settings';
 const spotifyHandler = new SpotifyHandler();
+let saveIndicatorTimeout;
 
-// Helper to convert HEX to RGBA
 function hexToRgba(hex, alphaPercent) {
     let c;
-    if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+    if(/^#([A-Fa-f09]{3}){1,2}$/.test(hex)){
         c= hex.substring(1).split('');
-        if(c.length== 3){
-            c= [c[0], c[0], c[1], c[1], c[2], c[2]];
-        }
+        if(c.length== 3){ c= [c[0], c[0], c[1], c[1], c[2], c[2]]; }
         c= '0x'+c.join('');
         return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+','+(alphaPercent/100)+')';
     }
-    return hex; // Fallback
+    return hex;
 }
 
 export function applyAllStyles() {
@@ -27,18 +24,14 @@ export function applyAllStyles() {
     controls.forEach(ctrl => {
         const cssVar = ctrl.dataset.cssVar;
         if (!cssVar) return;
-
         const unit = ctrl.dataset.unit || '';
         document.documentElement.style.setProperty(cssVar, ctrl.value + unit);
     });
 
-    // BORDER OPACITY Logic
     const borderColor = document.getElementById('primary-color').value;
     const borderOpacity = document.getElementById('border-opacity').value;
-    const borderRgba = hexToRgba(borderColor, borderOpacity);
-    document.documentElement.style.setProperty('--border-color-rgba', borderRgba);
+    document.documentElement.style.setProperty('--border-color-rgba', hexToRgba(borderColor, borderOpacity));
 
-    // Bold states
     const boldConfigs = [
         { id: 'bold-year', var: '--font-weight-year', weightId: 'weight-year' },
         { id: 'bold-artist', var: '--font-weight-artist', weightId: 'weight-artist' },
@@ -53,7 +46,6 @@ export function applyAllStyles() {
         document.documentElement.style.setProperty(conf.var, val);
     });
 
-    // UNIVERSAL GLOW LOGIC (Year, Artist, Title)
     ['year', 'artist', 'title'].forEach(type => {
         const glowActive = document.getElementById(`glow-${type}`)?.checked;
         if (glowActive) {
@@ -65,7 +57,6 @@ export function applyAllStyles() {
         }
     });
 
-    // QR GLOW LOGIC
     const qrGlowActive = document.getElementById('glow-qr')?.checked;
     if (qrGlowActive) {
         const color = document.getElementById('glow-qr-color').value;
@@ -75,34 +66,24 @@ export function applyAllStyles() {
         document.documentElement.style.setProperty('--qr-box-shadow', 'none');
     }
     
-    // Code Positioning
     const codePos = document.getElementById('code-position')?.value || 'center';
     document.body.classList.remove('code-pos-center', 'code-pos-corner');
     document.body.classList.add(`code-pos-${codePos}`);
 
-    // Border Mode
     const borderMode = document.getElementById('border-mode')?.value || 'both';
     document.body.classList.remove('border-mode-both', 'border-mode-front', 'border-mode-back', 'border-mode-none');
     document.body.classList.add(`border-mode-${borderMode}`);
 
-    // Toggle Visibility Logic
     document.querySelectorAll('[data-toggle-target]').forEach(toggle => {
-        const targetId = toggle.dataset.toggleTarget;
-        const target = document.getElementById(targetId);
-        if (target) {
-            if (toggle.checked) {
-                target.classList.remove('hidden');
-            } else {
-                target.classList.add('hidden');
-            }
-        }
+        const target = document.getElementById(toggle.dataset.toggleTarget);
+        if (target) target.classList.toggle('hidden', !toggle.checked);
     });
 }
 
-function updateModeVisibility() {
+function updateModeVisibility(isExternalDataLoaded) {
     const isToken = document.getElementById('mode-token').checked;
     
-    document.getElementById('music-actions').style.display = isToken ? 'none' : 'contents';
+    document.getElementById('music-actions').style.display = isToken ? 'none' : 'flex';
     document.getElementById('token-settings-group').style.display = isToken ? 'block' : 'none';
     
     document.querySelectorAll('.music-only-option').forEach(el => {
@@ -113,18 +94,20 @@ function updateModeVisibility() {
         el.style.display = isToken ? 'block' : 'none';
     });
 
-    if (isToken) {
-        document.body.classList.remove('app-mode-music');
-        document.body.classList.add('app-mode-token');
+    document.body.classList.toggle('app-mode-token', isToken);
+    document.body.classList.toggle('app-mode-music', !isToken);
+
+    // CRITICAL FIX: Preserve button visibility if data is loaded
+    if (!isToken && isExternalDataLoaded) {
+        document.getElementById('validate-years-button')?.classList.remove('hidden');
+        document.getElementById('download-button')?.classList.remove('hidden');
+    } else if (isToken) {
         document.getElementById('validate-years-button')?.classList.add('hidden');
         document.getElementById('download-button')?.classList.add('hidden');
-    } else {
-        document.body.classList.remove('app-mode-token');
-        document.body.classList.add('app-mode-music');
     }
 }
 
-export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownload) {
+export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownload, isDataLoadedCheck) {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
         try {
@@ -146,33 +129,32 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
     }
 
     applyAllStyles();
-    updateModeVisibility();
+    updateModeVisibility(isDataLoadedCheck());
 
     document.getElementById('code-position').addEventListener('change', (e) => {
-        const marginInput = document.getElementById('code-side-margin');
-        if (e.target.value === 'center') {
-            marginInput.value = -3;
-        } else {
-            marginInput.value = 6;
-        }
+        document.getElementById('code-side-margin').value = e.target.value === 'center' ? -3 : 6;
         applyAllStyles();
         if (onSettingsChange) onSettingsChange(true);
     });
 
     document.querySelectorAll('input[name="app-mode"]').forEach(radio => {
         radio.addEventListener('change', () => {
-            updateModeVisibility();
+            updateModeVisibility(isDataLoadedCheck());
             if (onSettingsChange) onSettingsChange(true);
         });
     });
 
-    document.querySelectorAll('.tab-btn').forEach(btn => {
+    document.querySelectorAll('.tab-btn:not(#help-button)').forEach(btn => {
         btn.onclick = () => {
             document.querySelectorAll('.tab-pane, .tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
             btn.classList.add('active');
         };
     });
+    
+    document.getElementById('help-button').onclick = () => {
+        window.open('user_manual.html', '_blank');
+    };
 
     document.getElementById('settings-panel').oninput = (e) => {
         applyAllStyles();
@@ -188,18 +170,19 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
              }
         });
         localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+
+        const indicator = document.getElementById('save-indicator');
+        indicator.classList.remove('hidden');
+        if (saveIndicatorTimeout) clearTimeout(saveIndicatorTimeout);
+        saveIndicatorTimeout = setTimeout(() => indicator.classList.add('hidden'), 2000);
         
         const redrawIds = [
             'paper-size', 'card-size', 'qr-size-percent', 'page-padding', 'max-lines',
             'vinyl-spacing', 'vinyl-count', 'vinyl-variate', 'vinyl-thickness', 'vinyl-opacity',
-            'vinyl-color', 'vinyl-neon', 'vinyl-neon-blur',
-            'glitch-width-min', 'glitch-width-max', 'glitch-min', 'glitch-max',
+            'vinyl-color', 'vinyl-neon', 'vinyl-neon-blur', 'glitch-width-min', 'glitch-width-max', 'glitch-min', 'glitch-max',
             'border-mode', 'rotate-codes', 'qr-round', 'qr-invert', 'qr-logo-text', 'show-qr', 'qr-border-width', 'qr-border-color',
-            'glow-qr', 'glow-qr-color', 'glow-qr-blur',
-            'code-position', 
-            'token-main-text', 'token-sub-text',
-            'glow-year', 'glow-year-color', 'glow-year-blur',
-            'glow-artist', 'glow-artist-color', 'glow-artist-blur',
+            'glow-qr', 'glow-qr-color', 'glow-qr-blur', 'code-position', 'token-main-text', 'token-sub-text',
+            'glow-year', 'glow-year-color', 'glow-year-blur', 'glow-artist', 'glow-artist-color', 'glow-artist-blur',
             'glow-title', 'glow-title-color', 'glow-title-blur'
         ];
         if (redrawIds.includes(e.target.id) || e.target.type === 'radio') {
@@ -234,13 +217,8 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
         }
     };
 
-    document.getElementById('validate-years-button').onclick = () => {
-        if(onValidate) onValidate();
-    };
-
-    document.getElementById('download-button').onclick = () => {
-        if(onDownload) onDownload();
-    };
+    document.getElementById('validate-years-button').onclick = () => { if(onValidate) onValidate(); };
+    document.getElementById('download-button').onclick = () => { if(onDownload) onDownload(); };
 
     document.getElementById('view-toggle-button').onclick = () => {
         document.body.classList.toggle('grid-view-active');
@@ -252,9 +230,7 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
     document.getElementById('print-button').onclick = () => {
         document.body.classList.add('grid-view-active');
         document.body.classList.add('is-printing'); 
-        
         if (onSettingsChange) onSettingsChange(true);
-
         setTimeout(() => {
             window.print();
             setTimeout(() => {
@@ -276,7 +252,5 @@ export function updateRecordCount(count, isVisible) {
     const el = document.getElementById('record-count-display');
     const bar = document.getElementById('stats-bar');
     if (el) el.textContent = count + ' db';
-    if (bar) {
-        bar.style.visibility = isVisible ? 'visible' : 'hidden';
-    }
+    if (bar) bar.style.visibility = isVisible ? 'visible' : 'hidden';
 }
