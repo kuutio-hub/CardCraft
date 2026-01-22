@@ -1,0 +1,5 @@
+{
+  "description": "MusicStencil v1.8.0 - Gated Access. Implemented a password-protected landing page and switched to Spotify's Client Credentials Flow for direct, non-user-based API access.",
+  "requestFramePermissions": [],
+  "name": "MusicStencil v1.8.0"
+}
