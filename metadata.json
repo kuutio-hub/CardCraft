@@ -1,5 +1,5 @@
 {
-  "description": "CardCraft v1.9.8 - UI cleanup: Compacted the Typography panel to prevent overflow, reorganized the Layout tab for clarity, and set the QR code logo to be off by default for a cleaner initial state.",
+  "description": "CardCraft v1.9.9 - Critically improves the MusicBrainz year validation logic by prioritizing the 'first-release-date' of a song's release group, ensuring the original release year is fetched, not the compilation date. This fixes a major regression.",
   "requestFramePermissions": [],
-  "name": "CardCraft v1.9.8"
+  "name": "CardCraft v1.9.9"
 }

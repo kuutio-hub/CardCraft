@@ -93,13 +93,13 @@ export class SpotifyHandler {
     }
     
     async searchTrack(artist, title) {
-        // MusicBrainz is strict, so we clean the title for better matching
         const cleanedTitle = cleanTrackTitle(title);
+        const userAgent = `CardCraft/1.9.9 (cardcraft.app/info)`;
         const url = `https://musicbrainz.org/ws/2/recording/?query=artist:"${encodeURIComponent(artist)}" AND recording:"${encodeURIComponent(cleanedTitle)}"&limit=5&fmt=json`;
         
         try {
             const response = await fetch(url, {
-                headers: { 'User-Agent': 'CardCraft/1.9.7 (cardcraft.app/info)' }
+                headers: { 'User-Agent': userAgent }
             });
 
             if (!response.ok) {
@@ -108,39 +108,45 @@ export class SpotifyHandler {
             }
 
             const data = await response.json();
-            if (data.recordings && data.recordings.length > 0) {
-                // Find the best match (sometimes the first one isn't the most relevant)
-                const recording = data.recordings[0]; 
+            if (!data.recordings || data.recordings.length === 0) {
+                return null;
+            }
+            
+            const recording = data.recordings[0]; 
+            
+            if (recording.releases && recording.releases.length > 0) {
+                // New strategy: Prioritize 'first-release-date' from release groups for accuracy.
+                const firstReleaseDates = recording.releases
+                    .filter(r => r['release-group'] && r['release-group']['first-release-date'])
+                    .map(r => r['release-group']['first-release-date']);
                 
-                if (recording.releases && recording.releases.length > 0) {
-                    // Prioritize official releases
-                    let officialReleases = recording.releases.filter(r => r.date && r.status === 'Official');
-                    
-                    // Fallback to any release if no official ones are found
-                    if (officialReleases.length === 0) {
-                        officialReleases = recording.releases.filter(r => r.date);
-                    }
+                const uniqueFirstReleaseDates = [...new Set(firstReleaseDates)].filter(d => d);
 
-                    if (officialReleases.length > 0) {
-                        // Sort by date to find the earliest
-                        const earliestRelease = officialReleases.sort((a, b) => {
-                            const dateA = new Date(a.date);
-                            const dateB = new Date(b.date);
-                            return dateA - dateB;
-                        })[0];
-                        
-                        if (earliestRelease && earliestRelease.date) {
-                            return earliestRelease.date.substring(0, 4); // Return YYYY
-                        }
-                    }
+                if (uniqueFirstReleaseDates.length > 0) {
+                    uniqueFirstReleaseDates.sort(); // Sorts chronologically 'YYYY-MM-DD'
+                    return uniqueFirstReleaseDates[0].substring(0, 4);
                 }
             }
+            
+            // Fallback for recordings without release-groups or first-release-dates: 
+            // Use the earliest release date. This is the old, less reliable method.
+            const fallbackDates = recording.releases
+                .map(r => r.date)
+                .filter(d => d);
+
+            if (fallbackDates.length > 0) {
+                fallbackDates.sort();
+                return fallbackDates[0].substring(0, 4);
+            }
+
         } catch (error) {
             console.error("Error fetching from MusicBrainz:", error);
             return null;
         }
+        
         return null;
     }
+
 
     async fetchSpotifyData(url) {
         const token = await this.getAccessToken();
