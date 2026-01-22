@@ -1,5 +1,5 @@
 {
-  "description": "CardCraft v1.9.3 - Interactive validation progress modal with cancellation, and a completely rewritten, comprehensive user manual.",
+  "description": "CardCraft v1.9.4 - Major UX Overhaul. Features a reorganized main menu, a comprehensive in-app help guide, an auto-save indicator for settings, and improved MusicBrainz query accuracy.",
   "requestFramePermissions": [],
-  "name": "CardCraft v1.9.3"
+  "name": "CardCraft v1.9.4"
 }

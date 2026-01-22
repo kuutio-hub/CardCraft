@@ -27,7 +27,7 @@
             <button id="login-button">Belépés</button>
             <p id="error-message" class="hidden">Helytelen kód.</p>
             <footer class="landing-footer">
-                <p>v1.9.3 &copy; <span id="landing-year">2026</span></p>
+                <p>v1.9.4 &copy; <span id="landing-year">2026</span></p>
             </footer>
         </div>
     </div>
@@ -58,19 +58,26 @@
                 </div>
                 <button id="reset-settings" class="icon-btn mini" title="Alaphelyzet"><i class="fa-solid fa-rotate-left"></i></button>
             </div>
+            
+            <!-- ACTION BUTTONS RESTRUCTURED -->
             <div class="actions main-actions">
-                <!-- Music Mode Actions -->
-                <div id="music-actions" class="mode-specific-actions">
-                    <button id="spotify-import-button" class="action-btn" title="Spotify Lista Betöltése" style="border-color: #1DB954; color: #1DB954;"><i class="fa-brands fa-spotify"></i> SPOTIFY</button>
-                    <label for="file-upload-button" class="action-btn upload-btn" title="Adatok betöltése"><i class="fa-solid fa-file-circle-plus"></i> XLS</label>
-                    <input type="file" id="file-upload-button" accept=".xls, .xlsx" style="display: none;">
-                    <button id="validate-years-button" class="action-btn hidden" title="Évszámok ellenőrzése (MusicBrainz)"><i class="fa-solid fa-wand-magic-sparkles"></i> VALIDÁL</button>
-                    <button id="download-button" class="action-btn hidden" title="Adatok letöltése XLSX formátumban"><i class="fa-solid fa-file-arrow-down"></i> LETÖLTÉS</button>
+                <div class="action-group" id="music-actions">
+                    <h4 class="action-group-title">Adatkezelés</h4>
+                    <div class="action-group-buttons">
+                        <button id="spotify-import-button" class="action-btn" title="Spotify Lista Betöltése" style="border-color: #1DB954; color: #1DB954;"><i class="fa-brands fa-spotify"></i> SPOTIFY</button>
+                        <label for="file-upload-button" class="action-btn upload-btn" title="Adatok betöltése"><i class="fa-solid fa-file-circle-plus"></i> XLS</label>
+                        <input type="file" id="file-upload-button" accept=".xls, .xlsx" style="display: none;">
+                        <button id="validate-years-button" class="action-btn hidden" title="Évszámok ellenőrzése (MusicBrainz)"><i class="fa-solid fa-wand-magic-sparkles"></i> VALIDÁL</button>
+                        <button id="download-button" class="action-btn hidden" title="Adatok letöltése XLSX formátumban"><i class="fa-solid fa-file-arrow-down"></i> LETÖLTÉS</button>
+                    </div>
                 </div>
-                
-                <!-- Common Actions -->
-                <button id="view-toggle-button" class="action-btn" title="Rácsnézet"><i class="fa-solid fa-table-cells"></i> NÉZET</button>
-                <button id="print-button" class="action-btn print-btn" title="Teljes Nyomtatás"><i class="fa-solid fa-print"></i> NYOMTAT</button>
+                <div class="action-group">
+                    <h4 class="action-group-title">Műveletek</h4>
+                    <div class="action-group-buttons">
+                        <button id="view-toggle-button" class="action-btn" title="Rácsnézet"><i class="fa-solid fa-table-cells"></i> NÉZET</button>
+                        <button id="print-button" class="action-btn print-btn" title="Teljes Nyomtatás"><i class="fa-solid fa-print"></i> NYOMTAT</button>
+                    </div>
+                </div>
             </div>
         </header>
 
@@ -430,18 +437,69 @@
             <!-- HELP -->
             <div class="tab-pane" id="tab-help">
                 <div class="settings-section">
-                    <h3>Információ</h3>
                     <div class="help-content">
-                        <p><strong>Zoom:</strong> Kattints egy kártyára a nagyításhoz!</p>
-                        <p><strong>Spotify Import:</strong> Add meg a belépési kódot, majd másold be a lejátszási lista linkjét a gombra kattintva.</p>
-                        <p><strong>Glow:</strong> Jelöld be a Glow opciót a részletes beállítások (szín, elmosás) megjelenítéséhez.</p>
-                        <p><strong>Neon Mód:</strong> Kapcsold be a Vinyl beállításoknál a véletlenszerű neon színekhez.</p>
+                        <h2>CardCraft v1.9.4 - Felhasználói Kézikönyv</h2>
+                        <p>Üdvözlünk a CardCraft alkalmazásban! Ez az útmutató segít megismerni és teljes mértékben kihasználni az alkalmazás funkcióit, amellyel egyedi, vinyl-stílusú kártyákat és zsetonokat tervezhetsz és nyomtathatsz.</p>
+                        
+                        <h3>1. A Kezelőfelület Áttekintése</h3>
+                        <p>A felület két fő részre oszlik: egy bal oldali <strong>Beállítások Panelre</strong> és egy jobb oldali <strong>Munkaterületre</strong> (ahol az előnézet vagy a nyomtatási rács látható).</p>
+                        
+                        <h3>2. Üzemmódok</h3>
+                        <p>Az alkalmazás két fő üzemmódban használható, amelyeket a panel tetején válthatsz.</p>
+                        <ul>
+                            <li><strong><i class="fa-solid fa-music"></i> Zene Mód:</strong> Egyedi zeneszámokból álló kártyák létrehozására szolgál. Minden kártya egyedi adatokat tartalmaz (előadó, cím, év, QR-kód).</li>
+                            <li><strong><i class="fa-solid fa-coins"></i> Zseton Mód:</strong> Egységes kinézetű kártyák (zsetonok, kuponok) tömeges generálására szolgál. A nyomtatási nézetben az első oldalra csak előlapokat, a másodikra pedig csak hátlapokat generál.</li>
+                        </ul>
+                        
+                        <hr class="divider">
+                        
+                        <h3>3. Adatkezelés (Csak Zene Módban)</h3>
+                        <h4>3.1. Adatbetöltés</h4>
+                        <ul>
+                            <li><strong>Spotify Import (Ajánlott):</strong> Kattints a <button class="btn-inline spotify"><i class="fa-brands fa-spotify"></i> SPOTIFY</button> gombra, és másold be a Spotify lejátszási lista vagy album URL-jét.</li>
+                            <li><strong>XLS Import:</strong> Kattints az <button class="btn-inline"><i class="fa-solid fa-file-circle-plus"></i> XLS</button> gombra. A javasolt oszlopsorrend: <code>Artist</code>, <code>Title</code>, <code>Year</code>, <code>QR Data</code>, <code>Code1</code>, <code>Code2</code>.</li>
+                        </ul>
+
+                        <h4>3.2. Évszámok Validálása</h4>
+                        <p>A Spotify vagy XLS fájlok pontatlan évszámokat tartalmazhatnak. A <button class="btn-inline"><i class="fa-solid fa-wand-magic-sparkles"></i> VALIDÁL</button> gombbal javíthatod őket a MusicBrainz adatbázisa alapján.</p>
+                        <ul>
+                            <li><strong>Folyamat:</strong> Kattintásra egy felugró ablak jelenik meg, ami mutatja a haladást.</li>
+                            <li><strong>Megszakítás:</strong> A folyamat a <strong>Megszakítás</strong> gombbal bármikor leállítható.</li>
+                        </ul>
+
+                        <h4>3.3. Adatok Letöltése</h4>
+                        <p>Adatbetöltés után a <button class="btn-inline"><i class="fa-solid fa-file-arrow-down"></i> LETÖLTÉS</button> gombra kattintva lementheted az aktuális (akár már validált) adatlistát <code>cardcraft_data.xlsx</code> néven.</p>
+                        
+                        <hr class="divider">
+                        
+                        <h3>4. Részletes Beállítások (Tabok)</h3>
+                        <p>A beállításaidat a böngésző automatikusan elmenti. Erről egy kis üzenet tájékoztat a panel alján.</p>
+                        
+                        <h4><i class="fa-solid fa-sliders"></i> Méretek (General)</h4>
+                        <p>Itt állíthatod be a fizikai méreteket (papír, kártya, sarok) és a vágást segítő keret tulajdonságait.</p>
+                        
+                        <h4><i class="fa-solid fa-font"></i> Tipográfia (Typography)</h4>
+                        <p>A szövegek kinézetének testreszabása. Globális betűtípus, illetve elemenként (Év, Előadó, Cím) méret, vastagság, nagybetűs írásmód és "Glow" (ragyogás) effekt állítható.</p>
+
+                        <h4><i class="fa-solid fa-arrows-to-dot"></i> Elhelyezés (Layout)</h4>
+                        <p>A szövegelemek (előadó, cím) és az egyedi kódok pozicionálása Zene módban.</p>
+                        
+                        <h4><i class="fa-solid fa-record-vinyl"></i> Vinyl & QR (Backside)</h4>
+                        <p>A kártya hátlapjának dizájnja. Itt szabhatod testre a bakelit effektet (barázdák, glitch, neon mód) és a QR kód kinézetét (méret, keret, logó).</p>
+                        
+                        <h3>5. Előnézet és Nyomtatás</h3>
+                        <ul>
+                            <li><strong><i class="fa-solid fa-table-cells"></i> NÉZET:</strong> Váltás az interaktív, nagyított előnézet és a nyomtatási rácsnézet között.</li>
+                            <li><strong><i class="fa-solid fa-print"></i> NYOMTAT:</strong> Elindítja a nyomtatási folyamatot. A kétoldalas nyomtatás pontosságáért az alkalmazás a hátlapok sorrendjét automatikusan tükrözi.</li>
+                        </ul>
                     </div>
                 </div>
             </div>
+
         </div>
         <footer class="app-footer">
-            <p>CardCraft v1.9.3 &copy; <span id="current-year">2026</span></p>
+            <div id="save-indicator" class="hidden">Beállítások mentve!</div>
+            <p>CardCraft v1.9.4 &copy; <span id="current-year">2026</span></p>
         </footer>
     </aside>
 
@@ -459,8 +517,8 @@
             </div>
             <p id="progress-text">Indítás...</p>
             <div id="modal-actions">
-                 <button id="cancel-validation-button" class="action-btn">Megszakítás</button>
-                 <button id="close-modal-button" class="action-btn print-btn hidden">Bezárás</button>
+                 <button id="cancel-validation-button" class="modal-action-btn">Megszakítás</button>
+                 <button id="close-modal-button" class="modal-action-btn print-btn hidden">Bezárás</button>
             </div>
         </div>
     </div>
