@@ -27,21 +27,30 @@
             <button id="login-button">Belépés</button>
             <p id="error-message" class="hidden">Helytelen kód.</p>
             <footer class="landing-footer">
-                <p>v1.9.4 &copy; <span id="landing-year">2026</span></p>
+                <p>v1.9.5 &copy; <span id="landing-year">2026</span></p>
             </footer>
         </div>
     </div>
+    
+    <div id="popup-backdrop" class="hidden"></div>
 
     <!-- MAIN APP (Initially Hidden) -->
     <aside id="settings-panel" class="app-hidden">
-        <header>
+        <header class="main-header">
             <div class="logo">
                 <i class="fa-solid fa-compact-disc fa-spin-slow"></i>
                 <span>CardCraft</span>
             </div>
             
-            <!-- MODE SWITCHER -->
-            <div class="mode-switcher-container">
+            <div class="top-actions">
+                <div class="stats-bar" id="stats-bar" style="visibility: hidden;">
+                    <i class="fa-solid fa-layer-group"></i> <span id="record-count-display">0</span>
+                </div>
+                <button id="reset-settings" class="icon-btn mini" title="Alaphelyzet"><i class="fa-solid fa-rotate-left"></i></button>
+            </div>
+
+             <!-- MODE SWITCHER -->
+             <div class="mode-switcher-container">
                 <div class="mode-option">
                     <input type="radio" name="app-mode" id="mode-music" value="music" checked>
                     <label for="mode-music"><i class="fa-solid fa-music"></i> Zene</label>
@@ -51,457 +60,216 @@
                     <label for="mode-token"><i class="fa-solid fa-coins"></i> Zseton</label>
                 </div>
             </div>
-
-            <div class="top-actions">
-                <div class="stats-bar" id="stats-bar" style="visibility: hidden;">
-                    <i class="fa-solid fa-layer-group"></i> <span id="record-count-display">0</span>
-                </div>
-                <button id="reset-settings" class="icon-btn mini" title="Alaphelyzet"><i class="fa-solid fa-rotate-left"></i></button>
-            </div>
             
-            <!-- ACTION BUTTONS RESTRUCTURED -->
-            <div class="actions main-actions">
-                <div class="action-group" id="music-actions">
-                    <h4 class="action-group-title">Adatkezelés</h4>
-                    <div class="action-group-buttons">
-                        <button id="spotify-import-button" class="action-btn" title="Spotify Lista Betöltése" style="border-color: #1DB954; color: #1DB954;"><i class="fa-brands fa-spotify"></i> SPOTIFY</button>
-                        <label for="file-upload-button" class="action-btn upload-btn" title="Adatok betöltése"><i class="fa-solid fa-file-circle-plus"></i> XLS</label>
-                        <input type="file" id="file-upload-button" accept=".xls, .xlsx" style="display: none;">
-                        <button id="validate-years-button" class="action-btn hidden" title="Évszámok ellenőrzése (MusicBrainz)"><i class="fa-solid fa-wand-magic-sparkles"></i> VALIDÁL</button>
-                        <button id="download-button" class="action-btn hidden" title="Adatok letöltése XLSX formátumban"><i class="fa-solid fa-file-arrow-down"></i> LETÖLTÉS</button>
-                    </div>
+            <hr class="divider" style="margin: 15px 0;">
+
+            <!-- ACTION BUTTONS -->
+            <div class="header-actions">
+                <div id="music-action-buttons">
+                    <button id="spotify-import-button" class="action-btn" title="Spotify Lista Betöltése"><i class="fa-brands fa-spotify"></i></button>
+                    <label for="file-upload-button" class="action-btn upload-btn" title="Adatok betöltése XLS-ből"><i class="fa-solid fa-file-circle-plus"></i></label>
+                    <input type="file" id="file-upload-button" accept=".xls, .xlsx" style="display: none;">
+                    <button id="validate-years-button" class="action-btn hidden" title="Évszámok ellenőrzése (MusicBrainz)"><i class="fa-solid fa-wand-magic-sparkles"></i></button>
+                    <button id="download-button" class="action-btn hidden" title="Adatok letöltése XLSX formátumban"><i class="fa-solid fa-file-arrow-down"></i></button>
                 </div>
-                <div class="action-group">
-                    <h4 class="action-group-title">Műveletek</h4>
-                    <div class="action-group-buttons">
-                        <button id="view-toggle-button" class="action-btn" title="Rácsnézet"><i class="fa-solid fa-table-cells"></i> NÉZET</button>
-                        <button id="print-button" class="action-btn print-btn" title="Teljes Nyomtatás"><i class="fa-solid fa-print"></i> NYOMTAT</button>
-                    </div>
+                <div class="common-action-buttons">
+                    <button id="view-toggle-button" class="action-btn" title="Rácsnézet"><i class="fa-solid fa-table-cells"></i></button>
+                    <button id="print-button" class="action-btn print-btn" title="Teljes Nyomtatás"><i class="fa-solid fa-print"></i></button>
                 </div>
             </div>
         </header>
 
-        <nav class="tab-nav">
-            <button class="tab-btn active" data-tab="general" title="Méretek"><i class="fa-solid fa-sliders"></i></button>
-            <button class="tab-btn" data-tab="typography" title="Betűk"><i class="fa-solid fa-font"></i></button>
-            <button class="tab-btn" data-tab="layout" title="Elhelyezés"><i class="fa-solid fa-arrows-to-dot"></i></button>
-            <button class="tab-btn" data-tab="backside" title="Vinyl & QR"><i class="fa-solid fa-record-vinyl"></i></button>
-            <button class="tab-btn" data-tab="help" title="Súgó"><i class="fa-solid fa-circle-question"></i></button>
+        <div class="scroll-container-placeholder">
+            <!-- This area is intentionally left blank as popups will cover it -->
+        </div>
+
+        <nav class="settings-nav">
+            <button class="settings-btn" data-popup="general" title="Méretek"><i class="fa-solid fa-sliders"></i></button>
+            <button class="settings-btn" data-popup="typography" title="Betűk"><i class="fa-solid fa-font"></i></button>
+            <button class="settings-btn" data-popup="layout" title="Elhelyezés"><i class="fa-solid fa-arrows-to-dot"></i></button>
+            <button class="settings-btn" data-popup="backside" title="Vinyl & QR"><i class="fa-solid fa-record-vinyl"></i></button>
+            <button class="settings-btn" id="help-button" title="Súgó"><i class="fa-solid fa-circle-question"></i></button>
         </nav>
         
-        <div class="scroll-container">
-            <!-- GENERAL -->
-            <div class="tab-pane active" id="tab-general">
-                <div class="settings-section">
-                    
-                    <!-- TOKEN SETTINGS (Only visible in Token Mode) -->
-                    <div id="token-settings-group" style="display: none; border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 15px;">
-                        <h3>Zseton Tartalom</h3>
-                        <div class="control-group">
-                            <div class="input-row">
-                                <label>Fő Szöveg</label>
-                                <input type="text" id="token-main-text" value="TOKEN" style="width: 120px;">
-                            </div>
-                            <div class="input-row">
-                                <label>Alcím (Opciós)</label>
-                                <input type="text" id="token-sub-text" value="" style="width: 120px;" placeholder="...">
-                            </div>
-                        </div>
-                    </div>
-
-                    <h3>Papír & Kártya</h3>
-                    <div class="control-group">
-                        <div class="input-row">
-                            <label>Papír</label>
-                            <select id="paper-size">
-                                <option value="A4">A4</option>
-                                <option value="A3">A3</option>
-                            </select>
-                        </div>
-                        <div class="input-row">
-                            <label>Oldal Padding (mm)</label>
-                            <input type="number" id="page-padding" value="10" min="0" max="50" step="1" data-unit="mm" data-css-var="--page-padding">
-                        </div>
-                        <div class="input-row">
-                            <label>Kártya (mm)</label>
-                            <input type="number" id="card-size" value="46" step="0.5" data-unit="mm" data-css-var="--card-size">
-                        </div>
-                        <div class="input-row">
-                            <label>Sarok (mm)</label>
-                            <input type="number" id="card-radius" value="2" step="1" data-unit="mm" data-css-var="--card-radius">
-                        </div>
-                        
-                        <hr class="divider">
-                        
-                        <div class="input-row">
-                            <label>Keret szín</label>
-                            <input type="color" id="primary-color" value="#000000">
-                        </div>
-                        <div class="input-row">
-                            <label>Keret vastagság (px)</label>
-                            <input type="number" id="border-width" value="0.5" min="0" max="10" step="0.1" data-unit="px" data-css-var="--border-width">
-                        </div>
-                        <div class="input-row">
-                            <label>Keret Opacitás (%)</label>
-                            <input type="number" id="border-opacity" value="50" min="0" max="100" step="5">
-                        </div>
-                        <div class="input-row">
-                            <label>Keret Mód</label>
-                            <select id="border-mode" class="full-width">
-                                <option value="both">Elől + Hátul</option>
-                                <option value="front" selected>Csak Elől</option>
-                                <option value="back">Csak Hátul</option>
-                                <option value="none">Nincs Keret</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TYPOGRAPHY RESTRUCTURED (EXPANDABLE) -->
-            <div class="tab-pane" id="tab-typography">
-                <div class="settings-section">
-                    <h3>Tipográfia</h3>
-                    <select id="font-family" data-css-var="--font-family" class="full-width" style="margin-bottom:15px;">
-                        <option value="'Montserrat', sans-serif">Montserrat</option>
-                        <option value="'Poppins', sans-serif" selected>Poppins</option>
-                        <option value="'Bebas Neue', sans-serif">Bebas Neue</option>
-                        <option value="'Special Elite', cursive">Typewriter</option>
-                        <option value="'Syncopate', sans-serif">Syncopate</option>
-                    </select>
-
-                    <div class="typo-list">
-                        
-                        <!-- ITEM: YEAR -->
-                        <div class="typo-item">
-                            <div class="typo-main-row">
-                                <span class="typo-label">Év / Fő</span>
-                                <input type="number" id="font-size-year-input" value="30" class="tiny-input" data-unit="pt" data-css-var="--font-size-year">
-                                <div class="typo-options">
-                                    <label class="checkbox-container mini"><input type="checkbox" id="bold-year" checked> Bold</label>
-                                    <label class="checkbox-container mini"><input type="checkbox" id="glow-year" data-toggle-target="glow-settings-year"> Glow</label>
-                                    <input type="hidden" id="weight-year" value="800">
-                                </div>
-                            </div>
-                            <!-- EXPANDING: YEAR GLOW -->
-                            <div id="glow-settings-year" class="sub-panel hidden">
-                                <div class="input-row">
-                                    <label>Glow Szín</label>
-                                    <input type="color" id="glow-year-color" value="#888888">
-                                </div>
-                                <div class="input-row">
-                                    <label>Elmosás (px)</label>
-                                    <input type="number" id="glow-year-blur" value="5" min="0" max="20" step="1">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- ITEM: ARTIST -->
-                        <div class="typo-item">
-                            <div class="typo-main-row">
-                                <span class="typo-label">Előadó / Al</span>
-                                <input type="number" id="font-size-artist-input" value="12" class="tiny-input" step="0.5" data-unit="pt" data-css-var="--font-size-artist">
-                                <div class="typo-options">
-                                    <label class="checkbox-container mini"><input type="checkbox" id="bold-artist" checked> Bold</label>
-                                    <label class="checkbox-container mini"><input type="checkbox" id="glow-artist" data-toggle-target="glow-settings-artist"> Glow</label>
-                                    <select id="text-transform-artist" class="tiny-select" data-css-var="--text-transform-artist">
-                                        <option value="none">Aa</option>
-                                        <option value="uppercase">AA</option>
-                                    </select>
-                                    <input type="hidden" id="weight-artist" value="700">
-                                </div>
-                            </div>
-                             <!-- EXPANDING: ARTIST GLOW -->
-                             <div id="glow-settings-artist" class="sub-panel hidden">
-                                <div class="input-row">
-                                    <label>Glow Szín</label>
-                                    <input type="color" id="glow-artist-color" value="#888888">
-                                </div>
-                                <div class="input-row">
-                                    <label>Elmosás (px)</label>
-                                    <input type="number" id="glow-artist-blur" value="5" min="0" max="20" step="1">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- ITEM: TITLE (Music Only) -->
-                        <div class="typo-item music-only-option">
-                            <div class="typo-main-row">
-                                <span class="typo-label">Cím</span>
-                                <input type="number" id="font-size-title-input" value="10" class="tiny-input" step="0.5" data-unit="pt" data-css-var="--font-size-title">
-                                <div class="typo-options">
-                                    <label class="checkbox-container mini"><input type="checkbox" id="bold-title" checked> Bold</label>
-                                    <label class="checkbox-container mini"><input type="checkbox" id="glow-title" data-toggle-target="glow-settings-title"> Glow</label>
-                                    <select id="text-transform-title" class="tiny-select" data-css-var="--text-transform-title">
-                                        <option value="none">Aa</option>
-                                        <option value="uppercase">AA</option>
-                                    </select>
-                                    <input type="hidden" id="weight-title" value="700">
-                                </div>
-                            </div>
-                            <!-- EXPANDING: TITLE SETTINGS -->
-                            <div id="glow-settings-title" class="sub-panel hidden">
-                                <div class="input-row">
-                                    <label>Glow Szín</label>
-                                    <input type="color" id="glow-title-color" value="#888888">
-                                </div>
-                                <div class="input-row">
-                                    <label>Elmosás (px)</label>
-                                    <input type="number" id="glow-title-blur" value="5" min="0" max="20" step="1">
-                                </div>
-                                <hr class="divider">
-                                <div class="input-row">
-                                    <label>Max sorok</label>
-                                    <input type="number" id="max-lines" value="2" min="1" max="5" class="tiny-input" style="width:50px !important;">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- LAYOUT RESTRUCTURED -->
-            <div class="tab-pane" id="tab-layout">
-                <div class="settings-section">
-                    
-                    <div class="music-only-option">
-                        <!-- SECTION 1: MARGINS -->
-                        <div class="layout-group">
-                            <div class="group-header">Margók (pt)</div>
-                            <div class="control-group">
-                                <div class="input-row">
-                                    <label>Felső margó</label>
-                                    <input type="number" id="artist-margin" value="9" step="1" data-unit="pt" data-css-var="--artist-margin">
-                                </div>
-                                <div class="input-row">
-                                    <label>Alsó margó</label>
-                                    <input type="number" id="title-margin" value="9" step="1" data-unit="pt" data-css-var="--title-margin">
-                                </div>
-                            </div>
-                        </div>
-
-                        <hr class="divider">
-
-                        <!-- SECTION 2: CODES -->
-                        <div class="layout-group">
-                            <div class="group-header">Kód Elhelyezés</div>
-                            <div class="control-group">
-                                <div class="input-row">
-                                    <label>Pozíció</label>
-                                    <select id="code-position" class="full-width" style="margin-bottom:0;">
-                                        <option value="center" selected>Közép</option>
-                                        <option value="corner">Sarok</option>
-                                    </select>
-                                </div>
-                                <div class="input-row">
-                                    <label>Eltolás (pt)</label>
-                                    <input type="number" id="code-side-margin" value="-3" step="1" data-unit="pt" data-css-var="--code-side-margin">
-                                </div>
-                                <div class="row wraps">
-                                    <label class="checkbox-container"><input type="checkbox" id="bold-codes"> Kód Vastag</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="token-only-msg" style="display:none; color: #888; font-size: 0.8rem; font-style: italic;">
-                        Zseton módban a szöveg automatikusan középre igazodik.
-                    </div>
-                </div>
-            </div>
-
-            <!-- BACKSIDE (Shared Settings) -->
-            <div class="tab-pane" id="tab-backside">
-                <div class="settings-section">
-                    <h3>Vinyl & QR Stílus</h3>
-                    <div class="control-group">
-                        <div class="input-row">
-                            <label>Barázdák (db)</label>
-                            <input type="number" id="vinyl-count" value="8" min="1" max="50">
-                        </div>
-                        <div class="input-row">
-                            <label>Barázda köz (mm)</label>
-                            <input type="number" id="vinyl-spacing" value="3" step="0.1">
-                        </div>
-                        <div class="input-row">
-                            <label>Vastagság (px)</label>
-                            <input type="number" id="vinyl-thickness" value="0.5" step="0.1" min="0.1" max="5">
-                        </div>
-                        
-                        <!-- NEW: VINYL COLOR & NEON -->
-                        <div class="input-row">
-                            <label>Barázda Szín</label>
-                            <input type="color" id="vinyl-color" value="#000000">
-                        </div>
-
-                        <!-- PROGRESSIVE MENU: NEON -->
-                        <div class="expandable-group">
-                            <div class="input-row">
-                                <label class="checkbox-container">
-                                    <input type="checkbox" id="vinyl-neon" data-toggle-target="vinyl-neon-settings"> 
-                                    Neon Mód (Random)
-                                </label>
-                            </div>
-                            <div id="vinyl-neon-settings" class="sub-panel hidden">
-                                <div class="input-row">
-                                    <label>Izzás (Glow)</label>
-                                    <input type="number" id="vinyl-neon-blur" value="5" min="0" max="20" step="1">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="input-row">
-                            <label>Opacitás (%)</label>
-                            <input type="number" id="vinyl-opacity" value="50" min="0" max="100" step="5">
-                        </div>
-                        <div class="row wraps">
-                             <label class="checkbox-container"><input type="checkbox" id="vinyl-variate" checked> Vastagság variálás</label>
-                        </div>
-                        
-                        <hr class="divider">
-                        
-                        <div class="input-row">
-                            <label>Glitch / kör (db)</label>
-                            <div class="dual-input">
-                                <input type="number" id="glitch-min" value="1">
-                                <span>-</span>
-                                <input type="number" id="glitch-max" value="2">
-                            </div>
-                        </div>
-                        <div class="input-row">
-                            <label>Szélesség % (tól-ig)</label>
-                            <div class="dual-input">
-                                <input type="number" id="glitch-width-min" value="25" min="1" max="60">
-                                <span>-</span>
-                                <input type="number" id="glitch-width-max" value="30" min="1" max="60">
-                            </div>
-                        </div>
-
-                        <div class="music-only-option">
-                            <hr class="divider">
-                            
-                            <!-- PROGRESSIVE MENU: QR -->
-                            <div class="expandable-group">
-                                <div class="input-row">
-                                    <label class="checkbox-container">
-                                        <input type="checkbox" id="show-qr" checked data-toggle-target="qr-settings"> 
-                                        QR kód látható
-                                    </label>
-                                </div>
-                                <div id="qr-settings" class="sub-panel">
-                                    <div class="input-row">
-                                        <label>Méret (%)</label>
-                                        <input type="number" id="qr-size-percent" value="40" min="10" max="90" step="1" data-unit="%" data-css-var="--qr-size">
-                                    </div>
-                                    <div class="input-row">
-                                        <label>Keret (px)</label>
-                                        <input type="number" id="qr-border-width" value="3" step="1.0" min="0" max="10" data-unit="px" data-css-var="--qr-border-width">
-                                    </div>
-                                    <div class="input-row">
-                                        <label>Keret Szín</label>
-                                        <input type="color" id="qr-border-color" value="#ffffff" data-css-var="--qr-border-color">
-                                    </div>
-
-                                    <!-- NEW: QR GLOW -->
-                                    <div class="row" style="margin-top:10px; margin-bottom:5px;">
-                                        <label class="checkbox-container mini"><input type="checkbox" id="glow-qr" data-toggle-target="glow-settings-qr"> Glow (Izzás)</label>
-                                    </div>
-                                    <div id="glow-settings-qr" class="sub-panel hidden" style="border-left-color: #555; background:#000;">
-                                        <div class="input-row">
-                                            <label>Glow Szín</label>
-                                            <input type="color" id="glow-qr-color" value="#888888">
-                                        </div>
-                                        <div class="input-row">
-                                            <label>Elmosás (px)</label>
-                                            <input type="number" id="glow-qr-blur" value="10" min="0" max="50" step="1">
-                                        </div>
-                                    </div>
-
-                                    <div class="input-row">
-                                        <label>Logó (max 3)</label>
-                                        <input type="text" id="qr-logo-text" value="" maxlength="3" placeholder="ABC">
-                                    </div>
-                                    <div class="row wraps" style="margin-top:5px;">
-                                        <label class="checkbox-container mini"><input type="checkbox" id="qr-round" checked> Kerek</label>
-                                        <label class="checkbox-container mini"><input type="checkbox" id="qr-invert" checked> Inverz</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- HELP -->
-            <div class="tab-pane" id="tab-help">
-                <div class="settings-section">
-                    <div class="help-content">
-                        <h2>CardCraft v1.9.4 - Felhasználói Kézikönyv</h2>
-                        <p>Üdvözlünk a CardCraft alkalmazásban! Ez az útmutató segít megismerni és teljes mértékben kihasználni az alkalmazás funkcióit, amellyel egyedi, vinyl-stílusú kártyákat és zsetonokat tervezhetsz és nyomtathatsz.</p>
-                        
-                        <h3>1. A Kezelőfelület Áttekintése</h3>
-                        <p>A felület két fő részre oszlik: egy bal oldali <strong>Beállítások Panelre</strong> és egy jobb oldali <strong>Munkaterületre</strong> (ahol az előnézet vagy a nyomtatási rács látható).</p>
-                        
-                        <h3>2. Üzemmódok</h3>
-                        <p>Az alkalmazás két fő üzemmódban használható, amelyeket a panel tetején válthatsz.</p>
-                        <ul>
-                            <li><strong><i class="fa-solid fa-music"></i> Zene Mód:</strong> Egyedi zeneszámokból álló kártyák létrehozására szolgál. Minden kártya egyedi adatokat tartalmaz (előadó, cím, év, QR-kód).</li>
-                            <li><strong><i class="fa-solid fa-coins"></i> Zseton Mód:</strong> Egységes kinézetű kártyák (zsetonok, kuponok) tömeges generálására szolgál. A nyomtatási nézetben az első oldalra csak előlapokat, a másodikra pedig csak hátlapokat generál.</li>
-                        </ul>
-                        
-                        <hr class="divider">
-                        
-                        <h3>3. Adatkezelés (Csak Zene Módban)</h3>
-                        <h4>3.1. Adatbetöltés</h4>
-                        <ul>
-                            <li><strong>Spotify Import (Ajánlott):</strong> Kattints a <button class="btn-inline spotify"><i class="fa-brands fa-spotify"></i> SPOTIFY</button> gombra, és másold be a Spotify lejátszási lista vagy album URL-jét.</li>
-                            <li><strong>XLS Import:</strong> Kattints az <button class="btn-inline"><i class="fa-solid fa-file-circle-plus"></i> XLS</button> gombra. A javasolt oszlopsorrend: <code>Artist</code>, <code>Title</code>, <code>Year</code>, <code>QR Data</code>, <code>Code1</code>, <code>Code2</code>.</li>
-                        </ul>
-
-                        <h4>3.2. Évszámok Validálása</h4>
-                        <p>A Spotify vagy XLS fájlok pontatlan évszámokat tartalmazhatnak. A <button class="btn-inline"><i class="fa-solid fa-wand-magic-sparkles"></i> VALIDÁL</button> gombbal javíthatod őket a MusicBrainz adatbázisa alapján.</p>
-                        <ul>
-                            <li><strong>Folyamat:</strong> Kattintásra egy felugró ablak jelenik meg, ami mutatja a haladást.</li>
-                            <li><strong>Megszakítás:</strong> A folyamat a <strong>Megszakítás</strong> gombbal bármikor leállítható.</li>
-                        </ul>
-
-                        <h4>3.3. Adatok Letöltése</h4>
-                        <p>Adatbetöltés után a <button class="btn-inline"><i class="fa-solid fa-file-arrow-down"></i> LETÖLTÉS</button> gombra kattintva lementheted az aktuális (akár már validált) adatlistát <code>cardcraft_data.xlsx</code> néven.</p>
-                        
-                        <hr class="divider">
-                        
-                        <h3>4. Részletes Beállítások (Tabok)</h3>
-                        <p>A beállításaidat a böngésző automatikusan elmenti. Erről egy kis üzenet tájékoztat a panel alján.</p>
-                        
-                        <h4><i class="fa-solid fa-sliders"></i> Méretek (General)</h4>
-                        <p>Itt állíthatod be a fizikai méreteket (papír, kártya, sarok) és a vágást segítő keret tulajdonságait.</p>
-                        
-                        <h4><i class="fa-solid fa-font"></i> Tipográfia (Typography)</h4>
-                        <p>A szövegek kinézetének testreszabása. Globális betűtípus, illetve elemenként (Év, Előadó, Cím) méret, vastagság, nagybetűs írásmód és "Glow" (ragyogás) effekt állítható.</p>
-
-                        <h4><i class="fa-solid fa-arrows-to-dot"></i> Elhelyezés (Layout)</h4>
-                        <p>A szövegelemek (előadó, cím) és az egyedi kódok pozicionálása Zene módban.</p>
-                        
-                        <h4><i class="fa-solid fa-record-vinyl"></i> Vinyl & QR (Backside)</h4>
-                        <p>A kártya hátlapjának dizájnja. Itt szabhatod testre a bakelit effektet (barázdák, glitch, neon mód) és a QR kód kinézetét (méret, keret, logó).</p>
-                        
-                        <h3>5. Előnézet és Nyomtatás</h3>
-                        <ul>
-                            <li><strong><i class="fa-solid fa-table-cells"></i> NÉZET:</strong> Váltás az interaktív, nagyított előnézet és a nyomtatási rácsnézet között.</li>
-                            <li><strong><i class="fa-solid fa-print"></i> NYOMTAT:</strong> Elindítja a nyomtatási folyamatot. A kétoldalas nyomtatás pontosságáért az alkalmazás a hátlapok sorrendjét automatikusan tükrözi.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-        </div>
         <footer class="app-footer">
             <div id="save-indicator" class="hidden">Beállítások mentve!</div>
-            <p>CardCraft v1.9.4 &copy; <span id="current-year">2026</span></p>
+            <p>CardCraft v1.9.5 &copy; <span id="current-year">2026</span></p>
         </footer>
     </aside>
+
+    <!-- SETTINGS POPUPS -->
+    <div id="popup-general" class="settings-popup">
+        <div class="popup-header">
+            <h3><i class="fa-solid fa-sliders"></i> Méretek</h3>
+            <button class="close-popup-btn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="popup-content">
+            <!-- TOKEN SETTINGS -->
+            <div id="token-settings-group" style="display: none; border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 15px;">
+                <h4>Zseton Tartalom</h4>
+                <div class="control-group">
+                    <div class="input-row">
+                        <label>Fő Szöveg</label>
+                        <input type="text" id="token-main-text" value="TOKEN" style="width: 120px;">
+                    </div>
+                    <div class="input-row">
+                        <label>Alcím (Opciós)</label>
+                        <input type="text" id="token-sub-text" value="" style="width: 120px;" placeholder="...">
+                    </div>
+                </div>
+            </div>
+
+            <h4>Papír & Kártya</h4>
+            <div class="control-group">
+                <div class="input-row">
+                    <label>Papír</label>
+                    <select id="paper-size">
+                        <option value="A4">A4</option>
+                        <option value="A3">A3</option>
+                    </select>
+                </div>
+                <div class="input-row">
+                    <label>Oldal Padding (mm)</label>
+                    <input type="number" id="page-padding" value="10" min="0" max="50" step="1" data-unit="mm" data-css-var="--page-padding">
+                </div>
+                <div class="input-row">
+                    <label>Kártya (mm)</label>
+                    <input type="number" id="card-size" value="46" step="0.5" data-unit="mm" data-css-var="--card-size">
+                </div>
+                <div class="input-row">
+                    <label>Sarok (mm)</label>
+                    <input type="number" id="card-radius" value="2" step="1" data-unit="mm" data-css-var="--card-radius">
+                </div>
+                
+                <hr class="divider">
+                
+                <h4>Keret</h4>
+                <div class="input-row">
+                    <label>Szín</label>
+                    <input type="color" id="primary-color" value="#000000">
+                </div>
+                <div class="input-row">
+                    <label>Vastagság (px)</label>
+                    <input type="number" id="border-width" value="0.5" min="0" max="10" step="0.1" data-unit="px" data-css-var="--border-width">
+                </div>
+                <div class="input-row">
+                    <label>Opacitás (%)</label>
+                    <input type="number" id="border-opacity" value="50" min="0" max="100" step="5">
+                </div>
+                <div class="input-row">
+                    <label>Mód</label>
+                    <select id="border-mode" class="full-width">
+                        <option value="both">Elől + Hátul</option>
+                        <option value="front" selected>Csak Elől</option>
+                        <option value="back">Csak Hátul</option>
+                        <option value="none">Nincs Keret</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="popup-typography" class="settings-popup">
+        <div class="popup-header">
+            <h3><i class="fa-solid fa-font"></i> Tipográfia</h3>
+            <button class="close-popup-btn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="popup-content">
+            <h4>Betűtípus</h4>
+            <select id="font-family" data-css-var="--font-family" class="full-width" style="margin-bottom:15px;">
+                <option value="'Montserrat', sans-serif">Montserrat</option>
+                <option value="'Poppins', sans-serif" selected>Poppins</option>
+                <option value="'Bebas Neue', sans-serif">Bebas Neue</option>
+                <option value="'Special Elite', cursive">Typewriter</option>
+                <option value="'Syncopate', sans-serif">Syncopate</option>
+            </select>
+
+            <div class="typo-list">
+                <!-- YEAR -->
+                <div class="typo-item">
+                    <div class="typo-main-row">
+                        <span class="typo-label">Év / Fő</span>
+                        <input type="number" id="font-size-year-input" value="30" class="tiny-input" data-unit="pt" data-css-var="--font-size-year">
+                        <div class="typo-options">
+                            <label class="checkbox-container mini"><input type="checkbox" id="bold-year" checked> Bold</label>
+                            <label class="checkbox-container mini"><input type="checkbox" id="glow-year" data-toggle-target="glow-settings-year"> Glow</label>
+                            <input type="hidden" id="weight-year" value="800">
+                        </div>
+                    </div>
+                    <div id="glow-settings-year" class="sub-panel hidden">
+                        <!-- Glow settings here -->
+                    </div>
+                </div>
+                <!-- ARTIST -->
+                <div class="typo-item">
+                    <div class="typo-main-row">
+                        <span class="typo-label">Előadó / Al</span>
+                        <input type="number" id="font-size-artist-input" value="12" class="tiny-input" step="0.5" data-unit="pt" data-css-var="--font-size-artist">
+                        <div class="typo-options">
+                            <label class="checkbox-container mini"><input type="checkbox" id="bold-artist" checked> Bold</label>
+                            <label class="checkbox-container mini"><input type="checkbox" id="glow-artist" data-toggle-target="glow-settings-artist"> Glow</label>
+                            <select id="text-transform-artist" class="tiny-select" data-css-var="--text-transform-artist"><option value="none">Aa</option><option value="uppercase">AA</option></select>
+                            <input type="hidden" id="weight-artist" value="700">
+                        </div>
+                    </div>
+                     <div id="glow-settings-artist" class="sub-panel hidden">
+                        <!-- Glow settings here -->
+                    </div>
+                </div>
+                <!-- TITLE -->
+                <div class="typo-item music-only-option">
+                    <div class="typo-main-row">
+                        <span class="typo-label">Cím</span>
+                        <input type="number" id="font-size-title-input" value="10" class="tiny-input" step="0.5" data-unit="pt" data-css-var="--font-size-title">
+                        <div class="typo-options">
+                            <label class="checkbox-container mini"><input type="checkbox" id="bold-title" checked> Bold</label>
+                            <label class="checkbox-container mini"><input type="checkbox" id="glow-title" data-toggle-target="glow-settings-title"> Glow</label>
+                            <select id="text-transform-title" class="tiny-select" data-css-var="--text-transform-title"><option value="none">Aa</option><option value="uppercase">AA</option></select>
+                            <input type="hidden" id="weight-title" value="700">
+                        </div>
+                    </div>
+                    <div id="glow-settings-title" class="sub-panel hidden">
+                        <div class="input-row"><label>Max sorok</label><input type="number" id="max-lines" value="2" min="1" max="5" class="tiny-input" style="width:50px !important;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="popup-layout" class="settings-popup">
+        <div class="popup-header">
+            <h3><i class="fa-solid fa-arrows-to-dot"></i> Elhelyezés</h3>
+            <button class="close-popup-btn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="popup-content">
+            <div class="music-only-option">
+                <h4>Margók (pt)</h4>
+                <div class="control-group">
+                    <div class="input-row"><label>Felső margó</label><input type="number" id="artist-margin" value="9" step="1" data-unit="pt" data-css-var="--artist-margin"></div>
+                    <div class="input-row"><label>Alsó margó</label><input type="number" id="title-margin" value="9" step="1" data-unit="pt" data-css-var="--title-margin"></div>
+                </div>
+                <hr class="divider">
+                <h4>Kód Elhelyezés</h4>
+                <div class="control-group">
+                    <div class="input-row"><label>Pozíció</label><select id="code-position" class="full-width" style="margin-bottom:0;"><option value="center" selected>Közép</option><option value="corner">Sarok</option></select></div>
+                    <div class="input-row"><label>Eltolás (pt)</label><input type="number" id="code-side-margin" value="-3" step="1" data-unit="pt" data-css-var="--code-side-margin"></div>
+                    <div class="row wraps"><label class="checkbox-container"><input type="checkbox" id="bold-codes"> Kód Vastag</label></div>
+                </div>
+            </div>
+            <div class="token-only-msg" style="display:none; color: #888; font-size: 0.8rem; font-style: italic;">Zseton módban a szöveg automatikusan középre igazodik.</div>
+        </div>
+    </div>
+
+    <div id="popup-backside" class="settings-popup">
+        <div class="popup-header">
+            <h3><i class="fa-solid fa-record-vinyl"></i> Vinyl & QR</h3>
+            <button class="close-popup-btn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="popup-content">
+             <!-- All backside settings -->
+        </div>
+    </div>
+
 
     <main id="main-content" class="app-hidden">
         <div id="preview-area" title="Kattints a kártyákra"></div>

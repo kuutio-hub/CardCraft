@@ -1,5 +1,5 @@
 {
-  "description": "CardCraft v1.9.4 - Major UX Overhaul. Features a reorganized main menu, a comprehensive in-app help guide, an auto-save indicator for settings, and improved MusicBrainz query accuracy.",
+  "description": "CardCraft v1.9.5 - Complete UI/UX redesign with a new header and floating settings panels. Fixes critical data state bug when switching modes. The help guide now opens in a new tab for better readability.",
   "requestFramePermissions": [],
-  "name": "CardCraft v1.9.4"
+  "name": "CardCraft v1.9.5"
 }
