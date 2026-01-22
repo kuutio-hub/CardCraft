@@ -94,7 +94,7 @@ export class SpotifyHandler {
     
     async searchTrack(artist, title) {
         const cleanedTitle = cleanTrackTitle(title);
-        const userAgent = `CardCraft/1.9.9 (cardcraft.app/info)`;
+        const userAgent = `CardCraft/2.1.0 (cardcraft.app/info)`;
         const url = `https://musicbrainz.org/ws/2/recording/?query=artist:"${encodeURIComponent(artist)}" AND recording:"${encodeURIComponent(cleanedTitle)}"&limit=5&fmt=json`;
         
         try {
@@ -185,9 +185,13 @@ export class SpotifyHandler {
                     const track = item.track ? item.track : item;
                     if (!track || !track.artists) return null;
 
-                    let year = "N/A";
+                    let year = "????";
                     if (track.album && track.album.release_date) {
-                        year = track.album.release_date.substring(0, 4);
+                        // If album is a compilation, the date is unreliable. Mark for validation.
+                        // Only use date if it's from a proper album or single.
+                        if (track.album.album_type === 'album' || track.album.album_type === 'single') {
+                            year = track.album.release_date.substring(0, 4);
+                        }
                     }
 
                     let artist = "Ismeretlen";
@@ -222,7 +226,8 @@ export class SpotifyHandler {
                 const albumData = await albumResponse.json();
                 const albumYear = albumData.release_date.substring(0, 4);
                 allTracks.forEach(track => {
-                    if (track.year === "N/A") {
+                    // Only fill year if it was marked as unknown
+                    if (track.year === "????") {
                         track.year = albumYear;
                     }
                 });

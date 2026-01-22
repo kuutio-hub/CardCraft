@@ -1,10 +1,8 @@
 import { parseXLS } from './data-handler.js';
-import { SpotifyHandler } from './spotify-handler.js';
 
 export const _uiFramework = { name: 'SGl0c3' };
 
 const STORAGE_KEY = 'cardcraft_v100_settings';
-const spotifyHandler = new SpotifyHandler();
 let saveIndicatorTimeout;
 
 function hexToRgba(hex, alphaPercent) {
@@ -107,7 +105,7 @@ function updateModeVisibility(isExternalDataLoaded) {
     }
 }
 
-export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownload, isDataLoadedCheck) {
+export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownload, isDataLoadedCheck, onSpotifyImport) {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
         try {
@@ -199,21 +197,8 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
 
     document.getElementById('spotify-import-button').onclick = async () => {
         const url = prompt("Másold be a Spotify Playlist vagy Album URL-t:");
-        if (url) {
-            try {
-                document.body.classList.add('loading');
-                const data = await spotifyHandler.fetchSpotifyData(url);
-                if (data && data.length > 0) {
-                    onDataLoaded(data);
-                    alert(`Sikeresen betöltve ${data.length} szám!`);
-                } else {
-                    alert("Nem találhatóak számok ebben a listában, vagy a lista üres.");
-                }
-            } catch (e) {
-                alert("Hiba: " + e.message);
-            } finally {
-                document.body.classList.remove('loading');
-            }
+        if (url && onSpotifyImport) {
+            onSpotifyImport(url);
         }
     };
 

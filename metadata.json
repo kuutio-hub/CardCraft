@@ -1,5 +1,5 @@
 {
-  "description": "CardCraft v1.9.9 - Critically improves the MusicBrainz year validation logic by prioritizing the 'first-release-date' of a song's release group, ensuring the original release year is fetched, not the compilation date. This fixes a major regression.",
+  "description": "CardCraft v2.1.0 - Removed automatic validation on Spotify import. Improved import logic to handle compilation albums by setting the year to '????'. The manual validation process is now stricter, removing tracks for which no valid year can be found.",
   "requestFramePermissions": [],
-  "name": "CardCraft v1.9.9"
+  "name": "CardCraft v2.1.0"
 }

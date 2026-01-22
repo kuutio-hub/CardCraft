@@ -57,6 +57,13 @@
             margin: 20px 0;
             border-radius: 0 4px 4px 0;
         }
+        .warning {
+            background: #2a2020;
+            border-left: 4px solid #ff4d4d;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
     </style>
 </head>
 <body>
@@ -98,22 +105,22 @@
     <ol>
         <li><strong>Adatbetöltés:</strong>
             <ul>
-                <li><strong>Spotify Import (Ajánlott):</strong> Kattints a <code>SPOTIFY</code> gombra, és másold be a Spotify lejátszási lista vagy album URL-jét. Az alkalmazás automatikusan beolvassa a dalokat.</li>
-                <li><strong>XLS Import:</strong> Kattints az <code>XLS</code> gombra egy <code>.xls</code> vagy <code>.xlsx</code> fájl feltöltéséhez. A rendszer intelligensen felismeri a fejléceket, de a javasolt oszlopsorrend: <code>Artist</code>, <code>Title</code>, <code>Year</code>, <code>QR Data</code>, <code>Code1</code>, <code>Code2</code>.</li>
+                <li><strong>Spotify Import (Ajánlott):</strong> Kattints a <code>SPOTIFY</code> gombra, és másold be a Spotify lejátszási lista vagy album URL-jét. Az alkalmazás intelligensen beolvassa a dalokat. Ha egy dal válogatásalbumról származik (pl. "Best of 2014"), az évszám helyett <code>????</code> jelenik meg.</li>
+                <li><strong>XLS Import:</strong> Kattints az <code>XLS</code> gombra egy <code>.xls</code> vagy <code>.xlsx</code> fájl feltöltéséhez. A javasolt oszlopsorrend: <code>Artist</code>, <code>Title</code>, <code>Year</code>, <code>QR Data</code>, <code>Code1</code>, <code>Code2</code>.</li>
             </ul>
         </li>
-        <li><strong>Évszámok Validálása:</strong>
+        <li class="note"><strong>Évszámok Validálása és Szűrése:</strong>
             <ul>
-                <li>A Spotify vagy a feltöltött XLS fájlok esetenként pontatlan megjelenési éveket tartalmazhatnak. Adatbetöltés után a <code>VALIDÁL</code> gomb aktívvá válik.</li>
-                <li><strong>Folyamat:</strong> Kattintásra egy felugró ablak jelenik meg. Az alkalmazás a <strong>MusicBrainz</strong> nyílt zenei adatbázisában, egyenként ellenőrzi a dalokat (előadó és cím alapján), és ha pontosabb évszámot talál, frissíti azt.</li>
-                <li><strong>Interaktivitás:</strong> A felugró ablakban egy folyamatjelző sáv és egy számláló mutatja, hol tart a folyamat.</li>
-                <li><strong>Megszakítás:</strong> Ha a folyamat túl sokáig tart, a <code>Megszakítás</code> gombbal bármikor leállíthatod. Az addig elvégzett frissítések megmaradnak.</li>
+                <li>Adatbetöltés után a <code>VALIDÁL</code> gomb aktívvá válik. Erre kattintva elindíthatod az évszámok ellenőrzését és javítását.</li>
+                <li><strong>Folyamat:</strong> Az alkalmazás a <strong>MusicBrainz</strong> adatbázisában ellenőrzi a dalokat. Megpróbálja javítani a meglévő évszámokat és kitölteni a <code>????</code> helyét is.</li>
+                <li><strong class="warning">Szigorú Szűrés:</strong> Ha a validálás végén egy dalhoz nem található megbízható (négyjegyű) évszám, az a dal **automatikusan eltávolításra kerül a listáról.**</li>
+                <li>A folyamat végén egy összegzés tájékoztat a frissített és az eltávolított dalok számáról. Ez garantálja, hogy csak pontos adatokkal ellátott kártyák kerüljenek nyomtatásra.</li>
             </ul>
         </li>
         <li><strong>Adatok Letöltése:</strong>
             <ul>
-                <li>Adatbetöltés után a <code>LETÖLTÉS</code> gombra kattintva lementheted az aktuális (akár már validált) adatlistát.</li>
-                <li>A fájl <code>cardcraft_data.xlsx</code> néven töltődik le, rendezett oszlopokkal, ami kiválóan alkalmas archiválásra vagy további feldolgozásra.</li>
+                <li>A <code>LETÖLTÉS</code> gombra kattintva lementheted az aktuális (akár már validált és szűrt) adatlistát.</li>
+                <li>A fájl <code>cardcraft_data.xlsx</code> néven töltődik le, ami kiválóan alkalmas archiválásra.</li>
             </ul>
         </li>
     </ol>

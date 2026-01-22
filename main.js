@@ -62,7 +62,8 @@ const App = {
                 (d) => this.handleDataLoaded(d),
                 () => this.validateYearsWithMusicBrainz(),
                 () => this.downloadDataAsXLS(),
-                () => this.isExternalDataLoaded // Pass state checker to UI controller
+                () => this.isExternalDataLoaded, // Pass state checker to UI controller
+                (url) => this.handleSpotifyImport(url) // Pass Spotify import handler
             );
             
             const isToken = document.getElementById('mode-token')?.checked;
@@ -123,9 +124,28 @@ const App = {
 
         XLSX.writeFile(workbook, "cardcraft_data.xlsx");
     },
+    
+    async handleSpotifyImport(url) {
+        try {
+            document.body.classList.add('loading');
+            const rawData = await spotifyHandler.fetchSpotifyData(url);
+            
+            if (rawData && rawData.length > 0) {
+                // Load data directly without auto-validation
+                this.handleDataLoaded(rawData);
+            } else {
+                alert("Nem találhatóak számok ebben a listában, vagy a lista üres.");
+            }
+        } catch (e) {
+            alert("Hiba: " + e.message);
+        } finally {
+            document.body.classList.remove('loading');
+        }
+    },
 
     async validateYearsWithMusicBrainz() {
-        if (!this.data || this.data.length === 0) return;
+        const dataToValidate = this.data;
+        if (!dataToValidate || dataToValidate.length === 0) return;
 
         const modal = document.getElementById('progress-modal');
         const modalTitle = document.getElementById('modal-title');
@@ -150,23 +170,39 @@ const App = {
 
         mainValidateButton.disabled = true;
 
+        const validatedData = [];
         let updatedCount = 0;
+        let removedCount = 0;
         
-        for (let i = 0; i < this.data.length; i++) {
+        for (let i = 0; i < dataToValidate.length; i++) {
             if (this.validationCancelled) break;
 
-            const track = this.data[i];
+            const track = dataToValidate[i];
+            const originalYear = track.year;
             
-            progressFill.style.width = `${((i + 1) / this.data.length) * 100}%`;
-            progressText.textContent = `Feldolgozás: ${i + 1} / ${this.data.length} ... (${track.artist})`;
+            progressFill.style.width = `${((i + 1) / dataToValidate.length) * 100}%`;
+            progressText.textContent = `Feldolgozás: ${i + 1} / ${dataToValidate.length} ... (${track.artist})`;
 
-            if (!track.artist || !track.title) continue;
+            if (!track.artist || !track.title) {
+                removedCount++;
+                continue;
+            };
             
             const foundYear = await spotifyHandler.searchTrack(track.artist, track.title);
-            
-            if (foundYear && foundYear !== track.year) {
+            const isValidOriginalYear = originalYear && /^\d{4}$/.test(String(originalYear).trim());
+
+            if (foundYear) {
+                if (foundYear !== originalYear) {
+                    updatedCount++;
+                }
                 track.year = foundYear;
-                updatedCount++;
+                validatedData.push(track);
+            } else if (isValidOriginalYear) {
+                // No new year found, but original was valid, so keep it.
+                validatedData.push(track);
+            } else {
+                // No year found and original was not valid (e.g., '????')
+                removedCount++;
             }
             
             await new Promise(resolve => setTimeout(resolve, 1100));
@@ -177,17 +213,18 @@ const App = {
         cancelBtn.classList.add('hidden');
         closeBtn.classList.remove('hidden');
 
+        let resultText = `${updatedCount} dal frissítve, ${removedCount} dal eltávolítva (nincs megbízható évszám).`;
+
         if (this.validationCancelled) {
-            modalTitle.textContent = 'Validálás megszakítva';
-            progressText.textContent = `A folyamatot a felhasználó megszakította. ${updatedCount} dal frissült eddig.`;
-        } else if (updatedCount > 0) {
-            modalTitle.textContent = 'Validálás befejezve';
-            progressText.textContent = `${updatedCount} dal évszáma sikeresen frissítve a MusicBrainz adatbázis alapján!`;
-            this.handleSettingsChange(true);
+            modalTitle.textContent = 'Folyamat megszakítva';
+            progressText.textContent = `A folyamat megszakadt. Eddig: ${updatedCount} frissítve, ${removedCount} eltávolítva.`;
         } else {
             modalTitle.textContent = 'Validálás befejezve';
-            progressText.textContent = "Minden évszám naprakésznek tűnik, nem történt frissítés.";
+            progressText.textContent = resultText;
         }
+
+        // Update the app's data with the new, filtered, and validated list
+        this.handleDataLoaded(validatedData);
     },
 
     handleSettingsChange(fullReload = false) {
@@ -198,16 +235,18 @@ const App = {
     },
 
     handleDataLoaded(newData) {
-        if (!newData || newData.length === 0) return;
+        if (!newData) return; // Allow empty data to clear the view
         this.data = newData;
-        this.isExternalDataLoaded = true;
+        this.isExternalDataLoaded = newData.length > 0;
         this.updateStats();
         this.renderPrintView();
         this.currentPreviewIndex = 0;
         this.refreshCurrentPreview();
         this.resetCycle();
-        document.getElementById('validate-years-button')?.classList.remove('hidden');
-        document.getElementById('download-button')?.classList.remove('hidden');
+        
+        const showButtons = this.isExternalDataLoaded;
+        document.getElementById('validate-years-button')?.classList.toggle('hidden', !showButtons);
+        document.getElementById('download-button')?.classList.toggle('hidden', !showButtons);
     },
 
     updateStats() {
@@ -221,29 +260,37 @@ const App = {
 
     renderPrintView() {
         const isToken = document.getElementById('mode-token')?.checked;
-        if (!isToken && (!this.data || this.data.length === 0)) return;
-        
         const printArea = document.getElementById('print-area');
-        renderAllPages(printArea, this.data);
+        
+        // Clear previous content
+        printArea.innerHTML = ''; 
+
+        if (isToken || (this.data && this.data.length > 0)) {
+            renderAllPages(printArea, this.data);
+        }
     },
 
     showNextPreview() {
         const isToken = document.getElementById('mode-token')?.checked;
-        if (!isToken && (!this.data || this.data.length === 0)) return;
         
         if (document.querySelector('.zoomed-card')) return;
 
         if (!isToken) {
-            this.currentPreviewIndex = (this.currentPreviewIndex + 1) % this.data.length;
+             if (!this.data || this.data.length === 0) return;
+             this.currentPreviewIndex = (this.currentPreviewIndex + 1) % this.data.length;
         }
         this.refreshCurrentPreview();
     },
 
     refreshCurrentPreview() {
         const isToken = document.getElementById('mode-token')?.checked;
-        if (!isToken && (!this.data || this.data.length === 0)) return;
-        
         const previewArea = document.getElementById('preview-area');
+
+        if (!isToken && (!this.data || this.data.length === 0)) {
+            previewArea.innerHTML = ''; // Clear preview if no data
+            return;
+        }
+
         renderPreviewPair(previewArea, this.data[this.currentPreviewIndex]);
     },
 
