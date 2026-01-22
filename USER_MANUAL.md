@@ -1,4 +1,4 @@
-# CardCraft v1.8.1 - Felhasználói Kézikönyv
+# CardCraft v1.8.2 - Felhasználói Kézikönyv
 
 A CardCraft egy webes alkalmazás egyedi, vinyl-stílusú kártyák és zsetonok tervezésére és nyomtatására.
 
@@ -79,4 +79,4 @@ A hátlap dizájnja.
 *   **Zseton gyártás:** Ha kétoldalas zsetont készítesz, használd a Zseton módot. Az 1. oldal tartalmazza az összes előlapot (vágókerettel), a 2. oldal az összes hátlapot (keret nélkül, hogy ne csússzon el a vágás).
 
 ---
-*CardCraft v1.8.1 (2025)*
+*CardCraft v1.8.2 (2025)*

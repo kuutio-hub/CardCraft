@@ -1,5 +1,5 @@
 {
-  "description": "CardCraft v1.8.1 - Gated Access. Project renamed, password updated, and switched to Client Credentials Flow for direct API access.",
+  "description": "CardCraft v1.8.2 - Gated Access. Refined login terminology from 'password' to 'access code' for clarity and added versioning to the landing page.",
   "requestFramePermissions": [],
-  "name": "CardCraft v1.8.1"
+  "name": "CardCraft v1.8.2"
 }

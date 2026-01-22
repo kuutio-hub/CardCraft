@@ -2,36 +2,46 @@ import { initializeUI, updateRecordCount } from './modules/ui-controller.js';
 import { loadSampleData } from './modules/data-handler.js';
 import { renderAllPages, renderPreviewPair } from './modules/card-generator.js';
 
-// --- Password Protection Logic ---
-// Stored Base64 encoded password "Hitster101"
-const PWD_B64 = 'SGl0c3RlcjEwMQ==';
+// --- Access Protection Logic ---
+// Stored Base64 encoded access code "Hitster101"
+const ACCESS_CODE_B64 = 'SGl0c3RlcjEwMQ==';
 
-function checkPassword() {
-    const passwordInput = document.getElementById('password-input');
-    const enteredPassword = passwordInput.value;
+function checkAccessCode() {
+    const codeInput = document.getElementById('access-code-input');
+    const enteredCode = codeInput.value;
 
     // Use simple and reliable Base64 encoding for the check
     try {
-        if (btoa(enteredPassword) === PWD_B64) {
+        if (btoa(enteredCode) === ACCESS_CODE_B64) {
             const landingPage = document.getElementById('landing-page');
+            
+            // --- FIX START ---
+            // Make the landing page non-interactive immediately
+            landingPage.style.pointerEvents = 'none';
+            // Fade it out
             landingPage.style.opacity = '0';
+            
             setTimeout(() => {
-                landingPage.classList.add('hidden');
+                // Completely hide it from the layout after the transition
+                landingPage.style.display = 'none'; 
+                
                 document.getElementById('settings-panel').classList.remove('app-hidden');
                 document.getElementById('main-content').classList.remove('app-hidden');
                 App.init(); // Initialize the main application
             }, 500);
+            // --- FIX END ---
+
         } else {
-            throw new Error("Incorrect password");
+            throw new Error("Incorrect code");
         }
     } catch (e) {
         const errorMessage = document.getElementById('error-message');
         errorMessage.classList.remove('hidden');
-        passwordInput.value = '';
+        codeInput.value = '';
         setTimeout(() => errorMessage.classList.add('hidden'), 2000);
     }
 }
-// --- End of Password Logic ---
+// --- End of Access Logic ---
 
 
 const App = {
@@ -158,12 +168,12 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.classList.remove('loading'); // Show landing page
     
     const loginButton = document.getElementById('login-button');
-    const passwordInput = document.getElementById('password-input');
+    const accessCodeInput = document.getElementById('access-code-input');
 
-    loginButton.addEventListener('click', checkPassword);
-    passwordInput.addEventListener('keypress', (e) => {
+    loginButton.addEventListener('click', checkAccessCode);
+    accessCodeInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
-            checkPassword();
+            checkAccessCode();
         }
     });
 });

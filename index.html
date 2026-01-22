@@ -22,10 +22,13 @@
                 <i class="fa-solid fa-compact-disc fa-spin-slow"></i>
                 <span>CardCraft</span>
             </div>
-            <p>Kérlek, add meg a belépési jelszót.</p>
-            <input type="password" id="password-input" placeholder="Jelszó...">
+            <p>Kérlek, add meg a belépési kódot.</p>
+            <input type="password" id="access-code-input" placeholder="Belépési kód...">
             <button id="login-button">Belépés</button>
-            <p id="error-message" class="hidden">Helytelen jelszó.</p>
+            <p id="error-message" class="hidden">Helytelen kód.</p>
+            <footer class="landing-footer">
+                <p>v1.8.2 &copy; <span id="landing-year">2026</span></p>
+            </footer>
         </div>
     </div>
 
@@ -424,7 +427,7 @@
                     <h3>Információ</h3>
                     <div class="help-content">
                         <p><strong>Zoom:</strong> Kattints egy kártyára a nagyításhoz!</p>
-                        <p><strong>Spotify Import:</strong> Add meg a jelszót, majd másold be a lejátszási lista linkjét a gombra kattintva.</p>
+                        <p><strong>Spotify Import:</strong> Add meg a belépési kódot, majd másold be a lejátszási lista linkjét a gombra kattintva.</p>
                         <p><strong>Glow:</strong> Jelöld be a Glow opciót a részletes beállítások (szín, elmosás) megjelenítéséhez.</p>
                         <p><strong>Neon Mód:</strong> Kapcsold be a Vinyl beállításoknál a véletlenszerű neon színekhez.</p>
                     </div>
@@ -432,7 +435,7 @@
             </div>
         </div>
         <footer class="app-footer">
-            <p>CardCraft v1.8.1 &copy; <span id="current-year">2026</span></p>
+            <p>CardCraft v1.8.2 &copy; <span id="current-year">2026</span></p>
         </footer>
     </aside>
 
@@ -443,7 +446,12 @@
 
     <script type="module" src="main.js"></script>
     <script>
-        document.getElementById('current-year').textContent = new Date().getFullYear() < 2026 ? "2026" : new Date().getFullYear();
+        const setYear = (id) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = new Date().getFullYear() < 2026 ? "2026" : new Date().getFullYear();
+        };
+        setYear('current-year');
+        setYear('landing-year');
     </script>
 </body>
 </html>
