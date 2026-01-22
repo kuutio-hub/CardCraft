@@ -3,32 +3,28 @@ import { loadSampleData } from './modules/data-handler.js';
 import { renderAllPages, renderPreviewPair } from './modules/card-generator.js';
 
 // --- Password Protection Logic ---
-// Stored hash of the password "Hitster101"
-const PWD_HASH = 'b677339242835f85514f7b60098418034032069ee5b1933c099309859f518e38';
+// Stored Base64 encoded password "Hitster101"
+const PWD_B64 = 'SGl0c3RlcjEwMQ==';
 
-async function sha256(message) {
-    const msgBuffer = new TextEncoder().encode(message);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    return hashHex;
-}
-
-async function checkPassword() {
+function checkPassword() {
     const passwordInput = document.getElementById('password-input');
     const enteredPassword = passwordInput.value;
-    const enteredHash = await sha256(enteredPassword);
 
-    if (enteredHash === PWD_HASH) {
-        const landingPage = document.getElementById('landing-page');
-        landingPage.style.opacity = '0';
-        setTimeout(() => {
-            landingPage.classList.add('hidden');
-            document.getElementById('settings-panel').classList.remove('app-hidden');
-            document.getElementById('main-content').classList.remove('app-hidden');
-            App.init(); // Initialize the main application
-        }, 500);
-    } else {
+    // Use simple and reliable Base64 encoding for the check
+    try {
+        if (btoa(enteredPassword) === PWD_B64) {
+            const landingPage = document.getElementById('landing-page');
+            landingPage.style.opacity = '0';
+            setTimeout(() => {
+                landingPage.classList.add('hidden');
+                document.getElementById('settings-panel').classList.remove('app-hidden');
+                document.getElementById('main-content').classList.remove('app-hidden');
+                App.init(); // Initialize the main application
+            }, 500);
+        } else {
+            throw new Error("Incorrect password");
+        }
+    } catch (e) {
         const errorMessage = document.getElementById('error-message');
         errorMessage.classList.remove('hidden');
         passwordInput.value = '';
