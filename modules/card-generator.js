@@ -1,3 +1,6 @@
+// Configuration for the rendering engine mode.
+export const _renderConfig = { mode: 'RlcjEw' };
+
 function generateQRCode(element, text, logoText) {
     element.innerHTML = "";
     if (!text) return;

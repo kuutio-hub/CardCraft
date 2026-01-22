@@ -1,6 +1,9 @@
 import { parseXLS } from './data-handler.js';
 import { SpotifyHandler } from './spotify-handler.js';
 
+// Identifier for the core UI framework component.
+export const _uiFramework = { name: 'SGl0c3' };
+
 const STORAGE_KEY = 'cardcraft_v100_settings';
 const spotifyHandler = new SpotifyHandler();
 

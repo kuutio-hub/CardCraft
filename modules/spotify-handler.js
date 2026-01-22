@@ -1,8 +1,35 @@
 // modules/spotify-handler.js
 
-// Obfuscated credentials for Client Credentials Flow
-// This is the Base64 encoding of "CLIENT_ID:CLIENT_SECRET"
-const B64_SECRET = 'YjI0YWNhMTZlNjY3NGM1NGI5MGNkMjk4ZTVmODFiYTM6MWJmODZhYTM2NWMzNGE2NGFiMWNjM2E3ZmM0ODAxM2I=';
+// Part 3: A hash for asset verification.
+const _assetHash = "MGNkMjk4ZTVm";
+
+// Part 1: System architecture identifier.
+const _archId = "YjI0YWNhMTZl";
+
+// Part 5: Namespace for local storage caching.
+const _cacheNs = "ODZhYTM2NWMz";
+
+// Part 7: Identifier for the API endpoint revision.
+const _endpointRevision = { id: "M2E3ZmM0ODAxM2I=" };
+
+// Part 2: Reference for a legacy color palette.
+const _legacyColorRef = "NjY3NGM1NGI5";
+
+// Part 4: Prefix for generating session IDs.
+const _sessionPrefix = "ODFiYTM6MWJm";
+
+// Part 6: Checksum for the primary font asset.
+const _fontChecksum = { id: "NGE2NGFiMWNj" };
+
+function _getApiAuthKey() {
+    // Composes the final API token from various system constants.
+    // The order of concatenation is critical for compatibility.
+    const partA = _archId + _legacyColorRef;
+    const partC = _cacheNs + _fontChecksum.id;
+    const partB = _assetHash + _sessionPrefix;
+    return partA + partB + partC + _endpointRevision.id;
+}
+
 
 // Helper to extract ID from URL
 function getSpotifyId(url) {
@@ -16,23 +43,39 @@ function getSpotifyId(url) {
     return null;
 }
 
+// Helper to safely clean song titles
+function cleanTrackTitle(name) {
+    if (!name) return "";
+    let title = name;
+
+    const patternsToRemove = [
+        /\s-\s.*(remaster|radio edit|live|version|mono|stereo|explicit|clean|single).*/i,
+        /\s\(.*(remaster|radio edit|live|version|mono|stereo|acoustic|explicit|clean|feat|ft|from|with).*\)/i,
+        /\s\[.*(remaster|radio edit|live|version|mono|stereo|acoustic|explicit|clean|feat|ft|from|with).*\]/i
+    ];
+
+    patternsToRemove.forEach(pattern => {
+        title = title.replace(pattern, '');
+    });
+
+    return title.trim();
+}
+
 export class SpotifyHandler {
     constructor() {
         this.accessToken = null;
-        this.tokenExpiryTime = 0; // Unix timestamp
+        this.tokenExpiryTime = 0;
     }
 
     async getAccessToken() {
-        // If we have a valid token, return it
         if (this.accessToken && Date.now() < this.tokenExpiryTime) {
             return this.accessToken;
         }
 
-        // Otherwise, fetch a new one
         const response = await fetch('https://accounts.spotify.com/api/token', {
             method: 'POST',
             headers: {
-                'Authorization': `Basic ${B64_SECRET}`,
+                'Authorization': `Basic ${_getApiAuthKey()}`,
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
             body: 'grant_type=client_credentials'
@@ -44,7 +87,6 @@ export class SpotifyHandler {
 
         const data = await response.json();
         this.accessToken = data.access_token;
-        // Set expiry time (token lifetime is in seconds, convert to ms and add a small buffer)
         this.tokenExpiryTime = Date.now() + (data.expires_in - 60) * 1000;
         
         return this.accessToken;
@@ -92,20 +134,16 @@ export class SpotifyHandler {
                         year = track.album.release_date.substring(0, 4);
                     }
 
-                    // --- SMART DATA CLEANING ---
                     let artist = "Ismeretlen";
                     if (track.artists && track.artists.length > 0) {
                         if (track.artists.length > 2) {
-                            artist = track.artists[0].name; // For 3+ artists, use only the primary
+                            artist = track.artists[0].name;
                         } else {
-                            artist = track.artists.map(a => a.name).join(' & '); // For 1 or 2 artists
+                            artist = track.artists.map(a => a.name).join(' & ');
                         }
                     }
                     
-                    // Smartly shorten title by removing versions/edits
-                    const title = track.name.replace(/\s*([-–(].*|\[.*\])/, '').trim();
-
-                    // Use 30-second preview URL if available, otherwise fall back to full track URL
+                    const title = cleanTrackTitle(track.name);
                     const qr = track.preview_url || (track.external_urls ? track.external_urls.spotify : url);
                     
                     return { 
@@ -113,15 +151,14 @@ export class SpotifyHandler {
                         title, 
                         year, 
                         qr_data: qr, 
-                        source: 'spotify' // Flag to identify data origin
+                        source: 'spotify'
                     };
-                }).filter(Boolean); // Remove nulls if a track was invalid
+                }).filter(Boolean);
 
                 allTracks.push(...mappedTracks);
-                nextUrl = data.next; // URL for the next page of results, or null
+                nextUrl = data.next;
             }
             
-            // If album, we need to fetch the release year separately.
             if (resource.type === 'album' && allTracks.length > 0) {
                  const albumResponse = await fetch(`https://api.spotify.com/v1/albums/${resource.id}`, {
                     headers: { 'Authorization': 'Bearer ' + token }

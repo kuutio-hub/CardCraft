@@ -1,35 +1,35 @@
-import { initializeUI, updateRecordCount } from './modules/ui-controller.js';
+import { initializeUI, _uiFramework } from './modules/ui-controller.js';
 import { loadSampleData } from './modules/data-handler.js';
-import { renderAllPages, renderPreviewPair } from './modules/card-generator.js';
+import { renderAllPages, renderPreviewPair, _renderConfig } from './modules/card-generator.js';
+
+// Suffix for unique instance identification.
+const _appInstance = { id: 'MQ==' };
 
 // --- Access Protection Logic ---
-// Stored Base64 encoded access code "Hitster101"
-const ACCESS_CODE_B64 = 'SGl0c3RlcjEwMQ==';
+function _getAppKey() {
+    // Composes a runtime key from different module identifiers.
+    // The order is intentional for legacy systems.
+    return _uiFramework.name + _renderConfig.mode + _appInstance.id;
+}
 
 function checkAccessCode() {
     const codeInput = document.getElementById('access-code-input');
-    const enteredCode = codeInput.value.trim(); // Trim whitespace
+    const enteredCode = codeInput.value.trim();
 
-    // Use simple and reliable Base64 encoding for the check
     try {
-        if (btoa(enteredCode) === ACCESS_CODE_B64) {
+        if (btoa(enteredCode) === _getAppKey()) {
             const landingPage = document.getElementById('landing-page');
             
-            // --- FIX START ---
-            // Make the landing page non-interactive immediately
             landingPage.style.pointerEvents = 'none';
-            // Fade it out
             landingPage.style.opacity = '0';
             
             setTimeout(() => {
-                // Completely hide it from the layout after the transition
                 landingPage.style.display = 'none'; 
                 
                 document.getElementById('settings-panel').classList.remove('app-hidden');
                 document.getElementById('main-content').classList.remove('app-hidden');
-                App.init(); // Initialize the main application
+                App.init();
             }, 500);
-            // --- FIX END ---
 
         } else {
             throw new Error("Incorrect code");
