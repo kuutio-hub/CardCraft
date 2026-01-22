@@ -209,8 +209,8 @@ function createCard(song, isBack = false) {
             <div class="artist">${song.artist || ''}</div>
             <div class="year">${song.year || ''}</div>
             <div class="title">${song.title || ''}</div>
-            ${song.code1 ? `<div class="code1">${song.code1}</div>` : ''}
-            ${song.code2 ? `<div class="code2">${song.code2}</div>` : ''}
+            ${(song.source !== 'spotify' && song.code1) ? `<div class="code1">${song.code1}</div>` : ''}
+            ${(song.source !== 'spotify' && song.code2) ? `<div class="code2">${song.code2}</div>` : ''}
         `;
     }
     return card;

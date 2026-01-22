@@ -83,25 +83,38 @@ export class SpotifyHandler {
                 const data = await response.json();
                 const items = data.items;
 
-                const mappedTracks = items.map((item, index) => {
+                const mappedTracks = items.map((item) => {
                     const track = item.track ? item.track : item;
                     if (!track || !track.artists) return null;
 
                     let year = "N/A";
-                    // Playlists provide full album info, albums do not. For albums, we'd need another API call.
                     if (track.album && track.album.release_date) {
                         year = track.album.release_date.substring(0, 4);
                     }
 
-                    const artist = track.artists.map(a => a.name).join(', ');
-                    const title = track.name;
-                    const qr = track.external_urls ? track.external_urls.spotify : url;
+                    // --- SMART DATA CLEANING ---
+                    let artist = "Ismeretlen";
+                    if (track.artists && track.artists.length > 0) {
+                        if (track.artists.length > 2) {
+                            artist = track.artists[0].name; // For 3+ artists, use only the primary
+                        } else {
+                            artist = track.artists.map(a => a.name).join(' & '); // For 1 or 2 artists
+                        }
+                    }
+                    
+                    // Smartly shorten title by removing versions/edits
+                    const title = track.name.replace(/\s*([-–(].*|\[.*\])/, '').trim();
 
-                    const globalIndex = allTracks.length + index;
-                    const code1 = `${artist.substring(0, 2).toUpperCase()}-${(globalIndex + 1).toString().padStart(2, '0')}`;
-                    const code2 = `${year.toString().slice(-2)}-${title.substring(0, 2).toUpperCase()}`;
-
-                    return { artist, title, year, qr_data: qr, code1, code2 };
+                    // Use 30-second preview URL if available, otherwise fall back to full track URL
+                    const qr = track.preview_url || (track.external_urls ? track.external_urls.spotify : url);
+                    
+                    return { 
+                        artist, 
+                        title, 
+                        year, 
+                        qr_data: qr, 
+                        source: 'spotify' // Flag to identify data origin
+                    };
                 }).filter(Boolean); // Remove nulls if a track was invalid
 
                 allTracks.push(...mappedTracks);
@@ -118,7 +131,6 @@ export class SpotifyHandler {
                 allTracks.forEach(track => {
                     if (track.year === "N/A") {
                         track.year = albumYear;
-                        track.code2 = `${albumYear.toString().slice(-2)}-${track.title.substring(0, 2).toUpperCase()}`;
                     }
                 });
             }
