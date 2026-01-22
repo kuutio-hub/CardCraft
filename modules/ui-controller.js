@@ -1,7 +1,7 @@
 import { parseXLS } from './data-handler.js';
 import { SpotifyHandler } from './spotify-handler.js';
 
-const STORAGE_KEY = 'musicstencil_v150_settings';
+const STORAGE_KEY = 'cardcraft_v100_settings';
 const spotifyHandler = new SpotifyHandler();
 
 // Helper to convert HEX to RGBA

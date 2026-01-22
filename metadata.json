@@ -1,5 +1,5 @@
 {
-  "description": "MusicStencil v1.8.0 - Gated Access. Implemented a password-protected landing page and switched to Spotify's Client Credentials Flow for direct, non-user-based API access.",
+  "description": "CardCraft v1.8.1 - Gated Access. Project renamed, password updated, and switched to Client Credentials Flow for direct API access.",
   "requestFramePermissions": [],
-  "name": "MusicStencil v1.8.0"
+  "name": "CardCraft v1.8.1"
 }

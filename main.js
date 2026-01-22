@@ -3,8 +3,8 @@ import { loadSampleData } from './modules/data-handler.js';
 import { renderAllPages, renderPreviewPair } from './modules/card-generator.js';
 
 // --- Password Protection Logic ---
-// Stored hash of the password "vinyl24"
-const PWD_HASH = '2b037375252d6770f699d75b318d184715f204cb5038b3d61174c89f55e42438';
+// Stored hash of the password "Hitster101"
+const PWD_HASH = 'b677339242835f85514f7b60098418034032069ee5b1933c099309859f518e38';
 
 async function sha256(message) {
     const msgBuffer = new TextEncoder().encode(message);

@@ -1,18 +1,27 @@
-# MusicStencil v1.4.0 - Felhasználói Kézikönyv
+# CardCraft v1.8.1 - Felhasználói Kézikönyv
 
-A MusicStencil egy webes alkalmazás egyedi, vinyl-stílusú kártyák és zsetonok tervezésére és nyomtatására.
+A CardCraft egy webes alkalmazás egyedi, vinyl-stílusú kártyák és zsetonok tervezésére és nyomtatására.
 
 ## 1. Kezelőfelület felépítése
 
 Az alkalmazás bal oldalon egy fix beállításpanelt, jobb oldalon pedig egy élő előnézeti/nyomtatási területet tartalmaz.
 
 ### Fő Módok (Sidebar teteje)
-*   **Zene Mód (Music):** Adatbázis alapú kártyák (XLS fájlból). Előadó, Cím, Év, QR kód és egyedi azonosító kódok kezelése.
+*   **Zene Mód (Music):** Adatbázis alapú kártyák (Spotify vagy XLS fájlból). Előadó, Cím, Év, QR kód és egyedi azonosító kódok kezelése.
 *   **Zseton Mód (Token):** Egységes design generálása (pl. fesztiválpénz, kupon). Egy oldalra csak előlapokat, a következőre csak hátlapokat generál.
 
 ---
 
 ## 2. Adatok Betöltése (Csak Zene Mód)
+
+Kétféleképpen tölthetsz be adatokat:
+
+### Spotify Import (Ajánlott)
+1.  Kattints a **SPOTIFY** gombra.
+2.  Másold be a Spotify lejátszási lista vagy album linkjét a felugró ablakba.
+3.  A rendszer automatikusan letölti és feldolgozza az adatokat.
+
+### XLS Import (Haladó)
 Kattints az **XLS** gombra egy Excel fájl (.xls, .xlsx) betöltéséhez.
 A rendszer automatikusan felismeri a következő oszlopokat (fejléc alapján vagy sorrendben):
 1.  **Artist** (Előadó)
@@ -31,7 +40,7 @@ Itt állíthatod be a fizikai méreteket és a vágókeretet.
 *   **Papír:** A4 vagy A3. A rendszer automatikusan újraszámolja, hány kártya fér el egy lapon.
 *   **Kártya méret:** A kártya vágott mérete mm-ben (Standard: 46mm).
 *   **Keret:** Szín, vastagság és opacitás.
-    *   *Keret Mód:* Beállíthatod, hogy a vágójel csak az előlapon, csak a hátlapon, vagy mindkettőn látszódjon. (Zseton módnál hasznos a "Csak Hátul" kikapcsolása).
+    *   *Keret Mód:* Beállíthatod, hogy a vágójel csak az előlapon, csak a hátlapon, vagy mindkettőn látszódjon.
 
 ### 🅰️ Tipográfia
 A betűtípusok és szövegeffektek beállítása.
@@ -39,7 +48,7 @@ A betűtípusok és szövegeffektek beállítása.
 *   **Elemek (Év, Előadó, Cím):**
     *   Méret (pt).
     *   **Bold:** Félkövér szedés.
-    *   **Glow (Új):** Bekapcsolásával lenyílik a részletes menü, ahol beállíthatod a ragyogás színét és az elmosás mértékét (Blur). Ez segít a sötét vinyl háttéren való olvashatóságban.
+    *   **Glow:** Bekapcsolásával lenyílik a részletes menü, ahol beállíthatod a ragyogás színét és az elmosás mértékét (Blur). Ez segít a sötét vinyl háttéren való olvashatóságban.
 
 ### 📐 Elhelyezés (Layout)
 *   **Margók (pt):** Az előadó (felső) és cím (alsó) távolsága a kártya szélétől.
@@ -51,7 +60,7 @@ A betűtípusok és szövegeffektek beállítása.
 A hátlap dizájnja.
 *   **Vinyl (Bakelit):**
     *   Barázdák száma, sűrűsége, vastagsága.
-    *   **Glitch:** A "törések" a barázdákban. Beállítható a törések száma és szélessége. A v1.4.0 óta teljesen organikus, véletlenszerű eloszlást használ.
+    *   **Glitch:** A "törések" a barázdákban. Beállítható a törések száma és szélessége.
 *   **QR Kód:**
     *   Méret: A kártyához viszonyított %-os méret.
     *   Logó: Max 3 karakteres szöveg a QR közepén (pl. "FESZ").
@@ -63,7 +72,6 @@ A hátlap dizájnja.
 
 *   **Nézet (Rácsnézet):** Váltás az egyes kártyák előnézete (nagyítható) és a nyomdai ív (fehér hátterű) között.
 *   **Nyomtatás:** Generálja a nyomtatási képet.
-    *   *Shadow Kill:* Nyomtatáskor automatikusan eltűnnek a text-shadow/glow effektek a tisztább nyomat érdekében (kivéve, ha ezt CSS-ben felülírjuk, de alapértelmezetten a nyomtatók nem szeretik az árnyékokat).
     *   *Tükrözés:* Zene módban a hátlapok sorrendje automatikusan tükrözve van (jobbról balra), hogy a kétoldalas nyomtatásnál pontosan fedjék egymást az előlapokkal.
 
 ## Tippek
@@ -71,4 +79,4 @@ A hátlap dizájnja.
 *   **Zseton gyártás:** Ha kétoldalas zsetont készítesz, használd a Zseton módot. Az 1. oldal tartalmazza az összes előlapot (vágókerettel), a 2. oldal az összes hátlapot (keret nélkül, hogy ne csússzon el a vágás).
 
 ---
-*MusicStencil v1.4.0 (2025)*
+*CardCraft v1.8.1 (2025)*
