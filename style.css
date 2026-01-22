@@ -126,7 +126,7 @@ body {
 .tab-pane.active { display: block; }
 
 
-.settings-section h3 { font-size: 0.75rem; color: var(--spotify-green); margin-bottom: 18px; text-transform: uppercase; letter-spacing: 1.5px; border-left: 3px solid var(--spotify-green); padding-left: 10px; font-weight: 800; }
+.settings-section h3 { font-size: 0.75rem; color: var(--spotify-green); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1.5px; border-left: 3px solid var(--spotify-green); padding-left: 10px; font-weight: 800; }
 .control-group { display: flex; flex-direction: column; gap: 14px; }
 .input-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .input-row label { font-size: 0.8rem; color: #bbb; flex: 1; }
@@ -135,11 +135,11 @@ body {
 .group-header { font-size: 0.7rem; color: #666; text-transform: uppercase; font-weight: 700; margin-bottom: 10px; }
 
 /* PROGRESSIVE UI (SUB-PANELS) */
-.sub-panel { background: #111; border-left: 2px solid #333; padding: 10px 10px 10px 15px; margin-top: 10px; margin-bottom: 10px; border-radius: 0 4px 4px 0; display: flex; flex-direction: column; gap: 10px; animation: slideDown 0.2s ease-out; }
+.sub-panel { background: #111; border-left: 2px solid #333; padding: 8px 8px 8px 12px; margin-top: 8px; margin-bottom: 5px; border-radius: 0 4px 4px 0; display: flex; flex-direction: column; gap: 8px; animation: slideDown 0.2s ease-out; }
 @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
-.typo-list { display: flex; flex-direction: column; gap: 15px; }
-.typo-item { background: #111; border-radius: 4px; padding: 10px; border: 1px solid #222; }
+.typo-list { display: flex; flex-direction: column; gap: 10px; }
+.typo-item { background: #111; border-radius: 4px; padding: 8px; border: 1px solid #222; }
 .typo-main-row { display: flex; align-items: center; gap: 10px; justify-content: space-between; }
 .typo-label { font-size: 0.75rem; color: #ccc; font-weight: 700; width: 60px; }
 .typo-options { display: flex; gap: 10px; align-items: center; }

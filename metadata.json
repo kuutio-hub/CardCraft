@@ -1,5 +1,5 @@
 {
-  "description": "CardCraft v1.9.7 - Restores the complete 'Vinyl & QR' settings panel. Implements a much more accurate MusicBrainz validation logic, prioritizing the earliest 'Official' release date to fix year inconsistencies from compilations.",
+  "description": "CardCraft v1.9.8 - UI cleanup: Compacted the Typography panel to prevent overflow, reorganized the Layout tab for clarity, and set the QR code logo to be off by default for a cleaner initial state.",
   "requestFramePermissions": [],
-  "name": "CardCraft v1.9.7"
+  "name": "CardCraft v1.9.8"
 }

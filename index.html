@@ -27,7 +27,7 @@
             <button id="login-button">Belépés</button>
             <p id="error-message" class="hidden">Helytelen kód.</p>
             <footer class="landing-footer">
-                <p>v1.9.7 &copy; <span id="landing-year">2026</span></p>
+                <p>v1.9.8 &copy; <span id="landing-year">2026</span></p>
             </footer>
         </div>
     </div>
@@ -162,7 +162,7 @@
             <div class="tab-pane" id="tab-typography">
                 <div class="settings-section">
                     <h3>Tipográfia</h3>
-                    <select id="font-family" data-css-var="--font-family" class="full-width" style="margin-bottom:15px;">
+                    <select id="font-family" data-css-var="--font-family" class="full-width" style="margin-bottom:12px;">
                         <option value="'Montserrat', sans-serif">Montserrat</option>
                         <option value="'Poppins', sans-serif" selected>Poppins</option>
                         <option value="'Bebas Neue', sans-serif">Bebas Neue</option>
@@ -227,21 +227,17 @@
             <div class="tab-pane" id="tab-layout">
                 <div class="settings-section">
                     <div class="music-only-option">
-                        <div class="layout-group">
-                            <div class="group-header">Margók (pt)</div>
-                            <div class="control-group">
-                                <div class="input-row"><label>Felső margó</label><input type="number" id="artist-margin" value="9" step="1" data-unit="pt" data-css-var="--artist-margin"></div>
-                                <div class="input-row"><label>Alsó margó</label><input type="number" id="title-margin" value="9" step="1" data-unit="pt" data-css-var="--title-margin"></div>
-                            </div>
+                        <h3>Margók (pt)</h3>
+                        <div class="control-group">
+                            <div class="input-row"><label>Felső margó</label><input type="number" id="artist-margin" value="9" step="1" data-unit="pt" data-css-var="--artist-margin"></div>
+                            <div class="input-row"><label>Alsó margó</label><input type="number" id="title-margin" value="9" step="1" data-unit="pt" data-css-var="--title-margin"></div>
                         </div>
-                        <hr class="divider">
-                        <div class="layout-group">
-                            <div class="group-header">Kód Elhelyezés</div>
-                            <div class="control-group">
-                                <div class="input-row"><label>Pozíció</label><select id="code-position" class="full-width" style="margin-bottom:0;"><option value="center" selected>Közép</option><option value="corner">Sarok</option></select></div>
-                                <div class="input-row"><label>Eltolás (pt)</label><input type="number" id="code-side-margin" value="-3" step="1" data-unit="pt" data-css-var="--code-side-margin"></div>
-                                <div class="row wraps"><label class="checkbox-container"><input type="checkbox" id="bold-codes"> Kód Vastag</label></div>
-                            </div>
+
+                        <h3 style="margin-top: 25px;">Kód Elhelyezés</h3>
+                        <div class="control-group">
+                            <div class="input-row"><label>Pozíció</label><select id="code-position" class="full-width" style="margin-bottom:0;"><option value="center" selected>Közép</option><option value="corner">Sarok</option></select></div>
+                            <div class="input-row"><label>Eltolás (pt)</label><input type="number" id="code-side-margin" value="-3" step="1" data-unit="pt" data-css-var="--code-side-margin"></div>
+                            <div class="row wraps"><label class="checkbox-container"><input type="checkbox" id="bold-codes"> Kód Vastag</label></div>
                         </div>
                     </div>
                     <div class="token-only-msg" style="display:none; color: #888; font-size: 0.8rem; font-style: italic;">Zseton módban a szöveg automatikusan középre igazodik.</div>
@@ -300,7 +296,7 @@
                                     <div class="input-row"><label>Elmosás (px)</label><input type="number" id="glow-qr-blur" value="8" min="0" max="30"></div>
                                 </div>
                                 <hr class="divider">
-                                <div class="input-row"><label>Logó (max 3)</label><input type="text" id="qr-logo-text" value="HITS" maxlength="3" style="width: 80px;"></div>
+                                <div class="input-row"><label>Logó (max 3)</label><input type="text" id="qr-logo-text" value="" placeholder="pl. XYZ" maxlength="3" style="width: 80px;"></div>
                                 <div class="row wraps"><label class="checkbox-container"><input type="checkbox" id="qr-round"> Logó Kerek</label></div>
                                 <div class="row wraps"><label class="checkbox-container"><input type="checkbox" id="qr-invert"> Logó Inverz</label></div>
                             </div>
@@ -322,7 +318,7 @@
         </div>
         <footer class="app-footer">
             <div id="save-indicator" class="hidden">Beállítások mentve!</div>
-            <p>CardCraft v1.9.7 &copy; <span id="current-year">2026</span></p>
+            <p>CardCraft v1.9.8 &copy; <span id="current-year">2026</span></p>
         </footer>
     </aside>
 
