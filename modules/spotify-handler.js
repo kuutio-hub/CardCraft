@@ -93,13 +93,13 @@ export class SpotifyHandler {
     }
     
     async searchTrack(artist, title) {
-        const url = `https://musicbrainz.org/ws/2/recording/?query=artist:"${encodeURIComponent(artist)}" AND recording:"${encodeURIComponent(title)}"&limit=1&fmt=json`;
+        // MusicBrainz is strict, so we clean the title for better matching
+        const cleanedTitle = cleanTrackTitle(title);
+        const url = `https://musicbrainz.org/ws/2/recording/?query=artist:"${encodeURIComponent(artist)}" AND recording:"${encodeURIComponent(cleanedTitle)}"&limit=5&fmt=json`;
         
         try {
             const response = await fetch(url, {
-                headers: {
-                    'User-Agent': 'CardCraft/1.9.1 (https://github.com/YourName/CardCraft)'
-                }
+                headers: { 'User-Agent': 'CardCraft/1.9.7 (cardcraft.app/info)' }
             });
 
             if (!response.ok) {
@@ -109,14 +109,29 @@ export class SpotifyHandler {
 
             const data = await response.json();
             if (data.recordings && data.recordings.length > 0) {
-                const recording = data.recordings[0];
+                // Find the best match (sometimes the first one isn't the most relevant)
+                const recording = data.recordings[0]; 
+                
                 if (recording.releases && recording.releases.length > 0) {
-                    const earliestRelease = recording.releases
-                        .filter(r => r.date)
-                        .sort((a, b) => new Date(a.date) - new Date(b.date))[0];
+                    // Prioritize official releases
+                    let officialReleases = recording.releases.filter(r => r.date && r.status === 'Official');
                     
-                    if (earliestRelease && earliestRelease.date) {
-                        return earliestRelease.date.substring(0, 4); // YYYY
+                    // Fallback to any release if no official ones are found
+                    if (officialReleases.length === 0) {
+                        officialReleases = recording.releases.filter(r => r.date);
+                    }
+
+                    if (officialReleases.length > 0) {
+                        // Sort by date to find the earliest
+                        const earliestRelease = officialReleases.sort((a, b) => {
+                            const dateA = new Date(a.date);
+                            const dateB = new Date(b.date);
+                            return dateA - dateB;
+                        })[0];
+                        
+                        if (earliestRelease && earliestRelease.date) {
+                            return earliestRelease.date.substring(0, 4); // Return YYYY
+                        }
                     }
                 }
             }

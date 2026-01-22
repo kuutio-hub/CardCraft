@@ -27,7 +27,7 @@
             <button id="login-button">Belépés</button>
             <p id="error-message" class="hidden">Helytelen kód.</p>
             <footer class="landing-footer">
-                <p>v1.9.6 &copy; <span id="landing-year">2026</span></p>
+                <p>v1.9.7 &copy; <span id="landing-year">2026</span></p>
             </footer>
         </div>
     </div>
@@ -253,7 +253,58 @@
                 <div class="settings-section">
                     <h3>Vinyl & QR Stílus</h3>
                     <div class="control-group">
-                         <!-- All backside settings -->
+                        <div class="layout-group">
+                            <div class="group-header">Vinyl (Bakelit) Effekt</div>
+                            <div class="control-group">
+                                <div class="input-row"><label>Barázdák (db)</label><input type="number" id="vinyl-count" value="12" min="1" max="50"></div>
+                                <div class="input-row"><label>Köz (pt)</label><input type="number" id="vinyl-spacing" value="2.5" min="0.5" max="10" step="0.1"></div>
+                                <div class="input-row"><label>Vastagság (pt)</label><input type="number" id="vinyl-thickness" value="0.4" min="0.1" max="5" step="0.1"></div>
+                                <div class="input-row"><label>Opacitás (%)</label><input type="number" id="vinyl-opacity" value="100" min="0" max="100" step="5"></div>
+                                <div class="input-row"><label>Szín</label><input type="color" id="vinyl-color" value="#000000"></div>
+                                <div class="row wraps"><label class="checkbox-container"><input type="checkbox" id="vinyl-variate" checked> Vastagság variálás</label></div>
+                                <div class="row wraps"><label class="checkbox-container"><input type="checkbox" id="vinyl-neon" data-toggle-target="vinyl-neon-settings"> Neon Mód</label></div>
+                                <div id="vinyl-neon-settings" class="sub-panel hidden">
+                                    <div class="input-row"><label>Neon elmosás (px)</label><input type="number" id="vinyl-neon-blur" value="5" min="0" max="20"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="divider">
+                        <div class="layout-group">
+                            <div class="group-header">Glitch Effekt</div>
+                            <div class="control-group">
+                                <div class="dual-input">
+                                    <label>Glitch / kör (db)</label>
+                                    <input type="number" id="glitch-min" value="1" min="0" max="10">
+                                    <span>-</span>
+                                    <input type="number" id="glitch-max" value="2" min="0" max="10">
+                                </div>
+                                <div class="dual-input">
+                                    <label>Szélesség %</label>
+                                    <input type="number" id="glitch-width-min" value="25" min="0" max="100">
+                                    <span>-</span>
+                                    <input type="number" id="glitch-width-max" value="30" min="0" max="100">
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="divider">
+                        <div class="layout-group music-only-option">
+                            <div class="group-header">QR Kód</div>
+                            <div class="control-group">
+                                <div class="row wraps"><label class="checkbox-container full-width-label"><input type="checkbox" id="show-qr" checked> QR kód látható</label></div>
+                                <div class="input-row"><label>Méret (%)</label><input type="number" id="qr-size-percent" value="40" min="10" max="90" step="5" data-unit="%" data-css-var="--qr-size"></div>
+                                <div class="input-row"><label>Keret (px)</label><input type="number" id="qr-border-width" value="3" min="0" max="20" data-unit="px" data-css-var="--qr-border-width"></div>
+                                <div class="input-row"><label>Keret Szín</label><input type="color" id="qr-border-color" value="#ffffff" data-css-var="--qr-border-color"></div>
+                                <div class="row wraps"><label class="checkbox-container"><input type="checkbox" id="glow-qr" data-toggle-target="glow-qr-settings"> Glow</label></div>
+                                <div id="glow-qr-settings" class="sub-panel hidden">
+                                    <div class="input-row"><label>Glow Szín</label><input type="color" id="glow-qr-color" value="#888888"></div>
+                                    <div class="input-row"><label>Elmosás (px)</label><input type="number" id="glow-qr-blur" value="8" min="0" max="30"></div>
+                                </div>
+                                <hr class="divider">
+                                <div class="input-row"><label>Logó (max 3)</label><input type="text" id="qr-logo-text" value="HITS" maxlength="3" style="width: 80px;"></div>
+                                <div class="row wraps"><label class="checkbox-container"><input type="checkbox" id="qr-round"> Logó Kerek</label></div>
+                                <div class="row wraps"><label class="checkbox-container"><input type="checkbox" id="qr-invert"> Logó Inverz</label></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -271,7 +322,7 @@
         </div>
         <footer class="app-footer">
             <div id="save-indicator" class="hidden">Beállítások mentve!</div>
-            <p>CardCraft v1.9.6 &copy; <span id="current-year">2026</span></p>
+            <p>CardCraft v1.9.7 &copy; <span id="current-year">2026</span></p>
         </footer>
     </aside>
 

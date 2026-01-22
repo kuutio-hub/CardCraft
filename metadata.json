@@ -1,5 +1,5 @@
 {
-  "description": "CardCraft v1.9.6 - Reverts the UI to the classic tabbed sidebar layout based on user feedback. Retains all critical bug fixes from v1.9.5, including the data state preservation logic and improved help access.",
+  "description": "CardCraft v1.9.7 - Restores the complete 'Vinyl & QR' settings panel. Implements a much more accurate MusicBrainz validation logic, prioritizing the earliest 'Official' release date to fix year inconsistencies from compilations.",
   "requestFramePermissions": [],
-  "name": "CardCraft v1.9.6"
+  "name": "CardCraft v1.9.7"
 }
