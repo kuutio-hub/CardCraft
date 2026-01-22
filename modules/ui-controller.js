@@ -5,6 +5,7 @@ import { SpotifyHandler } from './spotify-handler.js';
 export const _uiFramework = { name: 'SGl0c3' };
 
 const STORAGE_KEY = 'cardcraft_v100_settings';
+const BG_IMAGE_KEY = 'cardcraft_bg_image_v1';
 const spotifyHandler = new SpotifyHandler();
 
 // Helper to convert HEX to RGBA
@@ -54,7 +55,6 @@ export function applyAllStyles() {
     });
 
     // UNIVERSAL GLOW LOGIC (Year, Artist, Title)
-    // Works for Token Mode too via shared CSS variables
     ['year', 'artist', 'title'].forEach(type => {
         const glowActive = document.getElementById(`glow-${type}`)?.checked;
         if (glowActive) {
@@ -74,6 +74,24 @@ export function applyAllStyles() {
         document.documentElement.style.setProperty('--qr-box-shadow', `0 0 ${blur}px ${color}`);
     } else {
         document.documentElement.style.setProperty('--qr-box-shadow', 'none');
+    }
+    
+    // CUSTOM BACKGROUND LOGIC
+    const bgEnabled = document.getElementById('bg-enable')?.checked;
+    const savedBgData = localStorage.getItem(BG_IMAGE_KEY);
+
+    if (bgEnabled && savedBgData) {
+        const opacity = document.getElementById('bg-opacity').value / 100;
+        const blendMode = document.getElementById('bg-blend-mode').value;
+        const blurEnabled = document.getElementById('bg-blur-enable').checked;
+        const blurAmount = blurEnabled ? document.getElementById('bg-blur-amount').value : 0;
+        
+        document.documentElement.style.setProperty('--card-bg-image', `url(${savedBgData})`);
+        document.documentElement.style.setProperty('--card-bg-opacity', opacity);
+        document.documentElement.style.setProperty('--card-bg-blend-mode', blendMode);
+        document.documentElement.style.setProperty('--card-bg-blur', `${blurAmount}px`);
+    } else {
+        document.documentElement.style.setProperty('--card-bg-image', 'none');
     }
 
     // Code Positioning
@@ -103,11 +121,9 @@ export function applyAllStyles() {
 function updateModeVisibility() {
     const isToken = document.getElementById('mode-token').checked;
     
-    // Music vs Token specific elements
     document.getElementById('music-actions').style.display = isToken ? 'none' : 'contents';
     document.getElementById('token-settings-group').style.display = isToken ? 'block' : 'none';
     
-    // Hide music-only fields in typography/layout
     document.querySelectorAll('.music-only-option').forEach(el => {
         el.style.display = isToken ? 'none' : (el.classList.contains('typo-item') || el.classList.contains('layout-group') ? 'block' : 'flex');
     });
@@ -116,7 +132,6 @@ function updateModeVisibility() {
         el.style.display = isToken ? 'block' : 'none';
     });
 
-    // Update body class for styling if needed
     if (isToken) {
         document.body.classList.remove('app-mode-music');
         document.body.classList.add('app-mode-token');
@@ -135,7 +150,6 @@ export function initializeUI(onSettingsChange, onDataLoaded) {
                 const el = document.getElementById(id);
                 if (el) {
                     if (el.type === 'radio' && el.name === 'app-mode') {
-                        // Skip radios here, handle separately or ensure id matches
                         if(el.id === 'mode-music' && value === 'music') el.checked = true;
                         if(el.id === 'mode-token' && value === 'token') el.checked = true;
                     } else if (el.type === 'checkbox') {
@@ -151,19 +165,17 @@ export function initializeUI(onSettingsChange, onDataLoaded) {
     applyAllStyles();
     updateModeVisibility();
 
-    // Code Position Change Logic (Auto Margins in PT)
     document.getElementById('code-position').addEventListener('change', (e) => {
         const marginInput = document.getElementById('code-side-margin');
         if (e.target.value === 'center') {
-            marginInput.value = -3; // approx -1mm
+            marginInput.value = -3;
         } else {
-            marginInput.value = 6;  // approx 2mm
+            marginInput.value = 6;
         }
         applyAllStyles();
         if (onSettingsChange) onSettingsChange(true);
     });
 
-    // Mode Switcher Listeners
     document.querySelectorAll('input[name="app-mode"]').forEach(radio => {
         radio.addEventListener('change', () => {
             updateModeVisibility();
@@ -182,12 +194,11 @@ export function initializeUI(onSettingsChange, onDataLoaded) {
     document.getElementById('settings-panel').oninput = (e) => {
         applyAllStyles();
         
-        // Save Settings
         const settings = {};
         document.querySelectorAll('#settings-panel input, #settings-panel select').forEach(el => {
              if (el.id) {
                  if(el.type === 'radio') {
-                     if(el.checked) settings['app-mode-val'] = el.value; // Helper
+                     if(el.checked) settings['app-mode-val'] = el.value;
                  } else {
                      settings[el.id] = el.type === 'checkbox' ? el.checked : el.value;
                  }
@@ -206,7 +217,8 @@ export function initializeUI(onSettingsChange, onDataLoaded) {
             'token-main-text', 'token-sub-text',
             'glow-year', 'glow-year-color', 'glow-year-blur',
             'glow-artist', 'glow-artist-color', 'glow-artist-blur',
-            'glow-title', 'glow-title-color', 'glow-title-blur'
+            'glow-title', 'glow-title-color', 'glow-title-blur',
+            'bg-enable', 'bg-opacity', 'bg-blend-mode', 'bg-blur-enable', 'bg-blur-amount'
         ];
         if (redrawIds.includes(e.target.id) || e.target.type === 'radio') {
              if (onSettingsChange) onSettingsChange(true); 
@@ -215,12 +227,25 @@ export function initializeUI(onSettingsChange, onDataLoaded) {
         }
     };
 
+    document.getElementById('bg-image-upload').onchange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const dataUrl = event.target.result;
+                localStorage.setItem(BG_IMAGE_KEY, dataUrl);
+                applyAllStyles();
+                if (onSettingsChange) onSettingsChange(true);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     document.getElementById('file-upload-button').onchange = async (e) => {
         const data = await parseXLS(e.target.files[0]);
         if (data) onDataLoaded(data);
     };
 
-    // SPOTIFY BUTTON LOGIC (Client Credentials Flow)
     document.getElementById('spotify-import-button').onclick = async () => {
         const url = prompt("Másold be a Spotify Playlist vagy Album URL-t:");
         if (url) {
@@ -263,16 +288,13 @@ export function initializeUI(onSettingsChange, onDataLoaded) {
         }, 800);
     };
 
-    const previewArea = document.getElementById('preview-area');
-
     document.getElementById('reset-settings').onclick = () => {
-        if (confirm("Minden beállítást alaphelyzetbe állítasz?")) {
+        if (confirm("Minden beállítást alaphelyzetbe állítasz? Ebbe beletartozik a feltöltött háttérkép is.")) {
             localStorage.removeItem(STORAGE_KEY);
+            localStorage.removeItem(BG_IMAGE_KEY);
             location.reload();
         }
     };
-
-    // body.loading is removed by main.js after successful password entry
 }
 
 export function updateRecordCount(count, isVisible) {

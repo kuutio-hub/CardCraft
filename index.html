@@ -27,7 +27,7 @@
             <button id="login-button">Belépés</button>
             <p id="error-message" class="hidden">Helytelen kód.</p>
             <footer class="landing-footer">
-                <p>v1.8.2 &copy; <span id="landing-year">2026</span></p>
+                <p>v1.9.0 &copy; <span id="landing-year">2026</span></p>
             </footer>
         </div>
     </div>
@@ -97,7 +97,6 @@
                                 <label>Alcím (Opciós)</label>
                                 <input type="text" id="token-sub-text" value="" style="width: 120px;" placeholder="...">
                             </div>
-                            <!-- Note: Glow is now handled via Typography tab "Year" and "Artist" settings -->
                         </div>
                     </div>
 
@@ -145,6 +144,54 @@
                                 <option value="back">Csak Hátul</option>
                                 <option value="none">Nincs Keret</option>
                             </select>
+                        </div>
+                    </div>
+                    
+                    <hr class="divider">
+                    <h3>Háttér</h3>
+                    <div class="control-group">
+                        <div class="expandable-group">
+                            <div class="input-row">
+                                <label class="checkbox-container full-width-label">
+                                    <input type="checkbox" id="bg-enable" data-toggle-target="bg-settings"> 
+                                    Egyedi háttér használata
+                                </label>
+                            </div>
+                            <div id="bg-settings" class="sub-panel hidden">
+                                 <label for="bg-image-upload" class="action-btn upload-btn mini-btn" title="Kép feltöltése">
+                                    <i class="fa-solid fa-image"></i> KÉP FELTÖLTÉSE
+                                </label>
+                                <input type="file" id="bg-image-upload" accept="image/*" style="display: none;">
+                                
+                                <div class="input-row">
+                                    <label>Opacitás (%)</label>
+                                    <input type="number" id="bg-opacity" value="30" min="0" max="100" step="1">
+                                </div>
+                                <div class="input-row">
+                                    <label>Keverés</label>
+                                    <select id="bg-blend-mode">
+                                        <option value="normal">Normál</option>
+                                        <option value="multiply">Multiply</option>
+                                        <option value="screen">Screen</option>
+                                        <option value="overlay" selected>Overlay</option>
+                                        <option value="luminosity">Luminosity</option>
+                                    </select>
+                                </div>
+                                <div class="expandable-group">
+                                    <div class="input-row">
+                                        <label class="checkbox-container">
+                                            <input type="checkbox" id="bg-blur-enable" data-toggle-target="bg-blur-settings"> 
+                                            Elmosás
+                                        </label>
+                                    </div>
+                                    <div id="bg-blur-settings" class="sub-panel hidden">
+                                        <div class="input-row">
+                                            <label>Méret (px)</label>
+                                            <input type="number" id="bg-blur-amount" value="2" min="0" max="20" step="1">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -435,7 +482,7 @@
             </div>
         </div>
         <footer class="app-footer">
-            <p>CardCraft v1.8.2 &copy; <span id="current-year">2026</span></p>
+            <p>CardCraft v1.9.0 &copy; <span id="current-year">2026</span></p>
         </footer>
     </aside>
 

@@ -14,6 +14,11 @@
     --card-bg-color: #ffffff;
     --spotify-green: #1DB954;
     
+    --card-bg-image: none;
+    --card-bg-opacity: 1;
+    --card-bg-blend-mode: normal;
+    --card-bg-blur: 0px;
+
     --font-family: 'Poppins', sans-serif;
     --font-size-year: 30pt;
     --font-weight-year: 800;
@@ -125,6 +130,14 @@ body {
 .action-btn.print-btn { background: var(--spotify-green); border-color: var(--spotify-green); color: #000; }
 .action-btn.print-btn:hover { background: #1ed760; }
 
+.action-btn.upload-btn.mini-btn {
+    width: 100%;
+    flex-direction: row;
+    justify-content: center;
+    padding: 8px 5px;
+    font-size: 0.8rem;
+}
+
 .tab-nav { display: flex; background: #111; border-bottom: 1px solid #222; }
 .tab-btn { flex: 1; padding: 15px; border: none; background: none; color: #555; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s; }
 .tab-btn i { font-size: 1.1rem; }
@@ -172,13 +185,16 @@ body {
 .tiny-input { width: 40px !important; padding: 4px !important; text-align: center; }
 .tiny-select { width: 50px !important; padding: 4px !important; font-size: 0.7rem !important; }
 
+.checkbox-container { display: flex; align-items: center; cursor: pointer; }
 .checkbox-container.mini {
     display: flex; align-items: center; gap: 4px; cursor: pointer; color: #888; font-size: 0.7rem; font-weight: 600; white-space: nowrap;
 }
-.checkbox-container.mini input { margin: 0; }
+.checkbox-container.full-width-label { width: 100%; justify-content: flex-start; }
+.checkbox-container.mini input, .checkbox-container input { margin-right: 6px; }
 .checkbox-container.mini:hover { color: #fff; }
-.checkbox-container.mini input:checked { accent-color: var(--spotify-green); }
+.checkbox-container.mini input:checked, .checkbox-container input:checked { accent-color: var(--spotify-green); }
 .checkbox-container.mini input:checked + span { color: var(--spotify-green); }
+
 
 .dual-input { display: flex; align-items: center; gap: 5px; }
 .dual-input span { font-size: 0.7rem; color: #555; }
@@ -227,6 +243,23 @@ select.full-width { width: 100%; margin-bottom: 15px; }
     width: 100%; height: 100%; background: var(--card-bg-color); border-radius: var(--card-radius);
     position: relative; overflow: hidden; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center;
     border: var(--border-width) solid var(--border-color-rgba);
+    z-index: 1;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border-radius: var(--card-radius);
+    background-image: var(--card-bg-image);
+    background-size: cover;
+    background-position: center;
+    opacity: var(--card-bg-opacity);
+    mix-blend-mode: var(--card-bg-blend-mode);
+    filter: blur(var(--card-bg-blur));
+    z-index: -1;
+    pointer-events: none;
 }
 
 .card.token .token-content {
@@ -236,7 +269,6 @@ select.full-width { width: 100%; margin-bottom: 15px; }
 
 .token-main, .token-sub {
     font-family: var(--font-family); color: #000; line-height: 1.1; margin-bottom: 5px;
-    /* Removed text-stroke Matrica effect */
 }
 .token-main { 
     font-size: var(--font-size-year); 
@@ -294,7 +326,7 @@ body.code-pos-corner .code2 {
     bottom: var(--code-side-margin); right: var(--code-side-margin); transform: none; text-align: right;
 }
 
-.vinyl-bg { position: absolute; width: 98%; height: 98%; opacity: 0.8; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+.vinyl-bg { position: absolute; width: 98%; height: 98%; opacity: 0.8; display: flex; align-items: center; justify-content: center; pointer-events: none; z-index: 2; }
 
 .qr-container { 
     position: absolute; width: var(--qr-size); height: var(--qr-size); 
@@ -343,7 +375,6 @@ body.grid-view-active .card { background: #ffffff !important; transition: none !
     
     /* PRINT FIX: Shadows enabled for neon/glow effects */
     .year, .artist, .title, .code1, .code2 { 
-        /* text-shadow: none !important; <--- REMOVED TO ALLOW GLOW PRINTING */
         color: #000000 !important;
     }
 
@@ -351,10 +382,6 @@ body.grid-view-active .card { background: #ffffff !important; transition: none !
         background-color: #000000 !important; color: #ffffff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact;
         border: 1px solid #000 !important; box-shadow: none !important;
     }
-
-    /* REMOVE QR BOX SHADOW ON PRINT IF DESIRED, OR KEEP FOR GLOW */
-    /* Keeping it enabled since user asked for glow printing */
-    /* .qr-container { box-shadow: none !important; } */
 
     .page-container { margin: 0 auto !important; border: none !important; }
     @page { margin: 0; }

@@ -1,4 +1,4 @@
-# CardCraft v1.8.2 - Felhasználói Kézikönyv
+# CardCraft v1.9.0 - Felhasználói Kézikönyv
 
 A CardCraft egy webes alkalmazás egyedi, vinyl-stílusú kártyák és zsetonok tervezésére és nyomtatására.
 
@@ -36,11 +36,16 @@ A rendszer automatikusan felismeri a következő oszlopokat (fejléc alapján va
 ## 3. Beállítások (Tabok)
 
 ### 🎚️ Méretek (General)
-Itt állíthatod be a fizikai méreteket és a vágókeretet.
+Itt állíthatod be a fizikai méreteket, a vágókeretet és az egyedi háttereket.
 *   **Papír:** A4 vagy A3. A rendszer automatikusan újraszámolja, hány kártya fér el egy lapon.
 *   **Kártya méret:** A kártya vágott mérete mm-ben (Standard: 46mm).
 *   **Keret:** Szín, vastagság és opacitás.
     *   *Keret Mód:* Beállíthatod, hogy a vágójel csak az előlapon, csak a hátlapon, vagy mindkettőn látszódjon.
+*   **Egyedi háttér:** Lehetőséged van saját képet beállítani a kártyák háttereként.
+    *   *Kép feltöltése:* Válassz egy képet a számítógépedről.
+    *   *Opacitás:* A háttérkép átlátszósága.
+    *   *Keverés (Blend Mode):* Meghatározza, hogyan keveredjen a kép a kártya alapszínével (pl. `Overlay` a leggyakoribb).
+    *   *Elmosás (Blur):* A háttérkép elmosásának mértéke.
 
 ### 🅰️ Tipográfia
 A betűtípusok és szövegeffektek beállítása.
@@ -79,4 +84,4 @@ A hátlap dizájnja.
 *   **Zseton gyártás:** Ha kétoldalas zsetont készítesz, használd a Zseton módot. Az 1. oldal tartalmazza az összes előlapot (vágókerettel), a 2. oldal az összes hátlapot (keret nélkül, hogy ne csússzon el a vágás).
 
 ---
-*CardCraft v1.8.2 (2025)*
+*CardCraft v1.9.0 (2025)*

@@ -1,5 +1,5 @@
 {
-  "description": "CardCraft v1.8.2 - Gated Access. Refined login terminology from 'password' to 'access code' for clarity and added versioning to the landing page.",
+  "description": "CardCraft v1.9.0 - Backgrounds Update. Adds support for custom image backgrounds on cards, with controls for opacity, blend mode, and blur effects.",
   "requestFramePermissions": [],
-  "name": "CardCraft v1.8.2"
+  "name": "CardCraft v1.9.0"
 }
