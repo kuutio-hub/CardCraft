@@ -27,7 +27,7 @@
             <button id="login-button">Belépés</button>
             <p id="error-message" class="hidden">Helytelen kód.</p>
             <footer class="landing-footer">
-                <p>v1.9.0 &copy; <span id="landing-year">2026</span></p>
+                <p>v1.9.1 &copy; <span id="landing-year">2026</span></p>
             </footer>
         </div>
     </div>
@@ -64,6 +64,7 @@
                     <button id="spotify-import-button" class="action-btn" title="Spotify Lista Betöltése" style="border-color: #1DB954; color: #1DB954;"><i class="fa-brands fa-spotify"></i> SPOTIFY</button>
                     <label for="file-upload-button" class="action-btn upload-btn" title="Adatok betöltése"><i class="fa-solid fa-file-circle-plus"></i> XLS</label>
                     <input type="file" id="file-upload-button" accept=".xls, .xlsx" style="display: none;">
+                    <button id="validate-years-button" class="action-btn hidden" title="Évszámok ellenőrzése (MusicBrainz)"><i class="fa-solid fa-wand-magic-sparkles"></i> VALIDÁL</button>
                 </div>
                 
                 <!-- Common Actions -->
@@ -144,54 +145,6 @@
                                 <option value="back">Csak Hátul</option>
                                 <option value="none">Nincs Keret</option>
                             </select>
-                        </div>
-                    </div>
-                    
-                    <hr class="divider">
-                    <h3>Háttér</h3>
-                    <div class="control-group">
-                        <div class="expandable-group">
-                            <div class="input-row">
-                                <label class="checkbox-container full-width-label">
-                                    <input type="checkbox" id="bg-enable" data-toggle-target="bg-settings"> 
-                                    Egyedi háttér használata
-                                </label>
-                            </div>
-                            <div id="bg-settings" class="sub-panel hidden">
-                                 <label for="bg-image-upload" class="action-btn upload-btn mini-btn" title="Kép feltöltése">
-                                    <i class="fa-solid fa-image"></i> KÉP FELTÖLTÉSE
-                                </label>
-                                <input type="file" id="bg-image-upload" accept="image/*" style="display: none;">
-                                
-                                <div class="input-row">
-                                    <label>Opacitás (%)</label>
-                                    <input type="number" id="bg-opacity" value="30" min="0" max="100" step="1">
-                                </div>
-                                <div class="input-row">
-                                    <label>Keverés</label>
-                                    <select id="bg-blend-mode">
-                                        <option value="normal">Normál</option>
-                                        <option value="multiply">Multiply</option>
-                                        <option value="screen">Screen</option>
-                                        <option value="overlay" selected>Overlay</option>
-                                        <option value="luminosity">Luminosity</option>
-                                    </select>
-                                </div>
-                                <div class="expandable-group">
-                                    <div class="input-row">
-                                        <label class="checkbox-container">
-                                            <input type="checkbox" id="bg-blur-enable" data-toggle-target="bg-blur-settings"> 
-                                            Elmosás
-                                        </label>
-                                    </div>
-                                    <div id="bg-blur-settings" class="sub-panel hidden">
-                                        <div class="input-row">
-                                            <label>Méret (px)</label>
-                                            <input type="number" id="bg-blur-amount" value="2" min="0" max="20" step="1">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -278,7 +231,7 @@
                                     <input type="hidden" id="weight-title" value="700">
                                 </div>
                             </div>
-                            <!-- EXPANDING: TITLE GLOW -->
+                            <!-- EXPANDING: TITLE SETTINGS -->
                             <div id="glow-settings-title" class="sub-panel hidden">
                                 <div class="input-row">
                                     <label>Glow Szín</label>
@@ -287,6 +240,11 @@
                                 <div class="input-row">
                                     <label>Elmosás (px)</label>
                                     <input type="number" id="glow-title-blur" value="5" min="0" max="20" step="1">
+                                </div>
+                                <hr class="divider">
+                                <div class="input-row">
+                                    <label>Max sorok</label>
+                                    <input type="number" id="max-lines" value="2" min="1" max="5" class="tiny-input" style="width:50px !important;">
                                 </div>
                             </div>
                         </div>
@@ -482,7 +440,7 @@
             </div>
         </div>
         <footer class="app-footer">
-            <p>CardCraft v1.9.0 &copy; <span id="current-year">2026</span></p>
+            <p>CardCraft v1.9.1 &copy; <span id="current-year">2026</span></p>
         </footer>
     </aside>
 

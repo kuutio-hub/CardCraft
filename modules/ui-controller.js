@@ -5,7 +5,6 @@ import { SpotifyHandler } from './spotify-handler.js';
 export const _uiFramework = { name: 'SGl0c3' };
 
 const STORAGE_KEY = 'cardcraft_v100_settings';
-const BG_IMAGE_KEY = 'cardcraft_bg_image_v1';
 const spotifyHandler = new SpotifyHandler();
 
 // Helper to convert HEX to RGBA
@@ -76,24 +75,6 @@ export function applyAllStyles() {
         document.documentElement.style.setProperty('--qr-box-shadow', 'none');
     }
     
-    // CUSTOM BACKGROUND LOGIC
-    const bgEnabled = document.getElementById('bg-enable')?.checked;
-    const savedBgData = localStorage.getItem(BG_IMAGE_KEY);
-
-    if (bgEnabled && savedBgData) {
-        const opacity = document.getElementById('bg-opacity').value / 100;
-        const blendMode = document.getElementById('bg-blend-mode').value;
-        const blurEnabled = document.getElementById('bg-blur-enable').checked;
-        const blurAmount = blurEnabled ? document.getElementById('bg-blur-amount').value : 0;
-        
-        document.documentElement.style.setProperty('--card-bg-image', `url(${savedBgData})`);
-        document.documentElement.style.setProperty('--card-bg-opacity', opacity);
-        document.documentElement.style.setProperty('--card-bg-blend-mode', blendMode);
-        document.documentElement.style.setProperty('--card-bg-blur', `${blurAmount}px`);
-    } else {
-        document.documentElement.style.setProperty('--card-bg-image', 'none');
-    }
-
     // Code Positioning
     const codePos = document.getElementById('code-position')?.value || 'center';
     document.body.classList.remove('code-pos-center', 'code-pos-corner');
@@ -135,13 +116,14 @@ function updateModeVisibility() {
     if (isToken) {
         document.body.classList.remove('app-mode-music');
         document.body.classList.add('app-mode-token');
+        document.getElementById('validate-years-button')?.classList.add('hidden');
     } else {
         document.body.classList.remove('app-mode-token');
         document.body.classList.add('app-mode-music');
     }
 }
 
-export function initializeUI(onSettingsChange, onDataLoaded) {
+export function initializeUI(onSettingsChange, onDataLoaded, onValidate) {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
         try {
@@ -207,7 +189,7 @@ export function initializeUI(onSettingsChange, onDataLoaded) {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
         
         const redrawIds = [
-            'paper-size', 'card-size', 'qr-size-percent', 'page-padding',
+            'paper-size', 'card-size', 'qr-size-percent', 'page-padding', 'max-lines',
             'vinyl-spacing', 'vinyl-count', 'vinyl-variate', 'vinyl-thickness', 'vinyl-opacity',
             'vinyl-color', 'vinyl-neon', 'vinyl-neon-blur',
             'glitch-width-min', 'glitch-width-max', 'glitch-min', 'glitch-max',
@@ -217,27 +199,12 @@ export function initializeUI(onSettingsChange, onDataLoaded) {
             'token-main-text', 'token-sub-text',
             'glow-year', 'glow-year-color', 'glow-year-blur',
             'glow-artist', 'glow-artist-color', 'glow-artist-blur',
-            'glow-title', 'glow-title-color', 'glow-title-blur',
-            'bg-enable', 'bg-opacity', 'bg-blend-mode', 'bg-blur-enable', 'bg-blur-amount'
+            'glow-title', 'glow-title-color', 'glow-title-blur'
         ];
         if (redrawIds.includes(e.target.id) || e.target.type === 'radio') {
              if (onSettingsChange) onSettingsChange(true); 
         } else {
              if (onSettingsChange) onSettingsChange(false);
-        }
-    };
-
-    document.getElementById('bg-image-upload').onchange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                const dataUrl = event.target.result;
-                localStorage.setItem(BG_IMAGE_KEY, dataUrl);
-                applyAllStyles();
-                if (onSettingsChange) onSettingsChange(true);
-            };
-            reader.readAsDataURL(file);
         }
     };
 
@@ -266,6 +233,10 @@ export function initializeUI(onSettingsChange, onDataLoaded) {
         }
     };
 
+    document.getElementById('validate-years-button').onclick = () => {
+        if(onValidate) onValidate();
+    };
+
     document.getElementById('view-toggle-button').onclick = () => {
         document.body.classList.toggle('grid-view-active');
         document.body.classList.remove('is-printing');
@@ -289,9 +260,8 @@ export function initializeUI(onSettingsChange, onDataLoaded) {
     };
 
     document.getElementById('reset-settings').onclick = () => {
-        if (confirm("Minden beállítást alaphelyzetbe állítasz? Ebbe beletartozik a feltöltött háttérkép is.")) {
+        if (confirm("Minden beállítást alaphelyzetbe állítasz?")) {
             localStorage.removeItem(STORAGE_KEY);
-            localStorage.removeItem(BG_IMAGE_KEY);
             location.reload();
         }
     };

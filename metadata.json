@@ -1,5 +1,5 @@
 {
-  "description": "CardCraft v1.9.0 - Backgrounds Update. Adds support for custom image backgrounds on cards, with controls for opacity, blend mode, and blur effects.",
+  "description": "CardCraft v1.9.1 - Year Validator & Fixes. Removes the custom background feature, fixes bugs with the record counter, and adds a MusicBrainz-powered year validation feature for imported data.",
   "requestFramePermissions": [],
-  "name": "CardCraft v1.9.0"
+  "name": "CardCraft v1.9.1"
 }

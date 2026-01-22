@@ -91,6 +91,41 @@ export class SpotifyHandler {
         
         return this.accessToken;
     }
+    
+    async searchTrack(artist, title) {
+        const url = `https://musicbrainz.org/ws/2/recording/?query=artist:"${encodeURIComponent(artist)}" AND recording:"${encodeURIComponent(title)}"&limit=1&fmt=json`;
+        
+        try {
+            const response = await fetch(url, {
+                headers: {
+                    'User-Agent': 'CardCraft/1.9.1 (https://github.com/YourName/CardCraft)'
+                }
+            });
+
+            if (!response.ok) {
+                console.error(`MusicBrainz API error: ${response.status}`);
+                return null;
+            }
+
+            const data = await response.json();
+            if (data.recordings && data.recordings.length > 0) {
+                const recording = data.recordings[0];
+                if (recording.releases && recording.releases.length > 0) {
+                    const earliestRelease = recording.releases
+                        .filter(r => r.date)
+                        .sort((a, b) => new Date(a.date) - new Date(b.date))[0];
+                    
+                    if (earliestRelease && earliestRelease.date) {
+                        return earliestRelease.date.substring(0, 4); // YYYY
+                    }
+                }
+            }
+        } catch (error) {
+            console.error("Error fetching from MusicBrainz:", error);
+            return null;
+        }
+        return null;
+    }
 
     async fetchSpotifyData(url) {
         const token = await this.getAccessToken();

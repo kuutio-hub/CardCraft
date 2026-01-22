@@ -1,9 +1,11 @@
-import { initializeUI, _uiFramework } from './modules/ui-controller.js';
+import { initializeUI, updateRecordCount, _uiFramework } from './modules/ui-controller.js';
 import { loadSampleData } from './modules/data-handler.js';
 import { renderAllPages, renderPreviewPair, _renderConfig } from './modules/card-generator.js';
+import { SpotifyHandler } from './modules/spotify-handler.js';
 
 // Suffix for unique instance identification.
 const _appInstance = { id: 'MQ==' };
+const spotifyHandler = new SpotifyHandler();
 
 // --- Access Protection Logic ---
 function _getAppKey() {
@@ -56,7 +58,8 @@ const App = {
             
             initializeUI(
                 (fullReload) => this.handleSettingsChange(fullReload),
-                (d) => this.handleDataLoaded(d)
+                (d) => this.handleDataLoaded(d),
+                () => this.validateYearsWithMusicBrainz()
             );
             
             const isToken = document.getElementById('mode-token')?.checked;
@@ -94,6 +97,47 @@ const App = {
             console.error("Init error:", error);
         }
     },
+    
+    async validateYearsWithMusicBrainz() {
+        if (!this.data || this.data.length === 0) return;
+
+        const button = document.getElementById('validate-years-button');
+        const icon = button.querySelector('i');
+        const originalIconClass = icon.className;
+        
+        button.disabled = true;
+        button.classList.add('loading');
+        icon.className = 'fa-solid fa-spinner fa-spin';
+
+        let updatedCount = 0;
+
+        for (let i = 0; i < this.data.length; i++) {
+            const track = this.data[i];
+            if (!track.artist || !track.title) continue;
+            
+            const foundYear = await spotifyHandler.searchTrack(track.artist, track.title);
+            
+            if (foundYear && foundYear !== track.year) {
+                console.log(`Updating year for ${track.title}: ${track.year} -> ${foundYear}`);
+                track.year = foundYear;
+                updatedCount++;
+            }
+            
+            // Rate limit: 1 request per 1.1 second to be safe
+            await new Promise(resolve => setTimeout(resolve, 1100));
+        }
+
+        button.disabled = false;
+        button.classList.remove('loading');
+        icon.className = originalIconClass;
+
+        if (updatedCount > 0) {
+            alert(`${updatedCount} dal évszáma sikeresen frissítve a MusicBrainz adatbázis alapján!`);
+            this.handleSettingsChange(true); // Redraw everything
+        } else {
+            alert("Minden évszám naprakésznek tűnik, nem történt frissítés.");
+        }
+    },
 
     handleSettingsChange(fullReload = false) {
         if (fullReload) {
@@ -111,6 +155,7 @@ const App = {
         this.currentPreviewIndex = 0;
         this.refreshCurrentPreview();
         this.resetCycle();
+        document.getElementById('validate-years-button')?.classList.remove('hidden');
     },
 
     updateStats() {

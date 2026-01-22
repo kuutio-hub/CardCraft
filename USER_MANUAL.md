@@ -1,4 +1,4 @@
-# CardCraft v1.9.0 - Felhasználói Kézikönyv
+# CardCraft v1.9.1 - Felhasználói Kézikönyv
 
 A CardCraft egy webes alkalmazás egyedi, vinyl-stílusú kártyák és zsetonok tervezésére és nyomtatására.
 
@@ -12,48 +12,38 @@ Az alkalmazás bal oldalon egy fix beállításpanelt, jobb oldalon pedig egy é
 
 ---
 
-## 2. Adatok Betöltése (Csak Zene Mód)
+## 2. Adatok Kezelése (Csak Zene Mód)
 
+### Adatbetöltés
 Kétféleképpen tölthetsz be adatokat:
+*   **Spotify Import (Ajánlott):** Kattints a **SPOTIFY** gombra, majd másold be a lejátszási lista vagy album linkjét.
+*   **XLS Import:** Kattints az **XLS** gombra egy Excel fájl (.xls, .xlsx) betöltéséhez. A rendszer felismeri az `Artist`, `Title`, `Year`, `QR Data`, `Code1`, `Code2` oszlopokat.
 
-### Spotify Import (Ajánlott)
-1.  Kattints a **SPOTIFY** gombra.
-2.  Másold be a Spotify lejátszási lista vagy album linkjét a felugró ablakba.
-3.  A rendszer automatikusan letölti és feldolgozza az adatokat.
-
-### XLS Import (Haladó)
-Kattints az **XLS** gombra egy Excel fájl (.xls, .xlsx) betöltéséhez.
-A rendszer automatikusan felismeri a következő oszlopokat (fejléc alapján vagy sorrendben):
-1.  **Artist** (Előadó)
-2.  **Title** (Cím)
-3.  **Year** (Évszám)
-4.  **QR Data** (URL vagy szöveg a QR kódhoz)
-5.  **Code1** (Bal oldali/felső kód)
-6.  **Code2** (Jobb oldali/alsó kód)
+### Évszámok Validálása
+A Spotify vagy a feltöltött XLS fájlok esetenként pontatlan megjelenési éveket tartalmazhatnak.
+1.  Miután betöltötted az adatokat, megjelenik a **VALIDÁL** gomb.
+2.  Kattints rá, hogy az alkalmazás a **MusicBrainz** nyílt adatbázisában ellenőrizze és javítsa az évszámokat.
+3.  A folyamat szándékosan lassú, hogy ne terhelje túl az adatbázist. A gomb animációval jelzi a működést.
+4.  A végén egy felugró ablak értesít a frissített dalok számáról.
 
 ---
 
 ## 3. Beállítások (Tabok)
 
 ### 🎚️ Méretek (General)
-Itt állíthatod be a fizikai méreteket, a vágókeretet és az egyedi háttereket.
-*   **Papír:** A4 vagy A3. A rendszer automatikusan újraszámolja, hány kártya fér el egy lapon.
+Itt állíthatod be a fizikai méreteket és a vágókeretet.
+*   **Papír:** A4 vagy A3.
 *   **Kártya méret:** A kártya vágott mérete mm-ben (Standard: 46mm).
 *   **Keret:** Szín, vastagság és opacitás.
     *   *Keret Mód:* Beállíthatod, hogy a vágójel csak az előlapon, csak a hátlapon, vagy mindkettőn látszódjon.
-*   **Egyedi háttér:** Lehetőséged van saját képet beállítani a kártyák háttereként.
-    *   *Kép feltöltése:* Válassz egy képet a számítógépedről.
-    *   *Opacitás:* A háttérkép átlátszósága.
-    *   *Keverés (Blend Mode):* Meghatározza, hogyan keveredjen a kép a kártya alapszínével (pl. `Overlay` a leggyakoribb).
-    *   *Elmosás (Blur):* A háttérkép elmosásának mértéke.
 
 ### 🅰️ Tipográfia
 A betűtípusok és szövegeffektek beállítása.
-*   **Betűtípus:** Válassz a listából (Montserrat, Poppins, Typewriter, stb.).
+*   **Betűtípus:** Válassz a listából.
 *   **Elemek (Év, Előadó, Cím):**
-    *   Méret (pt).
-    *   **Bold:** Félkövér szedés.
-    *   **Glow:** Bekapcsolásával lenyílik a részletes menü, ahol beállíthatod a ragyogás színét és az elmosás mértékét (Blur). Ez segít a sötét vinyl háttéren való olvashatóságban.
+    *   Méret (pt), Félkövér (Bold).
+    *   **Glow:** Bekapcsolásával lenyílik a részletes menü, ahol beállíthatod a ragyogás színét és az elmosás mértékét (Blur).
+    *   **Max sorok (Címnél):** Meghatározza, hány sorba tördelje a hosszú címeket, mielőtt csökkentené a betűméretet.
 
 ### 📐 Elhelyezés (Layout)
 *   **Margók (pt):** Az előadó (felső) és cím (alsó) távolsága a kártya szélétől.
@@ -63,25 +53,19 @@ A betűtípusok és szövegeffektek beállítása.
 
 ### 💿 Vinyl & QR (Backside)
 A hátlap dizájnja.
-*   **Vinyl (Bakelit):**
-    *   Barázdák száma, sűrűsége, vastagsága.
-    *   **Glitch:** A "törések" a barázdákban. Beállítható a törések száma és szélessége.
-*   **QR Kód:**
-    *   Méret: A kártyához viszonyított %-os méret.
-    *   Logó: Max 3 karakteres szöveg a QR közepén (pl. "FESZ").
-    *   Inverz: Fekete alap, fehér kód (jobban illik a bakelithoz).
+*   **Vinyl (Bakelit):** Barázdák száma, sűrűsége, vastagsága, és a "glitch" effekt beállításai.
+*   **QR Kód:** Méret, logó (max 3 karakter), és stílus (kerek, inverz).
 
 ---
 
 ## 4. Nyomtatás & Nézet
 
-*   **Nézet (Rácsnézet):** Váltás az egyes kártyák előnézete (nagyítható) és a nyomdai ív (fehér hátterű) között.
-*   **Nyomtatás:** Generálja a nyomtatási képet.
-    *   *Tükrözés:* Zene módban a hátlapok sorrendje automatikusan tükrözve van (jobbról balra), hogy a kétoldalas nyomtatásnál pontosan fedjék egymást az előlapokkal.
+*   **Nézet (Rácsnézet):** Váltás az egyes kártyák előnézete (nagyítható) és a nyomdai ív között.
+*   **Nyomtatás:** Generálja a nyomtatási képet. Zene módban a hátlapok sorrendje automatikusan tükrözve van a pontos kétoldalas nyomtatáshoz.
 
 ## Tippek
 *   **Zoom:** Az előnézeti módban kattints egy kártyára a kinagyításhoz.
 *   **Zseton gyártás:** Ha kétoldalas zsetont készítesz, használd a Zseton módot. Az 1. oldal tartalmazza az összes előlapot (vágókerettel), a 2. oldal az összes hátlapot (keret nélkül, hogy ne csússzon el a vágás).
 
 ---
-*CardCraft v1.9.0 (2025)*
+*CardCraft v1.9.1 (2025)*
