@@ -117,13 +117,14 @@ function updateModeVisibility() {
         document.body.classList.remove('app-mode-music');
         document.body.classList.add('app-mode-token');
         document.getElementById('validate-years-button')?.classList.add('hidden');
+        document.getElementById('download-button')?.classList.add('hidden');
     } else {
         document.body.classList.remove('app-mode-token');
         document.body.classList.add('app-mode-music');
     }
 }
 
-export function initializeUI(onSettingsChange, onDataLoaded, onValidate) {
+export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownload) {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
         try {
@@ -235,6 +236,10 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate) {
 
     document.getElementById('validate-years-button').onclick = () => {
         if(onValidate) onValidate();
+    };
+
+    document.getElementById('download-button').onclick = () => {
+        if(onDownload) onDownload();
     };
 
     document.getElementById('view-toggle-button').onclick = () => {

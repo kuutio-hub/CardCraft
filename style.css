@@ -112,8 +112,11 @@ body {
 .stats-bar { font-size: 0.75rem; color: #aaa; background: #1a1a1a; padding: 4px 10px; border-radius: 20px; display: flex; align-items: center; gap: 6px; }
 .stats-bar i { color: var(--spotify-green); }
 
-.actions.main-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-#music-actions.has-validator { grid-template-columns: repeat(3, 1fr); }
+.actions.main-actions { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 8px; 
+}
 .mode-specific-actions { display: contents; } 
 
 .action-btn { 
@@ -168,6 +171,11 @@ body {
 @keyframes slideDown {
     from { opacity: 0; transform: translateY(-5px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .typo-list { display: flex; flex-direction: column; gap: 15px; }
@@ -344,6 +352,71 @@ body.grid-view-active #preview-area { display: none; }
 }
 
 body.grid-view-active .card { background: #ffffff !important; transition: none !important; }
+
+
+/* MODAL STYLES */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    backdrop-filter: blur(5px);
+    animation: fadeIn 0.3s ease-out;
+}
+.modal-content {
+    background: #1a1a1a;
+    padding: 30px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+}
+.modal-content h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: var(--spotify-green);
+}
+.progress-bar {
+    width: 100%;
+    height: 12px;
+    background: #000;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #444;
+    margin-bottom: 10px;
+}
+#progress-bar-fill {
+    width: 0%;
+    height: 100%;
+    background: var(--spotify-green);
+    border-radius: 6px;
+    transition: width 0.3s ease;
+}
+#progress-text {
+    font-size: 0.9rem;
+    color: #b3b3b3;
+    margin-bottom: 25px;
+    min-height: 1.2em; /* Prevent layout shift */
+}
+#modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+#modal-actions .action-btn {
+    min-width: 120px;
+    flex-direction: row; /* For button text and icon if needed */
+    gap: 8px;
+}
+
 
 @media print {
     body, #main-content, #print-area, .page-container, .card, .card-wrapper {

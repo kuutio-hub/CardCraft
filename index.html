@@ -27,7 +27,7 @@
             <button id="login-button">Belépés</button>
             <p id="error-message" class="hidden">Helytelen kód.</p>
             <footer class="landing-footer">
-                <p>v1.9.1 &copy; <span id="landing-year">2026</span></p>
+                <p>v1.9.3 &copy; <span id="landing-year">2026</span></p>
             </footer>
         </div>
     </div>
@@ -65,6 +65,7 @@
                     <label for="file-upload-button" class="action-btn upload-btn" title="Adatok betöltése"><i class="fa-solid fa-file-circle-plus"></i> XLS</label>
                     <input type="file" id="file-upload-button" accept=".xls, .xlsx" style="display: none;">
                     <button id="validate-years-button" class="action-btn hidden" title="Évszámok ellenőrzése (MusicBrainz)"><i class="fa-solid fa-wand-magic-sparkles"></i> VALIDÁL</button>
+                    <button id="download-button" class="action-btn hidden" title="Adatok letöltése XLSX formátumban"><i class="fa-solid fa-file-arrow-down"></i> LETÖLTÉS</button>
                 </div>
                 
                 <!-- Common Actions -->
@@ -440,7 +441,7 @@
             </div>
         </div>
         <footer class="app-footer">
-            <p>CardCraft v1.9.1 &copy; <span id="current-year">2026</span></p>
+            <p>CardCraft v1.9.3 &copy; <span id="current-year">2026</span></p>
         </footer>
     </aside>
 
@@ -448,6 +449,21 @@
         <div id="preview-area" title="Kattints a kártyákra"></div>
         <div id="print-area"></div>
     </main>
+
+    <!-- Progress Modal -->
+    <div id="progress-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3 id="modal-title">Évszámok validálása...</h3>
+            <div class="progress-bar">
+                <div id="progress-bar-fill"></div>
+            </div>
+            <p id="progress-text">Indítás...</p>
+            <div id="modal-actions">
+                 <button id="cancel-validation-button" class="action-btn">Megszakítás</button>
+                 <button id="close-modal-button" class="action-btn print-btn hidden">Bezárás</button>
+            </div>
+        </div>
+    </div>
 
     <script type="module" src="main.js"></script>
     <script>

@@ -1,5 +1,5 @@
 {
-  "description": "CardCraft v1.9.1 - Year Validator & Fixes. Removes the custom background feature, fixes bugs with the record counter, and adds a MusicBrainz-powered year validation feature for imported data.",
+  "description": "CardCraft v1.9.3 - Interactive validation progress modal with cancellation, and a completely rewritten, comprehensive user manual.",
   "requestFramePermissions": [],
-  "name": "CardCraft v1.9.1"
+  "name": "CardCraft v1.9.3"
 }

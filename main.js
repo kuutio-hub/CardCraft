@@ -51,6 +51,7 @@ const App = {
     previewIntervalId: null,
     currentPreviewIndex: 0, 
     isExternalDataLoaded: false,
+    validationCancelled: false,
 
     async init() {
         try {
@@ -59,7 +60,8 @@ const App = {
             initializeUI(
                 (fullReload) => this.handleSettingsChange(fullReload),
                 (d) => this.handleDataLoaded(d),
-                () => this.validateYearsWithMusicBrainz()
+                () => this.validateYearsWithMusicBrainz(),
+                () => this.downloadDataAsXLS()
             );
             
             const isToken = document.getElementById('mode-token')?.checked;
@@ -98,44 +100,92 @@ const App = {
         }
     },
     
+    downloadDataAsXLS() {
+        if (!this.data || this.data.length === 0) {
+            alert("Nincs adat a letöltéshez.");
+            return;
+        }
+
+        // Prepare data with specific headers
+        const dataForSheet = this.data.map(row => ({
+            'Artist': row.artist,
+            'Title': row.title,
+            'Year': row.year,
+            'QR Data': row.qr_data,
+            'Code1': row.code1 || '',
+            'Code2': row.code2 || ''
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(dataForSheet);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "CardCraft Data");
+
+        XLSX.writeFile(workbook, "cardcraft_data.xlsx");
+    },
+
     async validateYearsWithMusicBrainz() {
         if (!this.data || this.data.length === 0) return;
 
-        const button = document.getElementById('validate-years-button');
-        const icon = button.querySelector('i');
-        const originalIconClass = icon.className;
+        const modal = document.getElementById('progress-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const progressFill = document.getElementById('progress-bar-fill');
+        const progressText = document.getElementById('progress-text');
+        const progressBar = modal.querySelector('.progress-bar');
+        const cancelBtn = document.getElementById('cancel-validation-button');
+        const closeBtn = document.getElementById('close-modal-button');
+        const mainValidateButton = document.getElementById('validate-years-button');
+
+        this.validationCancelled = false;
+        modalTitle.textContent = 'Évszámok validálása...';
+        progressFill.style.width = '0%';
+        progressText.textContent = 'Indítás...';
+        progressBar.classList.remove('hidden');
+        cancelBtn.classList.remove('hidden');
+        closeBtn.classList.add('hidden');
+        modal.classList.remove('hidden');
         
-        button.disabled = true;
-        button.classList.add('loading');
-        icon.className = 'fa-solid fa-spinner fa-spin';
+        cancelBtn.onclick = () => { this.validationCancelled = true; };
+        closeBtn.onclick = () => modal.classList.add('hidden');
+
+        mainValidateButton.disabled = true;
 
         let updatedCount = 0;
-
+        
         for (let i = 0; i < this.data.length; i++) {
+            if (this.validationCancelled) break;
+
             const track = this.data[i];
+            
+            progressFill.style.width = `${((i + 1) / this.data.length) * 100}%`;
+            progressText.textContent = `Feldolgozás: ${i + 1} / ${this.data.length} ... (${track.artist})`;
+
             if (!track.artist || !track.title) continue;
             
             const foundYear = await spotifyHandler.searchTrack(track.artist, track.title);
             
             if (foundYear && foundYear !== track.year) {
-                console.log(`Updating year for ${track.title}: ${track.year} -> ${foundYear}`);
                 track.year = foundYear;
                 updatedCount++;
             }
             
-            // Rate limit: 1 request per 1.1 second to be safe
             await new Promise(resolve => setTimeout(resolve, 1100));
         }
 
-        button.disabled = false;
-        button.classList.remove('loading');
-        icon.className = originalIconClass;
+        mainValidateButton.disabled = false;
+        progressBar.classList.add('hidden');
+        cancelBtn.classList.add('hidden');
+        closeBtn.classList.remove('hidden');
 
-        if (updatedCount > 0) {
-            alert(`${updatedCount} dal évszáma sikeresen frissítve a MusicBrainz adatbázis alapján!`);
-            this.handleSettingsChange(true); // Redraw everything
+        if (this.validationCancelled) {
+            modalTitle.textContent = 'Validálás megszakítva';
+            progressText.textContent = `A folyamatot a felhasználó megszakította. ${updatedCount} dal frissült eddig.`;
+        } else if (updatedCount > 0) {
+            modalTitle.textContent = 'Validálás befejezve';
+            progressText.textContent = `${updatedCount} dal évszáma sikeresen frissítve a MusicBrainz adatbázis alapján!`;
+            this.handleSettingsChange(true);
         } else {
-            alert("Minden évszám naprakésznek tűnik, nem történt frissítés.");
+            modalTitle.textContent = 'Validálás befejezve';
+            progressText.textContent = "Minden évszám naprakésznek tűnik, nem történt frissítés.";
         }
     },
 
@@ -156,6 +206,7 @@ const App = {
         this.refreshCurrentPreview();
         this.resetCycle();
         document.getElementById('validate-years-button')?.classList.remove('hidden');
+        document.getElementById('download-button')?.classList.remove('hidden');
     },
 
     updateStats() {
