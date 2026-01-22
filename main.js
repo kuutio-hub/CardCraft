@@ -8,7 +8,7 @@ const ACCESS_CODE_B64 = 'SGl0c3RlcjEwMQ==';
 
 function checkAccessCode() {
     const codeInput = document.getElementById('access-code-input');
-    const enteredCode = codeInput.value;
+    const enteredCode = codeInput.value.trim(); // Trim whitespace
 
     // Use simple and reliable Base64 encoding for the check
     try {
