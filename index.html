@@ -27,7 +27,7 @@
             <button id="login-button">Belépés</button>
             <p id="error-message" class="hidden">Helytelen kód.</p>
             <footer class="landing-footer">
-                <p>v2.1.0 &copy; <span id="landing-year">2026</span></p>
+                <p>v2.2.0 &copy; <span id="landing-year">2026</span></p>
             </footer>
         </div>
     </div>
@@ -280,6 +280,12 @@
                                     <span>-</span>
                                     <input type="number" id="glitch-width-max" value="30" min="0" max="100">
                                 </div>
+                                <div class="dual-input">
+                                    <label>Szög (tól-ig)</label>
+                                    <input type="number" id="glitch-angle-min" value="0" min="0" max="360">
+                                    <span>-</span>
+                                    <input type="number" id="glitch-angle-max" value="360" min="0" max="360">
+                                </div>
                             </div>
                         </div>
                         <hr class="divider">
@@ -308,9 +314,8 @@
             <!-- HELP -->
             <div class="tab-pane" id="tab-help">
                 <div class="settings-section">
-                    <h3>Információ</h3>
-                    <div class="help-content">
-                        <p>A Súgó új böngészőfülön nyílik meg.</p>
+                    <h3>Súgó</h3>
+                    <div class="help-content-placeholder">
                         <p>Kattints a <i class="fa-solid fa-circle-question"></i> ikonra a Súgó megnyitásához.</p>
                     </div>
                 </div>
@@ -318,7 +323,7 @@
         </div>
         <footer class="app-footer">
             <div id="save-indicator" class="hidden">Beállítások mentve!</div>
-            <p>CardCraft v2.1.0 &copy; <span id="current-year">2026</span></p>
+            <p>CardCraft v2.2.0 &copy; <span id="current-year">2026</span></p>
         </footer>
     </aside>
 
@@ -339,6 +344,14 @@
                  <button id="cancel-validation-button" class="action-btn">Megszakítás</button>
                  <button id="close-modal-button" class="action-btn print-btn hidden">Bezárás</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="help-modal" class="modal-overlay hidden">
+        <div class="modal-content help-modal-content">
+             <button id="close-help-modal-button" class="close-btn">&times;</button>
+             <div id="help-content-container"></div>
         </div>
     </div>
 

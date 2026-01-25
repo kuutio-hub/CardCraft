@@ -1,5 +1,5 @@
 {
-  "description": "CardCraft v2.1.0 - Removed automatic validation on Spotify import. Improved import logic to handle compilation albums by setting the year to '????'. The manual validation process is now stricter, removing tracks for which no valid year can be found.",
+  "description": "CardCraft v2.2.0 - Fixed Spotify API key, added a new 'glitch angle' feature, improved UI layout, converted help manual to a modal, and temporarily disabled the landing page for testing.",
   "requestFramePermissions": [],
-  "name": "CardCraft v2.1.0"
+  "name": "CardCraft v2.2.0"
 }

@@ -142,17 +142,43 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
         });
     });
 
-    document.querySelectorAll('.tab-btn:not(#help-button)').forEach(btn => {
-        btn.onclick = () => {
-            document.querySelectorAll('.tab-pane, .tab-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
-            btn.classList.add('active');
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.onclick = (e) => {
+             if (e.currentTarget.id === 'help-button') return;
+             document.querySelectorAll('.tab-pane, .tab-btn').forEach(el => el.classList.remove('active'));
+             document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
+             btn.classList.add('active');
         };
     });
     
-    document.getElementById('help-button').onclick = () => {
-        window.open('user_manual.html', '_blank');
+    document.getElementById('help-button').onclick = async () => {
+        const modal = document.getElementById('help-modal');
+        const contentContainer = document.getElementById('help-content-container');
+        
+        if (contentContainer.innerHTML.trim() === '') { // Load only once
+            try {
+                const response = await fetch('user_manual.html');
+                if (!response.ok) throw new Error('Network response was not ok');
+                const html = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                contentContainer.innerHTML = doc.body.innerHTML;
+            } catch (e) {
+                contentContainer.innerHTML = '<p>Hiba a súgó betöltése közben.</p>';
+                console.error("Help load error", e);
+            }
+        }
+        modal.classList.remove('hidden');
     };
+
+    const helpModal = document.getElementById('help-modal');
+    document.getElementById('close-help-modal-button').onclick = () => helpModal.classList.add('hidden');
+    helpModal.onclick = (e) => {
+        if (e.target.id === 'help-modal') {
+            helpModal.classList.add('hidden');
+        }
+    };
+
 
     document.getElementById('settings-panel').oninput = (e) => {
         applyAllStyles();
@@ -178,6 +204,7 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
             'paper-size', 'card-size', 'qr-size-percent', 'page-padding', 'max-lines',
             'vinyl-spacing', 'vinyl-count', 'vinyl-variate', 'vinyl-thickness', 'vinyl-opacity',
             'vinyl-color', 'vinyl-neon', 'vinyl-neon-blur', 'glitch-width-min', 'glitch-width-max', 'glitch-min', 'glitch-max',
+            'glitch-angle-min', 'glitch-angle-max',
             'border-mode', 'rotate-codes', 'qr-round', 'qr-invert', 'qr-logo-text', 'show-qr', 'qr-border-width', 'qr-border-color',
             'glow-qr', 'glow-qr-color', 'glow-qr-blur', 'code-position', 'token-main-text', 'token-sub-text',
             'glow-year', 'glow-year-color', 'glow-year-blur', 'glow-artist', 'glow-artist-color', 'glow-artist-blur',

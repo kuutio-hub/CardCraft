@@ -63,16 +63,16 @@ function generateVinyl() {
     const opacityPercent = parseFloat(document.getElementById('vinyl-opacity')?.value) || 100;
     const grooveCount = parseInt(document.getElementById('vinyl-count')?.value) || 12;
     
-    // NEW SETTINGS
     const baseColor = document.getElementById('vinyl-color')?.value || '#000000';
     const isNeon = document.getElementById('vinyl-neon')?.checked;
     const neonBlur = document.getElementById('vinyl-neon-blur')?.value || 5;
 
     const gMin = parseInt(document.getElementById('glitch-min')?.value) || 1;
     const gMax = parseInt(document.getElementById('glitch-max')?.value) || 2;
-    
     const gWidthMin = parseFloat(document.getElementById('glitch-width-min')?.value) || 25;
     const gWidthMax = parseFloat(document.getElementById('glitch-width-max')?.value) || 30;
+    const angleMin = parseFloat(document.getElementById('glitch-angle-min')?.value) || 0;
+    const angleMax = parseFloat(document.getElementById('glitch-angle-max')?.value) || 360;
     
     const variate = document.getElementById('vinyl-variate')?.checked;
 
@@ -90,51 +90,49 @@ function generateVinyl() {
         if (gCount === 0) {
             dashArray.push(circ, 0);
         } else {
-            // ORGANIC GLITCH LOGIC: Random Angles
             let cuts = [];
             
-            // Try to place glitches randomly
-            for (let g = 0; g < gCount * 2; g++) { // Try more times than needed (dart throwing)
+            for (let g = 0; g < gCount * 5; g++) { // Try more times
                 if (cuts.length >= gCount) break;
+                
+                let angle;
+                if (angleMin <= angleMax) {
+                    angle = Math.random() * (angleMax - angleMin) + angleMin;
+                } else { // Wraps around 360
+                    const range1 = 360 - angleMin;
+                    const range2 = angleMax;
+                    const totalRange = range1 + range2;
+                    const randomVal = Math.random() * totalRange;
+                    if (randomVal < range1) {
+                        angle = angleMin + randomVal;
+                    } else {
+                        angle = randomVal - range1;
+                    }
+                }
 
-                const angle = Math.random() * 360; // Start angle in degrees
-                // Convert percentage width to degrees
                 const widthPercent = Math.random() * (gWidthMax - gWidthMin) + gWidthMin; 
                 const arcLength = (widthPercent / 100) * circ;
                 const angleSpan = (arcLength / circ) * 360;
 
-                // Check collision with existing cuts + random buffer
-                const buffer = 15 + Math.random() * 45; // Minimum 15 deg buffer, up to 60 deg
-                
+                const buffer = 15 + Math.random() * 45;
                 let overlap = false;
                 for (let c of cuts) {
-                    // Simple radial overlap check handling 0-360 wrap
                     let diff = Math.abs(c.angle - angle);
                     if (diff > 180) diff = 360 - diff;
-                    
                     if (diff < (c.span/2 + angleSpan/2 + buffer)) {
                         overlap = true;
                         break;
                     }
                 }
-
                 if (!overlap) {
                     cuts.push({ angle, span: angleSpan, arc: arcLength });
                 }
             }
 
-            // If no valid cuts found (unlikely but possible), full circle
             if (cuts.length === 0) {
                 dashArray.push(circ, 0);
             } else {
-                // Sort by angle to draw sequentially
                 cuts.sort((a, b) => a.angle - b.angle);
-
-                let currentPos = 0; // relative to 0 degrees (0 length)
-                
-                // Calculate dash array based on sorted cuts
-                
-                // Let's normalize angles to length positions on the circle (0 to circ)
                 let cutSegments = cuts.map(c => {
                     let startPos = (c.angle / 360) * circ;
                     return { start: startPos, end: startPos + c.arc };
@@ -142,42 +140,29 @@ function generateVinyl() {
 
                 let lastP = 0;
                 let dashAccumulator = [];
-                
                 cutSegments.forEach(cut => {
                      let drawLen = cut.start - lastP;
-                     // If random angle generation caused overlap (shouldn't), clamp
                      if(drawLen < 0) drawLen = 0; 
-                     
                      let gapLen = cut.end - cut.start;
-                     
-                     dashAccumulator.push(drawLen); // Draw line
-                     dashAccumulator.push(gapLen);  // Gap (glitch)
-                     
+                     dashAccumulator.push(drawLen, gapLen);
                      lastP = cut.end;
                 });
                 
-                // Close the loop
                 let finalDraw = circ - lastP;
-                if(finalDraw > 0) {
-                    // Combine final draw with first draw if array isn't empty
-                    if(dashAccumulator.length > 0) {
+                if (finalDraw > 0) {
+                    if (dashAccumulator.length > 0) {
                         dashAccumulator[0] += finalDraw;
                     } else {
                         dashAccumulator.push(finalDraw, 0);
                     }
                 }
-                
                 dashArray = dashAccumulator;
             }
         }
 
         const sw = variate ? (baseThickness * (0.6 + Math.random() * 0.8)) : baseThickness;
         const op = (opacityPercent / 100) * (0.12 + (i * (0.8 / grooveCount))); 
-        
-        // Random rotation for the whole ring to break visual alignment further
         const rot = Math.random() * 360;
-
-        // NEON LOGIC
         let strokeColor = baseColor;
         let styleStr = '';
         if (isNeon) {

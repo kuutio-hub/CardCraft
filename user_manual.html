@@ -102,28 +102,47 @@
     <p>Ez az alapértelmezett mód, amely egyedi zeneszámokból álló kártyák létrehozására szolgál. Minden kártya egyedi adatokat tartalmaz (előadó, cím, év, QR-kód).</p>
 
     <h4>Adatkezelés Zene Módban</h4>
-    <ol>
-        <li><strong>Adatbetöltés:</strong>
-            <ul>
-                <li><strong>Spotify Import (Ajánlott):</strong> Kattints a <code>SPOTIFY</code> gombra, és másold be a Spotify lejátszási lista vagy album URL-jét. Az alkalmazás intelligensen beolvassa a dalokat. Ha egy dal válogatásalbumról származik (pl. "Best of 2014"), az évszám helyett <code>????</code> jelenik meg.</li>
-                <li><strong>XLS Import:</strong> Kattints az <code>XLS</code> gombra egy <code>.xls</code> vagy <code>.xlsx</code> fájl feltöltéséhez. A javasolt oszlopsorrend: <code>Artist</code>, <code>Title</code>, <code>Year</code>, <code>QR Data</code>, <code>Code1</code>, <code>Code2</code>.</li>
-            </ul>
-        </li>
-        <li class="note"><strong>Évszámok Validálása és Szűrése:</strong>
-            <ul>
-                <li>Adatbetöltés után a <code>VALIDÁL</code> gomb aktívvá válik. Erre kattintva elindíthatod az évszámok ellenőrzését és javítását.</li>
-                <li><strong>Folyamat:</strong> Az alkalmazás a <strong>MusicBrainz</strong> adatbázisában ellenőrzi a dalokat. Megpróbálja javítani a meglévő évszámokat és kitölteni a <code>????</code> helyét is.</li>
-                <li><strong class="warning">Szigorú Szűrés:</strong> Ha a validálás végén egy dalhoz nem található megbízható (négyjegyű) évszám, az a dal **automatikusan eltávolításra kerül a listáról.**</li>
-                <li>A folyamat végén egy összegzés tájékoztat a frissített és az eltávolított dalok számáról. Ez garantálja, hogy csak pontos adatokkal ellátott kártyák kerüljenek nyomtatásra.</li>
-            </ul>
-        </li>
-        <li><strong>Adatok Letöltése:</strong>
-            <ul>
-                <li>A <code>LETÖLTÉS</code> gombra kattintva lementheted az aktuális (akár már validált és szűrt) adatlistát.</li>
-                <li>A fájl <code>cardcraft_data.xlsx</code> néven töltődik le, ami kiválóan alkalmas archiválásra.</li>
-            </ul>
-        </li>
-    </ol>
+    <p>A zeneszámok adatait kétféleképpen töltheted be az alkalmazásba:</p>
+    
+    <div class="note">
+        <h3>1. Spotify Import (Ajánlott)</h3>
+        <p>A legegyszerűbb és leggyorsabb módja a dalok hozzáadásának.</p>
+        <ol>
+            <li>Kattints a <i class="fa-brands fa-spotify"></i> **Spotify** gombra.</li>
+            <li>A felugró ablakba másold be a Spotify **lejátszási lista (Playlist)** vagy **album (Album)** linkjét (URL-jét).</li>
+            <li>Az alkalmazás automatikusan beolvassa a dalokat.</li>
+            <li><strong>Intelligens Évszámkezelés:</strong> Az alkalmazás felismeri, ha egy dal válogatásalbumról (pl. "Best of 2014") származik. Ilyenkor, a hibás évszám elkerülése érdekében, az évszám helyére <code>????</code> kerül. Ezt később a `VALIDÁL` funkcióval pontosíthatod.</li>
+        </ol>
+    </div>
+
+    <div class="note">
+        <h3>2. XLS Import</h3>
+        <p>Lehetőséged van saját, táblázatkezelőben (pl. Excel, Google Sheets) összeállított listát is betölteni.</p>
+        <ul>
+            <li>**Fájlformátum:** <code>.xls</code> vagy <code>.xlsx</code></li>
+            <li>**Struktúra:** Az alkalmazás megpróbálja intelligensen felismerni az oszlopokat, de a legmegbízhatóbb működéshez kövesd az alábbi sorrendet. A fejléc használata nem kötelező.</li>
+        </ul>
+        <p><strong>Javasolt oszlopszerkezet:</strong></p>
+        <ol>
+            <li><strong>A oszlop:</strong> Előadó (pl. `Queen`)</li>
+            <li><strong>B oszlop:</strong> Cím (pl. `Bohemian Rhapsody`)</li>
+            <li><strong>C oszlop:</strong> Év (pl. `1975`)</li>
+            <li><strong>D oszlop:</strong> QR Adat (egy URL, ami a QR kódba kerül, pl. egy Spotify link)</li>
+            <li><strong>E oszlop (opcionális):</strong> Kód 1 (egyedi azonosító, ami a kártyára kerül)</li>
+            <li><strong>F oszlop (opcionális):</strong> Kód 2 (másik egyedi azonosító)</li>
+        </ol>
+    </div>
+
+    <h4>Évszámok Validálása és Szűrése</h4>
+    <ul>
+        <li>Adatbetöltés után a <i class="fa-solid fa-wand-magic-sparkles"></i> **VALIDÁL** gomb aktívvá válik. Erre kattintva elindíthatod az évszámok ellenőrzését és javítását.</li>
+        <li><strong>Folyamat:</strong> Az alkalmazás a **MusicBrainz** adatbázisában ellenőrzi a dalokat. Megpróbálja javítani a meglévő évszámokat és kitölteni a <code>????</code> helyét is.</li>
+        <li><strong class="warning">Szigorú Szűrés:</strong> Ha a validálás végén egy dalhoz nem található megbízható (négyjegyű) évszám, az a dal **automatikusan eltávolításra kerül a listáról.**</li>
+        <li>A folyamat végén egy összegzés tájékoztat a frissített és az eltávolított dalok számáról. Ez garantálja, hogy csak pontos adatokkal ellátott kártyák kerüljenek nyomtatásra.</li>
+    </ul>
+
+    <h4>Adatok Letöltése</h4>
+    <p>A <i class="fa-solid fa-file-arrow-down"></i> **LETÖLTÉS** gombra kattintva lementheted az aktuális (akár már validált és szűrt) adatlistát. A fájl <code>cardcraft_data.xlsx</code> néven töltődik le, ami kiválóan alkalmas archiválásra.</p>
 
     <h3>🪙 Zseton Mód</h3>
     <p>Ez a mód egységes kinézetű kártyák (zsetonok, kuponok) tömeges generálására szolgál.</p>
@@ -180,7 +199,7 @@
                 <li><strong>Vastagság variálás:</strong> A barázdák vastagsága kissé eltérő lesz a természetesebb hatásért.</li>
             </ul>
         </li>
-        <li><strong>Glitch Effekt:</strong> A barázdákon véletlenszerű "kihagyások" jelennek meg. Állítható a darabszám és a méret.</li>
+        <li><strong>Glitch Effekt:</strong> A barázdákon véletlenszerű "kihagyások" jelennek meg. Állítható a darabszám, a méret és a szög.</li>
         <li><strong>QR Kód (csak Zene mód):</strong>
             <ul>
                 <li><strong>QR kód látható:</strong> Ki/be kapcsolja a QR kódot.</li>

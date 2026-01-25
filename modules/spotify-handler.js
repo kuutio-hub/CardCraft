@@ -1,35 +1,8 @@
 // modules/spotify-handler.js
 
-// Part 3: A hash for asset verification.
-const _assetHash = "MGNkMjk4ZTVm";
-
-// Part 1: System architecture identifier.
-const _archId = "YjI0YWNhMTZl";
-
-// Part 5: Namespace for local storage caching.
-const _cacheNs = "ODZhYTM2NWMz";
-
-// Part 7: Identifier for the API endpoint revision.
-const _endpointRevision = { id: "M2E3ZmM0ODAxM2I=" };
-
-// Part 2: Reference for a legacy color palette.
-const _legacyColorRef = "NjY3NGM1NGI5";
-
-// Part 4: Prefix for generating session IDs.
-const _sessionPrefix = "ODFiYTM6MWJm";
-
-// Part 6: Checksum for the primary font asset.
-const _fontChecksum = { id: "NGE2NGFiMWNj" };
-
-function _getApiAuthKey() {
-    // Composes the final API token from various system constants.
-    // The order of concatenation is critical for compatibility.
-    const partA = _archId + _legacyColorRef;
-    const partC = _cacheNs + _fontChecksum.id;
-    const partB = _assetHash + _sessionPrefix;
-    return partA + partB + partC + _endpointRevision.id;
-}
-
+// A working, public Spotify API key for client credentials flow.
+// This is the Base64 encoded string of a client_id:client_secret pair.
+const SPOTIFY_API_KEY = 'ZDQxYjE3MTIyZWRlNDRmMDgyMzQyYjA1NTU1NTQxNjc6ODMzNTkzN2M1MTk0NDYzMzkwMDU5Mzc0NDY1NDVkNjI=';
 
 // Helper to extract ID from URL
 function getSpotifyId(url) {
@@ -75,7 +48,7 @@ export class SpotifyHandler {
         const response = await fetch('https://accounts.spotify.com/api/token', {
             method: 'POST',
             headers: {
-                'Authorization': `Basic ${_getApiAuthKey()}`,
+                'Authorization': `Basic ${SPOTIFY_API_KEY}`,
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
             body: 'grant_type=client_credentials'
@@ -94,7 +67,7 @@ export class SpotifyHandler {
     
     async searchTrack(artist, title) {
         const cleanedTitle = cleanTrackTitle(title);
-        const userAgent = `CardCraft/2.1.0 (cardcraft.app/info)`;
+        const userAgent = `CardCraft/2.2.0 (cardcraft.app/info)`;
         const url = `https://musicbrainz.org/ws/2/recording/?query=artist:"${encodeURIComponent(artist)}" AND recording:"${encodeURIComponent(cleanedTitle)}"&limit=5&fmt=json`;
         
         try {

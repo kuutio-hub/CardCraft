@@ -309,8 +309,16 @@ const App = {
 
 // Initial document load setup
 document.addEventListener('DOMContentLoaded', () => {
-    document.body.classList.remove('loading'); // Show landing page
+    document.body.classList.remove('loading');
     
+    // --- TEMP: BYPASS LOGIN FOR DEV ---
+    document.getElementById('landing-page').style.display = 'none'; 
+    document.getElementById('settings-panel').classList.remove('app-hidden');
+    document.getElementById('main-content').classList.remove('app-hidden');
+    App.init();
+    // --- END TEMP BYPASS ---
+
+    /* --- ORIGINAL LOGIN LOGIC ---
     const loginButton = document.getElementById('login-button');
     const accessCodeInput = document.getElementById('access-code-input');
 
@@ -320,4 +328,5 @@ document.addEventListener('DOMContentLoaded', () => {
             checkAccessCode();
         }
     });
+    */
 });
