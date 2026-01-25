@@ -86,7 +86,7 @@
 
     <h3>Fő Műveleti Gombok (a panel tetején)</h3>
     <ul>
-        <li><code>SPOTIFY / XLS:</code> Adatok betöltése Zene módban.</li>
+        <li><code>ADATOK BETÖLTÉSE:</code> Adatok betöltése <code>.xls, .xlsx, .csv</code> fájlból.</li>
         <li><code>VALIDÁL:</code> A betöltött dalok évszámainak ellenőrzése és javítása.</li>
         <li><code>LETÖLTÉS:</code> Az aktuális (validált) adatlista lementése <code>.xlsx</code> fájlba.</li>
         <li><code>NÉZET:</code> Váltás az interaktív előnézet és a nyomtatási rácsnézet között.</li>
@@ -102,24 +102,13 @@
     <p>Ez az alapértelmezett mód, amely egyedi zeneszámokból álló kártyák létrehozására szolgál. Minden kártya egyedi adatokat tartalmaz (előadó, cím, év, QR-kód).</p>
 
     <h4>Adatkezelés Zene Módban</h4>
-    <p>A zeneszámok adatait kétféleképpen töltheted be az alkalmazásba:</p>
+    <p>A zeneszámok adatait <code>.xls</code>, <code>.xlsx</code>, vagy <code>.csv</code> formátumú fájlokból töltheted be az <kbd>Adatok betöltése</kbd> ikonra kattintva.</p>
     
     <div class="note">
-        <h3>1. Spotify Import (Ajánlott)</h3>
-        <p>A legegyszerűbb és leggyorsabb módja a dalok hozzáadásának.</p>
-        <ol>
-            <li>Kattints a <i class="fa-brands fa-spotify"></i> **Spotify** gombra.</li>
-            <li>A felugró ablakba másold be a Spotify **lejátszási lista (Playlist)** vagy **album (Album)** linkjét (URL-jét).</li>
-            <li>Az alkalmazás automatikusan beolvassa a dalokat.</li>
-            <li><strong>Intelligens Évszámkezelés:</strong> Az alkalmazás felismeri, ha egy dal válogatásalbumról (pl. "Best of 2014") származik. Ilyenkor, a hibás évszám elkerülése érdekében, az évszám helyére <code>????</code> kerül. Ezt később a `VALIDÁL` funkcióval pontosíthatod.</li>
-        </ol>
-    </div>
-
-    <div class="note">
-        <h3>2. XLS Import</h3>
+        <h3>Adatok betöltése fájlból</h3>
         <p>Lehetőséged van saját, táblázatkezelőben (pl. Excel, Google Sheets) összeállított listát is betölteni.</p>
         <ul>
-            <li>**Fájlformátum:** <code>.xls</code> vagy <code>.xlsx</code></li>
+            <li>**Fájlformátum:** <code>.xls</code>, <code>.xlsx</code>, <code>.csv</code></li>
             <li>**Struktúra:** Az alkalmazás megpróbálja intelligensen felismerni az oszlopokat, de a legmegbízhatóbb működéshez kövesd az alábbi sorrendet. A fejléc használata nem kötelező.</li>
         </ul>
         <p><strong>Javasolt oszlopszerkezet:</strong></p>

@@ -1,5 +1,5 @@
 {
-  "description": "CardCraft v2.4.0 - Implemented new dedicated Spotify API key. Added CSV import with smart header detection. UI labels are now dynamic. Reworked glitch effect to use angle offset. Help modal is now an interactive accordion.",
+  "description": "CardCraft v2.5.0 - Temporarily disabled Spotify import functionality due to external API issues. The user manual has been updated to reflect this change.",
   "requestFramePermissions": [],
-  "name": "CardCraft v2.4.0"
+  "name": "CardCraft v2.5.0"
 }
