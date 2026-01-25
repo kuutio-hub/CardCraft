@@ -72,6 +72,7 @@ function generateVinyl() {
     const gWidthMin = parseFloat(document.getElementById('glitch-width-min')?.value) || 25;
     const gWidthMax = parseFloat(document.getElementById('glitch-width-max')?.value) || 30;
     const angleOffset = parseFloat(document.getElementById('glitch-angle-offset')?.value) || 0;
+    const glitchMode = document.getElementById('glitch-mode')?.value || 'random';
     
     const variate = document.getElementById('vinyl-variate')?.checked;
 
@@ -82,7 +83,13 @@ function generateVinyl() {
         const r = 48 - (i * spacing);
         if (r < 5) break;
 
-        cumulativeAngleOffset += angleOffset;
+        let rot = 0;
+        if (glitchMode === 'degree') {
+            cumulativeAngleOffset += angleOffset;
+            rot = cumulativeAngleOffset;
+        } else { // 'random' mode
+            rot = Math.random() * 360;
+        }
 
         const circ = 2 * Math.PI * r;
         const gCount = Math.floor(Math.random() * (gMax - gMin + 1)) + gMin;
@@ -128,7 +135,6 @@ function generateVinyl() {
 
         const sw = variate ? (baseThickness * (0.6 + Math.random() * 0.8)) : baseThickness;
         const op = (opacityPercent / 100) * (0.12 + (i * (0.8 / grooveCount))); 
-        const rot = cumulativeAngleOffset;
         let strokeColor = baseColor;
         let styleStr = '';
         if (isNeon) {

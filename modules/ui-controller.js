@@ -129,6 +129,11 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
 
     applyAllStyles();
     updateModeVisibility(isDataLoadedCheck);
+    
+    // Set initial visibility for the glitch angle slider
+    const initialGlitchMode = document.getElementById('glitch-mode').value;
+    document.getElementById('glitch-angle-offset-row').classList.toggle('hidden', initialGlitchMode !== 'degree');
+
 
     document.getElementById('code-position').addEventListener('change', (e) => {
         document.getElementById('code-side-margin').value = e.target.value === 'center' ? -3 : 6;
@@ -231,6 +236,10 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
     document.getElementById('settings-panel').oninput = (e) => {
         applyAllStyles();
         
+        if (e.target.id === 'glitch-mode') {
+            document.getElementById('glitch-angle-offset-row').classList.toggle('hidden', e.target.value !== 'degree');
+        }
+
         const settings = {};
         document.querySelectorAll('#settings-panel input, #settings-panel select').forEach(el => {
              if (el.id) {
@@ -252,7 +261,7 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
             'paper-size', 'card-size', 'qr-size-percent', 'page-padding', 'max-lines',
             'vinyl-spacing', 'vinyl-count', 'vinyl-variate', 'vinyl-thickness', 'vinyl-opacity',
             'vinyl-color', 'vinyl-neon', 'vinyl-neon-blur', 'glitch-width-min', 'glitch-width-max', 'glitch-min', 'glitch-max',
-            'glitch-angle-offset',
+            'glitch-angle-offset', 'glitch-mode',
             'border-mode', 'rotate-codes', 'qr-round', 'qr-invert', 'qr-logo-text', 'show-qr', 'qr-border-width', 'qr-border-color',
             'glow-qr', 'glow-qr-color', 'glow-qr-blur', 'code-position', 'token-main-text', 'token-sub-text',
             'glow-year', 'glow-year-color', 'glow-year-blur', 'glow-artist', 'glow-artist-color', 'glow-artist-blur',

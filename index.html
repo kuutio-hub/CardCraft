@@ -286,7 +286,14 @@
                                     <span>-</span>
                                     <input type="number" id="glitch-width-max" value="30" min="0" max="100">
                                 </div>
-                                 <div class="input-row range-slider">
+                                 <div class="input-row">
+                                    <label>Elforgatás Módja</label>
+                                    <select id="glitch-mode">
+                                        <option value="random" selected>Véletlenszerű</option>
+                                        <option value="degree">Fokozatos</option>
+                                    </select>
+                                </div>
+                                 <div class="input-row range-slider hidden" id="glitch-angle-offset-row">
                                     <label>Szög Eltolás (°)</label>
                                     <input type="range" id="glitch-angle-offset" value="15" min="-180" max="180" step="1">
                                     <span id="glitch-angle-value">15°</span>
