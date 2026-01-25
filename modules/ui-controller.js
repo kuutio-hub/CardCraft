@@ -1,4 +1,4 @@
-import { parseXLS } from './data-handler.js';
+import { parseDataFile } from './data-handler.js';
 
 export const _uiFramework = { name: 'SGl0c3' };
 
@@ -85,7 +85,7 @@ function updateModeVisibility(isExternalDataLoaded) {
     document.getElementById('token-settings-group').style.display = isToken ? 'block' : 'none';
     
     document.querySelectorAll('.music-only-option').forEach(el => {
-        el.style.display = isToken ? 'none' : (el.classList.contains('typo-item') || el.classList.contains('layout-group') ? 'block' : 'flex');
+        el.style.display = isToken ? 'none' : 'block';
     });
 
     document.querySelectorAll('.token-only-msg').forEach(el => {
@@ -95,11 +95,10 @@ function updateModeVisibility(isExternalDataLoaded) {
     document.body.classList.toggle('app-mode-token', isToken);
     document.body.classList.toggle('app-mode-music', !isToken);
 
-    // CRITICAL FIX: Preserve button visibility if data is loaded
-    if (!isToken && isExternalDataLoaded) {
+    if (!isToken && isExternalDataLoaded()) {
         document.getElementById('validate-years-button')?.classList.remove('hidden');
         document.getElementById('download-button')?.classList.remove('hidden');
-    } else if (isToken) {
+    } else {
         document.getElementById('validate-years-button')?.classList.add('hidden');
         document.getElementById('download-button')?.classList.add('hidden');
     }
@@ -114,9 +113,11 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
                 const el = document.getElementById(id);
                 if (el) {
                     if (el.type === 'radio' && el.name === 'app-mode') {
-                        if(el.id === 'mode-music' && value === 'music') el.checked = true;
-                        if(el.id === 'mode-token' && value === 'token') el.checked = true;
-                    } else if (el.type === 'checkbox') {
+                        // This logic is flawed, let's fix it.
+                        if (settings['app-mode-val'] === el.value) {
+                           el.checked = true;
+                        }
+                    } else if (el.type === 'checkbox' || el.type === 'radio') {
                         el.checked = value;
                     } else {
                         el.value = value;
@@ -127,7 +128,7 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
     }
 
     applyAllStyles();
-    updateModeVisibility(isDataLoadedCheck());
+    updateModeVisibility(isDataLoadedCheck);
 
     document.getElementById('code-position').addEventListener('change', (e) => {
         document.getElementById('code-side-margin').value = e.target.value === 'center' ? -3 : 6;
@@ -137,7 +138,7 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
 
     document.querySelectorAll('input[name="app-mode"]').forEach(radio => {
         radio.addEventListener('change', () => {
-            updateModeVisibility(isDataLoadedCheck());
+            updateModeVisibility(isDataLoadedCheck);
             if (onSettingsChange) onSettingsChange(true);
         });
     });
@@ -160,9 +161,52 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
                 const response = await fetch('user_manual.html');
                 if (!response.ok) throw new Error('Network response was not ok');
                 const html = await response.text();
+                
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
-                contentContainer.innerHTML = doc.body.innerHTML;
+                
+                const accordionWrapper = document.createElement('div');
+                accordionWrapper.className = 'help-accordion';
+
+                doc.querySelectorAll('h2').forEach(h2 => {
+                    const item = document.createElement('div');
+                    item.className = 'help-item';
+
+                    const q = document.createElement('div');
+                    q.className = 'help-q';
+                    q.textContent = h2.textContent;
+                    
+                    const a = document.createElement('div');
+                    a.className = 'help-a';
+                    
+                    let nextElem = h2.nextElementSibling;
+                    while(nextElem && nextElem.tagName !== 'H2') {
+                        a.appendChild(nextElem.cloneNode(true));
+                        nextElem = nextElem.nextElementSibling;
+                    }
+                    
+                    item.appendChild(q);
+                    item.appendChild(a);
+                    accordionWrapper.appendChild(item);
+                });
+
+                contentContainer.appendChild(accordionWrapper);
+
+                // Add accordion functionality
+                accordionWrapper.addEventListener('click', (e) => {
+                    const question = e.target.closest('.help-q');
+                    if (question) {
+                        const item = question.parentElement;
+                        const wasActive = item.classList.contains('active');
+
+                        accordionWrapper.querySelectorAll('.help-item').forEach(i => i.classList.remove('active'));
+                        
+                        if (!wasActive) {
+                            item.classList.add('active');
+                        }
+                    }
+                });
+
             } catch (e) {
                 contentContainer.innerHTML = '<p>Hiba a súgó betöltése közben.</p>';
                 console.error("Help load error", e);
@@ -179,6 +223,10 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
         }
     };
 
+    document.getElementById('glitch-angle-offset').addEventListener('input', (e) => {
+        document.getElementById('glitch-angle-value').textContent = `${e.target.value}°`;
+    });
+
 
     document.getElementById('settings-panel').oninput = (e) => {
         applyAllStyles();
@@ -186,7 +234,7 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
         const settings = {};
         document.querySelectorAll('#settings-panel input, #settings-panel select').forEach(el => {
              if (el.id) {
-                 if(el.type === 'radio') {
+                 if (el.name === 'app-mode') {
                      if(el.checked) settings['app-mode-val'] = el.value;
                  } else {
                      settings[el.id] = el.type === 'checkbox' ? el.checked : el.value;
@@ -204,13 +252,13 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
             'paper-size', 'card-size', 'qr-size-percent', 'page-padding', 'max-lines',
             'vinyl-spacing', 'vinyl-count', 'vinyl-variate', 'vinyl-thickness', 'vinyl-opacity',
             'vinyl-color', 'vinyl-neon', 'vinyl-neon-blur', 'glitch-width-min', 'glitch-width-max', 'glitch-min', 'glitch-max',
-            'glitch-angle-min', 'glitch-angle-max',
+            'glitch-angle-offset',
             'border-mode', 'rotate-codes', 'qr-round', 'qr-invert', 'qr-logo-text', 'show-qr', 'qr-border-width', 'qr-border-color',
             'glow-qr', 'glow-qr-color', 'glow-qr-blur', 'code-position', 'token-main-text', 'token-sub-text',
             'glow-year', 'glow-year-color', 'glow-year-blur', 'glow-artist', 'glow-artist-color', 'glow-artist-blur',
             'glow-title', 'glow-title-color', 'glow-title-blur'
         ];
-        if (redrawIds.includes(e.target.id) || e.target.type === 'radio') {
+        if (redrawIds.includes(e.target.id) || e.target.name === 'app-mode') {
              if (onSettingsChange) onSettingsChange(true); 
         } else {
              if (onSettingsChange) onSettingsChange(false);
@@ -218,8 +266,13 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
     };
 
     document.getElementById('file-upload-button').onchange = async (e) => {
-        const data = await parseXLS(e.target.files[0]);
-        if (data) onDataLoaded(data);
+        try {
+            const data = await parseDataFile(e.target.files[0]);
+            if (data) onDataLoaded(data);
+        } catch(err) {
+            alert(err.message);
+        }
+        e.target.value = ''; // Reset file input
     };
 
     document.getElementById('spotify-import-button').onclick = async () => {

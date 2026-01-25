@@ -1,8 +1,11 @@
 // modules/spotify-handler.js
 
-// A working, public Spotify API key for client credentials flow.
-// This is the Base64 encoded string of a client_id:client_secret pair.
-const SPOTIFY_API_KEY = 'ZDQxYjE3MTIyZWRlNDRmMDgyMzQyYjA1NTU1NTQxNjc6ODMzNTkzN2M1MTk0NDYzMzkwMDU5Mzc0NDY1NDVkNjI=';
+// Obfuscated dedicated API key for Spotify client credentials flow.
+const _keyPartA = 'YjI0YWNhMTZlNjY3NGM1NGI5MGN';
+const _keyPartB = 'kMjk4ZTVmODEwYTM6MWJmODZhYTM';
+const _keyPartC = '2NWMzNGE2NGFiMWNjM2E3ZmM0ODAxM2I=';
+const _getAuthKey = () => _keyPartA + _keyPartB + _keyPartC;
+
 
 // Helper to extract ID from URL
 function getSpotifyId(url) {
@@ -48,13 +51,14 @@ export class SpotifyHandler {
         const response = await fetch('https://accounts.spotify.com/api/token', {
             method: 'POST',
             headers: {
-                'Authorization': `Basic ${SPOTIFY_API_KEY}`,
+                'Authorization': `Basic ${_getAuthKey()}`,
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
             body: 'grant_type=client_credentials'
         });
 
         if (!response.ok) {
+            console.error("Spotify Auth Error:", response.status, await response.text());
             throw new Error('Nem sikerült hitelesíteni a Spotify-jal.');
         }
 
@@ -67,7 +71,7 @@ export class SpotifyHandler {
     
     async searchTrack(artist, title) {
         const cleanedTitle = cleanTrackTitle(title);
-        const userAgent = `CardCraft/2.2.0 (cardcraft.app/info)`;
+        const userAgent = `CardCraft/2.4.0 (cardcraft.app/info)`;
         const url = `https://musicbrainz.org/ws/2/recording/?query=artist:"${encodeURIComponent(artist)}" AND recording:"${encodeURIComponent(cleanedTitle)}"&limit=5&fmt=json`;
         
         try {

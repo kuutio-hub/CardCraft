@@ -71,16 +71,18 @@ function generateVinyl() {
     const gMax = parseInt(document.getElementById('glitch-max')?.value) || 2;
     const gWidthMin = parseFloat(document.getElementById('glitch-width-min')?.value) || 25;
     const gWidthMax = parseFloat(document.getElementById('glitch-width-max')?.value) || 30;
-    const angleMin = parseFloat(document.getElementById('glitch-angle-min')?.value) || 0;
-    const angleMax = parseFloat(document.getElementById('glitch-angle-max')?.value) || 360;
+    const angleOffset = parseFloat(document.getElementById('glitch-angle-offset')?.value) || 0;
     
     const variate = document.getElementById('vinyl-variate')?.checked;
 
     let svg = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">`;
+    let cumulativeAngleOffset = 0;
 
     for (let i = 0; i < grooveCount; i++) {
         const r = 48 - (i * spacing);
         if (r < 5) break;
+
+        cumulativeAngleOffset += angleOffset;
 
         const circ = 2 * Math.PI * r;
         const gCount = Math.floor(Math.random() * (gMax - gMin + 1)) + gMin;
@@ -88,81 +90,45 @@ function generateVinyl() {
         let dashArray = [];
         
         if (gCount === 0) {
-            dashArray.push(circ, 0);
+            dashArray.push(circ);
         } else {
             let cuts = [];
-            
-            for (let g = 0; g < gCount * 5; g++) { // Try more times
-                if (cuts.length >= gCount) break;
-                
-                let angle;
-                if (angleMin <= angleMax) {
-                    angle = Math.random() * (angleMax - angleMin) + angleMin;
-                } else { // Wraps around 360
-                    const range1 = 360 - angleMin;
-                    const range2 = angleMax;
-                    const totalRange = range1 + range2;
-                    const randomVal = Math.random() * totalRange;
-                    if (randomVal < range1) {
-                        angle = angleMin + randomVal;
-                    } else {
-                        angle = randomVal - range1;
-                    }
-                }
-
-                const widthPercent = Math.random() * (gWidthMax - gWidthMin) + gWidthMin; 
+            for (let g = 0; g < gCount; g++) {
+                const angle = Math.random() * 360;
+                const widthPercent = Math.random() * (gWidthMax - gWidthMin) + gWidthMin;
                 const arcLength = (widthPercent / 100) * circ;
-                const angleSpan = (arcLength / circ) * 360;
-
-                const buffer = 15 + Math.random() * 45;
-                let overlap = false;
-                for (let c of cuts) {
-                    let diff = Math.abs(c.angle - angle);
-                    if (diff > 180) diff = 360 - diff;
-                    if (diff < (c.span/2 + angleSpan/2 + buffer)) {
-                        overlap = true;
-                        break;
-                    }
-                }
-                if (!overlap) {
-                    cuts.push({ angle, span: angleSpan, arc: arcLength });
-                }
+                cuts.push({ angle, arc: arcLength });
             }
 
-            if (cuts.length === 0) {
-                dashArray.push(circ, 0);
-            } else {
-                cuts.sort((a, b) => a.angle - b.angle);
-                let cutSegments = cuts.map(c => {
-                    let startPos = (c.angle / 360) * circ;
-                    return { start: startPos, end: startPos + c.arc };
-                });
-
-                let lastP = 0;
-                let dashAccumulator = [];
-                cutSegments.forEach(cut => {
-                     let drawLen = cut.start - lastP;
-                     if(drawLen < 0) drawLen = 0; 
-                     let gapLen = cut.end - cut.start;
-                     dashAccumulator.push(drawLen, gapLen);
-                     lastP = cut.end;
-                });
-                
-                let finalDraw = circ - lastP;
-                if (finalDraw > 0) {
-                    if (dashAccumulator.length > 0) {
-                        dashAccumulator[0] += finalDraw;
-                    } else {
-                        dashAccumulator.push(finalDraw, 0);
-                    }
+            cuts.sort((a, b) => a.angle - b.angle);
+            
+            let lastPos = 0;
+            let dashSegments = [];
+            
+            cuts.forEach(cut => {
+                let startPos = (cut.angle / 360) * circ;
+                let drawLength = startPos - lastPos;
+                if (drawLength > 0) {
+                    dashSegments.push(drawLength);
+                    dashSegments.push(cut.arc);
+                    lastPos = startPos + cut.arc;
                 }
-                dashArray = dashAccumulator;
+            });
+
+            let finalSegment = circ - lastPos;
+            if (finalSegment > 0.01) {
+                if (dashSegments.length > 0) {
+                    dashSegments[0] += finalSegment;
+                } else {
+                    dashSegments.push(circ);
+                }
             }
+            dashArray = dashSegments;
         }
 
         const sw = variate ? (baseThickness * (0.6 + Math.random() * 0.8)) : baseThickness;
         const op = (opacityPercent / 100) * (0.12 + (i * (0.8 / grooveCount))); 
-        const rot = Math.random() * 360;
+        const rot = cumulativeAngleOffset;
         let strokeColor = baseColor;
         let styleStr = '';
         if (isNeon) {
@@ -175,6 +141,7 @@ function generateVinyl() {
     svg += `</svg>`;
     return svg;
 }
+
 
 // MUSIC CARD CREATOR
 function createCard(song, isBack = false) {

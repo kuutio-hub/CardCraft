@@ -27,7 +27,7 @@
             <button id="login-button">Belépés</button>
             <p id="error-message" class="hidden">Helytelen kód.</p>
             <footer class="landing-footer">
-                <p>v2.3.0 &copy; <span id="landing-year">2026</span></p>
+                <p>v2.4.0 &copy; <span id="landing-year">2026</span></p>
             </footer>
         </div>
     </div>
@@ -241,9 +241,9 @@
 
                         <h3 style="margin-top: 25px;">Kód Elhelyezés</h3>
                         <div class="control-group">
-                            <div class="input-row"><label>Pozíció</label><select id="code-position" class="full-width" style="margin-bottom:0;"><option value="center" selected>Közép</option><option value="corner">Sarok</option></select></div>
+                            <div class="input-row"><label>Pozíció</label><select id="code-position" class="full-width"><option value="center" selected>Közép</option><option value="corner">Sarok</option></select></div>
                             <div class="input-row"><label>Eltolás (pt)</label><input type="number" id="code-side-margin" value="-3" step="1" data-unit="pt" data-css-var="--code-side-margin"></div>
-                            <div class="row wraps"><label class="checkbox-container"><input type="checkbox" id="bold-codes"> Kód Vastag</label></div>
+                            <div class="input-row"><label class="checkbox-container"><input type="checkbox" id="bold-codes"> Kód Vastag</label></div>
                         </div>
                     </div>
                     <div class="token-only-msg" style="display:none; color: #888; font-size: 0.8rem; font-style: italic;">Zseton módban a szöveg automatikusan középre igazodik.</div>
@@ -286,9 +286,10 @@
                                     <span>-</span>
                                     <input type="number" id="glitch-width-max" value="30" min="0" max="100">
                                 </div>
-                                 <div class="input-row">
-                                    <label>Szög Eltolás</label>
-                                    <input type="number" id="glitch-angle-offset" value="15" min="-180" max="180">
+                                 <div class="input-row range-slider">
+                                    <label>Szög Eltolás (°)</label>
+                                    <input type="range" id="glitch-angle-offset" value="15" min="-180" max="180" step="1">
+                                    <span id="glitch-angle-value">15°</span>
                                 </div>
                             </div>
                         </div>
@@ -327,7 +328,7 @@
         </div>
         <footer class="app-footer">
             <div id="save-indicator" class="hidden">Beállítások mentve!</div>
-            <p>CardCraft v2.3.0 &copy; <span id="current-year">2026</span></p>
+            <p>CardCraft v2.4.0 &copy; <span id="current-year">2026</span></p>
         </footer>
     </aside>
 

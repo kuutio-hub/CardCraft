@@ -138,10 +138,18 @@ body {
 
 .settings-section h3 { font-size: 0.75rem; color: var(--spotify-green); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1.5px; border-left: 3px solid var(--spotify-green); padding-left: 10px; font-weight: 800; }
 .control-group { display: flex; flex-direction: column; gap: 14px; }
-#tab-layout .control-group { flex-direction: column !important; }
+#tab-layout .control-group { flex-direction: column; gap: 14px; }
+#tab-layout .input-row { flex-wrap: nowrap; }
+#tab-layout .input-row label { flex-basis: 90px; }
+#tab-layout .input-row select, #tab-layout .input-row input { flex-grow: 1; }
+#tab-layout .input-row .checkbox-container { width: 100%; }
+
 .input-row { display: flex; align-items: center; justify-content: flex-start; gap: 12px; flex-wrap: wrap; }
 .input-row label { font-size: 0.8rem; color: #bbb; flex: 1 1 80px; min-width: 80px; }
 .input-row input, .input-row select { flex: 1 1 65px; }
+.input-row.range-slider { align-items: center; }
+.input-row.range-slider span { font-size: 0.75rem; color: #888; min-width: 35px; text-align: right;}
+
 
 .layout-group { margin-bottom: 20px; }
 .group-header { font-size: 0.7rem; color: #666; text-transform: uppercase; font-weight: 700; margin-bottom: 10px; }
@@ -175,7 +183,8 @@ body {
 input[type="number"], select, input[type="text"], input[type="password"] { width: 65px; background: #161616; border: 1px solid #333; color: #fff; padding: 8px; border-radius: 5px; font-size: 0.8rem; outline: none; transition: border 0.2s; }
 input[type="number"]:focus, input[type="text"]:focus, input[type="password"]:focus { border-color: var(--spotify-green); }
 input[type="text"] { width: 100px; }
-select.full-width { width: 100%; margin-bottom: 15px; }
+input[type="range"] { flex-grow: 1 !important; accent-color: var(--spotify-green); }
+select.full-width { width: 100%; }
 .divider { border: none; border-top: 1px solid #222; margin: 15px 0; }
 
 .app-footer { text-align: center; padding: 20px; font-size: 0.7rem; color: #444; border-top: 1px solid #222; margin-top: auto; position: relative;}
