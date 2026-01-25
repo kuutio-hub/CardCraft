@@ -45,6 +45,10 @@
 }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+@keyframes slideDownAnswer {
+  from { max-height: 0; opacity: 0; transform: translateY(-10px); }
+  to { max-height: 500px; opacity: 1; transform: translateY(0); }
+}
 
 
 .fa-spin-slow { animation: spin 8s linear infinite; }
@@ -52,6 +56,12 @@
 body {
     font-family: 'Montserrat', sans-serif;
     background: #000; color: #fff; display: flex; height: 100vh; overflow: hidden; margin: 0;
+}
+
+/* DYNAMIC LABELS */
+.app-mode-music .token-label,
+.app-mode-token .music-label {
+    display: none;
 }
 
 /* LANDING PAGE */
@@ -128,6 +138,7 @@ body {
 
 .settings-section h3 { font-size: 0.75rem; color: var(--spotify-green); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1.5px; border-left: 3px solid var(--spotify-green); padding-left: 10px; font-weight: 800; }
 .control-group { display: flex; flex-direction: column; gap: 14px; }
+#tab-layout .control-group { flex-direction: column !important; }
 .input-row { display: flex; align-items: center; justify-content: flex-start; gap: 12px; flex-wrap: wrap; }
 .input-row label { font-size: 0.8rem; color: #bbb; flex: 1 1 80px; min-width: 80px; }
 .input-row input, .input-row select { flex: 1 1 65px; }
@@ -243,6 +254,12 @@ body.grid-view-active .card { background: #ffffff !important; transition: none !
 .close-btn { position: absolute; top: 10px; right: 15px; font-size: 2rem; color: #666; background: none; border: none; cursor: pointer; line-height: 1; }
 .close-btn:hover { color: #fff; }
 
+.help-accordion .help-item { border-bottom: 1px solid #333; }
+.help-accordion .help-q { padding: 18px 0; font-weight: 700; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: #e0e0e0; }
+.help-accordion .help-q::after { content: '+'; font-size: 1.5rem; transition: transform 0.3s; color: var(--spotify-green); }
+.help-accordion .help-item.active .help-q::after { transform: rotate(45deg); }
+.help-accordion .help-a { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out, padding 0.3s ease-out, opacity 0.3s; opacity: 0; padding: 0 15px; }
+.help-accordion .help-item.active .help-a { max-height: 1000px; opacity: 1; padding: 0 15px 20px 15px; animation: slideDownAnswer 0.5s ease-out; }
 
 @media print {
     body, #main-content, #print-area, .page-container, .card, .card-wrapper { background: #ffffff !important; box-shadow: none !important; filter: none !important; }
