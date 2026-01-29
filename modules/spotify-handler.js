@@ -92,7 +92,6 @@ export class SpotifyHandler {
             const recording = data.recordings[0]; 
             
             if (recording.releases && recording.releases.length > 0) {
-                // New strategy: Prioritize 'first-release-date' from release groups for accuracy.
                 const firstReleaseDates = recording.releases
                     .filter(r => r['release-group'] && r['release-group']['first-release-date'])
                     .map(r => r['release-group']['first-release-date']);
@@ -100,13 +99,11 @@ export class SpotifyHandler {
                 const uniqueFirstReleaseDates = [...new Set(firstReleaseDates)].filter(d => d);
 
                 if (uniqueFirstReleaseDates.length > 0) {
-                    uniqueFirstReleaseDates.sort(); // Sorts chronologically 'YYYY-MM-DD'
+                    uniqueFirstReleaseDates.sort();
                     return uniqueFirstReleaseDates[0].substring(0, 4);
                 }
             }
             
-            // Fallback for recordings without release-groups or first-release-dates: 
-            // Use the earliest release date. This is the old, less reliable method.
             const fallbackDates = recording.releases
                 .map(r => r.date)
                 .filter(d => d);
@@ -138,11 +135,17 @@ export class SpotifyHandler {
 
         let allTracks = [];
         let nextUrl;
+        let resourceName = 'Spotify_List';
 
         if (resource.type === 'playlist') {
             nextUrl = `https://api.spotify.com/v1/playlists/${resource.id}/tracks?limit=50`;
+            const detailsResponse = await fetch(`https://api.spotify.com/v1/playlists/${resource.id}?fields=name`, { headers: { 'Authorization': 'Bearer ' + token }});
+            if (detailsResponse.ok) resourceName = (await detailsResponse.json()).name;
+
         } else { // album
             nextUrl = `https://api.spotify.com/v1/albums/${resource.id}/tracks?limit=50`;
+            const detailsResponse = await fetch(`https://api.spotify.com/v1/albums/${resource.id}?fields=name`, { headers: { 'Authorization': 'Bearer ' + token }});
+            if (detailsResponse.ok) resourceName = (await detailsResponse.json()).name;
         }
 
         try {
@@ -164,8 +167,6 @@ export class SpotifyHandler {
 
                     let year = "????";
                     if (track.album && track.album.release_date) {
-                        // If album is a compilation, the date is unreliable. Mark for validation.
-                        // Only use date if it's from a proper album or single.
                         if (track.album.album_type === 'album' || track.album.album_type === 'single') {
                             year = track.album.release_date.substring(0, 4);
                         }
@@ -183,13 +184,7 @@ export class SpotifyHandler {
                     const title = cleanTrackTitle(track.name);
                     const qr = track.preview_url || (track.external_urls ? track.external_urls.spotify : url);
                     
-                    return { 
-                        artist, 
-                        title, 
-                        year, 
-                        qr_data: qr, 
-                        source: 'spotify'
-                    };
+                    return { artist, title, year, qr_data: qr, source: 'spotify' };
                 }).filter(Boolean);
 
                 allTracks.push(...mappedTracks);
@@ -203,14 +198,13 @@ export class SpotifyHandler {
                 const albumData = await albumResponse.json();
                 const albumYear = albumData.release_date.substring(0, 4);
                 allTracks.forEach(track => {
-                    // Only fill year if it was marked as unknown
                     if (track.year === "????") {
                         track.year = albumYear;
                     }
                 });
             }
 
-            return allTracks;
+            return { tracks: allTracks, name: resourceName };
 
         } catch (err) {
             console.error(err);

@@ -104,7 +104,7 @@ function updateModeVisibility(isExternalDataLoaded) {
     }
 }
 
-export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownload, isDataLoadedCheck, onSpotifyImport) {
+export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownload, isDataLoadedCheck, onSpotifyImport, onPrint) {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
         try {
@@ -113,7 +113,6 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
                 const el = document.getElementById(id);
                 if (el) {
                     if (el.type === 'radio' && el.name === 'app-mode') {
-                        // This logic is flawed, let's fix it.
                         if (settings['app-mode-val'] === el.value) {
                            el.checked = true;
                         }
@@ -130,13 +129,12 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
     applyAllStyles();
     updateModeVisibility(isDataLoadedCheck);
     
-    // Set initial visibility for the glitch angle slider
     const initialGlitchMode = document.getElementById('glitch-mode').value;
     document.getElementById('glitch-angle-offset-row').classList.toggle('hidden', initialGlitchMode !== 'degree');
 
 
     document.getElementById('code-position').addEventListener('change', (e) => {
-        document.getElementById('code-side-margin').value = e.target.value === 'center' ? -3 : 6;
+        document.getElementById('code-side-margin').value = e.target.value === 'center' ? 0 : 6;
         applyAllStyles();
         if (onSettingsChange) onSettingsChange(true);
     });
@@ -161,7 +159,7 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
         const modal = document.getElementById('help-modal');
         const contentContainer = document.getElementById('help-content-container');
         
-        if (contentContainer.innerHTML.trim() === '') { // Load only once
+        if (contentContainer.innerHTML.trim() === '') {
             try {
                 const response = await fetch('user_manual.html');
                 if (!response.ok) throw new Error('Network response was not ok');
@@ -197,7 +195,6 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
 
                 contentContainer.appendChild(accordionWrapper);
 
-                // Add accordion functionality
                 accordionWrapper.addEventListener('click', (e) => {
                     const question = e.target.closest('.help-q');
                     if (question) {
@@ -275,13 +272,14 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
     };
 
     document.getElementById('file-upload-button').onchange = async (e) => {
+        const file = e.target.files[0];
         try {
-            const data = await parseDataFile(e.target.files[0]);
-            if (data) onDataLoaded(data);
+            const data = await parseDataFile(file);
+            if (data) onDataLoaded(data, file.name);
         } catch(err) {
             alert(err.message);
         }
-        e.target.value = ''; // Reset file input
+        e.target.value = '';
     };
 
     document.getElementById('spotify-import-button').onclick = async () => {
@@ -293,25 +291,13 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
 
     document.getElementById('validate-years-button').onclick = () => { if(onValidate) onValidate(); };
     document.getElementById('download-button').onclick = () => { if(onDownload) onDownload(); };
+    document.getElementById('print-button').onclick = () => { if(onPrint) onPrint(); };
 
     document.getElementById('view-toggle-button').onclick = () => {
         document.body.classList.toggle('grid-view-active');
         document.body.classList.remove('is-printing');
         window.dispatchEvent(new Event('resize'));
         if (onSettingsChange) onSettingsChange(true);
-    };
-
-    document.getElementById('print-button').onclick = () => {
-        document.body.classList.add('grid-view-active');
-        document.body.classList.add('is-printing'); 
-        if (onSettingsChange) onSettingsChange(true);
-        setTimeout(() => {
-            window.print();
-            setTimeout(() => {
-                document.body.classList.remove('is-printing');
-                if (onSettingsChange) onSettingsChange(true); 
-            }, 1000);
-        }, 800);
     };
 
     document.getElementById('reset-settings').onclick = () => {

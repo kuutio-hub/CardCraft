@@ -86,11 +86,11 @@
 
     <h3>Fő Műveleti Gombok (a panel tetején)</h3>
     <ul>
-        <li><code>ADATOK BETÖLTÉSE:</code> Adatok betöltése <code>.xls, .xlsx, .csv</code> fájlból.</li>
-        <li><code>VALIDÁL:</code> A betöltött dalok évszámainak ellenőrzése és javítása.</li>
-        <li><code>LETÖLTÉS:</code> Az aktuális (validált) adatlista lementése <code>.xlsx</code> fájlba.</li>
-        <li><code>NÉZET:</code> Váltás az interaktív előnézet és a nyomtatási rácsnézet között.</li>
-        <li><code>NYOMTAT:</code> A teljes nyomtatási folyamat indítása.</li>
+        <li><i class="fa-brands fa-spotify" style="color: #1DB954;"></i> / <i class="fa-solid fa-file-circle-plus"></i>: Adatok betöltése Spotify-ról vagy fájlból.</li>
+        <li><i class="fa-solid fa-wand-magic-sparkles"></i>: A betöltött dalok évszámainak ellenőrzése és javítása.</li>
+        <li><i class="fa-solid fa-file-arrow-down"></i>: Az aktuális (validált) adatlista lementése <code>.xlsx</code> fájlba.</li>
+        <li><i class="fa-solid fa-table-cells"></i>: Váltás az interaktív előnézet és a nyomtatási rácsnézet között.</li>
+        <li><i class="fa-solid fa-print"></i>: A teljes nyomtatási folyamat indítása.</li>
     </ul>
 
     <hr>
@@ -102,22 +102,20 @@
     <p>Ez az alapértelmezett mód, amely egyedi zeneszámokból álló kártyák létrehozására szolgál. Minden kártya egyedi adatokat tartalmaz (előadó, cím, év, QR-kód).</p>
 
     <h4>Adatkezelés Zene Módban</h4>
-    <p>A zeneszámok adatait <code>.xls</code>, <code>.xlsx</code>, vagy <code>.csv</code> formátumú fájlokból töltheted be az <kbd>Adatok betöltése</kbd> ikonra kattintva.</p>
     
     <div class="note">
-        <h3>Adatok betöltése fájlból</h3>
-        <p>Lehetőséged van saját, táblázatkezelőben (pl. Excel, Google Sheets) összeállított listát is betölteni.</p>
+        <h3>Adatbetöltési lehetőségek</h3>
         <ul>
-            <li>**Fájlformátum:** <code>.xls</code>, <code>.xlsx</code>, <code>.csv</code></li>
-            <li>**Struktúra:** Az alkalmazás megpróbálja intelligensen felismerni az oszlopokat, de a legmegbízhatóbb működéshez kövesd az alábbi sorrendet. A fejléc használata nem kötelező.</li>
+            <li><strong>Spotify Import (Ajánlott):</strong> Kattints a <i class="fa-brands fa-spotify" style="color: #1DB954;"></i> ikonra, és másold be a Spotify lejátszási lista vagy album URL-jét. Az alkalmazás automatikusan beolvassa a dalokat.</li>
+            <li><strong>Fájl Import:</strong> Kattints a <i class="fa-solid fa-file-circle-plus"></i> ikonra egy <code>.xls</code>, <code>.xlsx</code>, vagy <code>.csv</code> fájl feltöltéséhez.</li>
         </ul>
-        <p><strong>Javasolt oszlopszerkezet:</strong></p>
+        <p><strong>Fájl import esetén javasolt oszlopszerkezet:</strong></p>
         <ol>
             <li><strong>A oszlop:</strong> Előadó (pl. `Queen`)</li>
             <li><strong>B oszlop:</strong> Cím (pl. `Bohemian Rhapsody`)</li>
             <li><strong>C oszlop:</strong> Év (pl. `1975`)</li>
-            <li><strong>D oszlop:</strong> QR Adat (egy URL, ami a QR kódba kerül, pl. egy Spotify link)</li>
-            <li><strong>E oszlop (opcionális):</strong> Kód 1 (egyedi azonosító, ami a kártyára kerül)</li>
+            <li><strong>D oszlop:</strong> QR Adat (egy URL, ami a QR kódba kerül)</li>
+            <li><strong>E oszlop (opcionális):</strong> Kód 1 (egyedi azonosító)</li>
             <li><strong>F oszlop (opcionális):</strong> Kód 2 (másik egyedi azonosító)</li>
         </ol>
     </div>

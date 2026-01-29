@@ -48,6 +48,7 @@ function checkAccessCode() {
 
 const App = {
     data: [],
+    sourceName: 'CardCraft',
     previewIntervalId: null,
     currentPreviewIndex: 0, 
     isExternalDataLoaded: false,
@@ -59,11 +60,12 @@ const App = {
             
             initializeUI(
                 (fullReload) => this.handleSettingsChange(fullReload),
-                (d) => this.handleDataLoaded(d),
+                (d, source) => this.handleDataLoaded(d, source),
                 () => this.validateYearsWithMusicBrainz(),
                 () => this.downloadDataAsXLS(),
-                () => this.isExternalDataLoaded, // Pass state checker to UI controller
-                (url) => this.handleSpotifyImport(url) // Pass Spotify import handler
+                () => this.isExternalDataLoaded,
+                (url) => this.handleSpotifyImport(url),
+                () => this.handlePrint()
             );
             
             const isToken = document.getElementById('mode-token')?.checked;
@@ -108,7 +110,6 @@ const App = {
             return;
         }
 
-        // Prepare data with specific headers
         const dataForSheet = this.data.map(row => ({
             'Artist': row.artist,
             'Title': row.title,
@@ -128,11 +129,10 @@ const App = {
     async handleSpotifyImport(url) {
         try {
             document.body.classList.add('loading');
-            const rawData = await spotifyHandler.fetchSpotifyData(url);
+            const { tracks, name } = await spotifyHandler.fetchSpotifyData(url);
             
-            if (rawData && rawData.length > 0) {
-                // Load data directly without auto-validation
-                this.handleDataLoaded(rawData);
+            if (tracks && tracks.length > 0) {
+                this.handleDataLoaded(tracks, name);
             } else {
                 alert("Nem találhatóak számok ebben a listában, vagy a lista üres.");
             }
@@ -198,10 +198,8 @@ const App = {
                 track.year = foundYear;
                 validatedData.push(track);
             } else if (isValidOriginalYear) {
-                // No new year found, but original was valid, so keep it.
                 validatedData.push(track);
             } else {
-                // No year found and original was not valid (e.g., '????')
                 removedCount++;
             }
             
@@ -222,9 +220,35 @@ const App = {
             modalTitle.textContent = 'Validálás befejezve';
             progressText.textContent = resultText;
         }
+        
+        this.handleDataLoaded(validatedData, this.sourceName);
+    },
+    
+    generatePrintFilename() {
+        const source = this.sourceName.replace(/[^a-z0-9]/gi, '_').substring(0, 20);
+        const paper = document.getElementById('paper-size').value;
+        const now = new Date();
+        const date = now.toLocaleDateString('hu-HU', { day: '2-digit', month: '2-digit', year: '2-digit' }).replace(/\.\s/g, '').replace(/\./g, '');
+        const time = now.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' }).replace(':', '');
+        return `${source}_${paper}_${date}_${time}`;
+    },
 
-        // Update the app's data with the new, filtered, and validated list
-        this.handleDataLoaded(validatedData);
+    handlePrint() {
+        document.body.classList.add('grid-view-active');
+        document.body.classList.add('is-printing'); 
+        this.handleSettingsChange(true);
+        
+        const originalTitle = document.title;
+        document.title = this.generatePrintFilename();
+
+        setTimeout(() => {
+            window.print();
+            setTimeout(() => {
+                document.body.classList.remove('is-printing');
+                document.title = originalTitle;
+                this.handleSettingsChange(true); 
+            }, 1000);
+        }, 800);
     },
 
     handleSettingsChange(fullReload = false) {
@@ -234,10 +258,18 @@ const App = {
         this.refreshCurrentPreview();
     },
 
-    handleDataLoaded(newData) {
-        if (!newData) return; // Allow empty data to clear the view
+    handleDataLoaded(newData, source = null) {
+        if (!newData) return;
         this.data = newData;
         this.isExternalDataLoaded = newData.length > 0;
+        
+        if (source) {
+            // Remove file extension for cleaner name
+            this.sourceName = source.includes('.') ? source.split('.').slice(0, -1).join('.') : source;
+        } else if (!this.sourceName) {
+            this.sourceName = 'CardCraft_Import';
+        }
+
         this.updateStats();
         this.renderPrintView();
         this.currentPreviewIndex = 0;
@@ -252,7 +284,6 @@ const App = {
     updateStats() {
         const isToken = document.getElementById('mode-token')?.checked;
         if (isToken) {
-             // Future: Show token stats if needed
         } else {
              updateRecordCount(this.data.length, this.isExternalDataLoaded);
         }
@@ -262,7 +293,6 @@ const App = {
         const isToken = document.getElementById('mode-token')?.checked;
         const printArea = document.getElementById('print-area');
         
-        // Clear previous content
         printArea.innerHTML = ''; 
 
         if (isToken || (this.data && this.data.length > 0)) {
@@ -287,7 +317,7 @@ const App = {
         const previewArea = document.getElementById('preview-area');
 
         if (!isToken && (!this.data || this.data.length === 0)) {
-            previewArea.innerHTML = ''; // Clear preview if no data
+            previewArea.innerHTML = '';
             return;
         }
 
@@ -307,18 +337,9 @@ const App = {
     }
 };
 
-// Initial document load setup
 document.addEventListener('DOMContentLoaded', () => {
     document.body.classList.remove('loading');
     
-    // --- TEMP: BYPASS LOGIN FOR DEV ---
-    document.getElementById('landing-page').style.display = 'none'; 
-    document.getElementById('settings-panel').classList.remove('app-hidden');
-    document.getElementById('main-content').classList.remove('app-hidden');
-    App.init();
-    // --- END TEMP BYPASS ---
-
-    /* --- ORIGINAL LOGIN LOGIC ---
     const loginButton = document.getElementById('login-button');
     const accessCodeInput = document.getElementById('access-code-input');
 
@@ -328,5 +349,4 @@ document.addEventListener('DOMContentLoaded', () => {
             checkAccessCode();
         }
     });
-    */
 });
