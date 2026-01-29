@@ -1,5 +1,5 @@
 {
-  "description": "CardCraft v2.6.0 - Re-enabled Spotify import and password protection. Added dynamic filename generation for PDF printing. Updated default visual settings for a cleaner initial layout.",
+  "description": "CardCraft v2.7.0 - Added data download functionality (XLSX) and a progress indicator for print generation. Filenames for downloads and prints are now dynamically generated.",
   "requestFramePermissions": [],
-  "name": "CardCraft v2.6.0"
+  "name": "CardCraft v2.7.0"
 }

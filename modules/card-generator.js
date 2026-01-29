@@ -256,17 +256,11 @@ export function renderAllPages(container, data) {
     if (cols < 1) return;
 
     if (isTokenMode) {
-        // TOKEN MODE GENERATION:
-        // Generate 2 full pages. 
-        // Page 1: All Front cards (with borders if enabled)
-        // Page 2: All Back cards (FORCE NO BORDERS)
-        
         const tokenConfig = {
             mainText: document.getElementById('token-main-text').value || "TOKEN",
             subText: document.getElementById('token-sub-text').value || ""
         };
 
-        // --- PAGE 1: FRONT ---
         const page1 = document.createElement('div');
         page1.className = `page-container ${paper}`;
         page1.style.gridTemplateColumns = `repeat(${cols}, ${cardSizeMm}mm)`;
@@ -274,7 +268,7 @@ export function renderAllPages(container, data) {
         for(let i=0; i<perPage; i++) {
              const wrap = document.createElement('div');
              wrap.className = 'card-wrapper';
-             const card = createTokenCard(tokenConfig, false); // isBack = false -> Front logic
+             const card = createTokenCard(tokenConfig, false);
              wrap.appendChild(card);
              page1.appendChild(wrap);
              adjustText(card.querySelector('.token-main'));
@@ -282,7 +276,6 @@ export function renderAllPages(container, data) {
         }
         container.appendChild(page1);
 
-        // --- PAGE 2: BACK (NO BORDERS ENFORCED) ---
         const page2 = document.createElement('div');
         page2.className = `page-container ${paper}`;
         page2.style.gridTemplateColumns = `repeat(${cols}, ${cardSizeMm}mm)`;
@@ -290,11 +283,8 @@ export function renderAllPages(container, data) {
         for(let i=0; i<perPage; i++) {
              const wrap = document.createElement('div');
              wrap.className = 'card-wrapper';
-             const card = createTokenCard(tokenConfig, true); // isBack = true
-             
-             // FORCE NO BORDER FOR BACK TOKEN PAGE
+             const card = createTokenCard(tokenConfig, true);
              card.style.borderColor = 'transparent';
-             
              wrap.appendChild(card);
              page2.appendChild(wrap);
              adjustText(card.querySelector('.token-main'));
@@ -303,7 +293,6 @@ export function renderAllPages(container, data) {
         container.appendChild(page2);
 
     } else {
-        // MUSIC MODE GENERATION (Existing Logic)
         let processData = data;
         if (!document.body.classList.contains('is-printing')) {
             processData = data.slice(0, perPage); 
@@ -312,7 +301,6 @@ export function renderAllPages(container, data) {
         for (let i = 0; i < processData.length; i += perPage) {
             const chunk = processData.slice(i, i + perPage);
             
-            // FRONT
             const frontPage = document.createElement('div');
             frontPage.className = `page-container ${paper}`;
             frontPage.style.gridTemplateColumns = `repeat(${cols}, ${cardSizeMm}mm)`;
@@ -328,7 +316,6 @@ export function renderAllPages(container, data) {
             });
             container.appendChild(frontPage);
 
-            // BACK
             const backPage = document.createElement('div');
             backPage.className = `page-container ${paper}`;
             backPage.style.gridTemplateColumns = `repeat(${cols}, ${cardSizeMm}mm)`;
@@ -345,4 +332,114 @@ export function renderAllPages(container, data) {
             container.appendChild(backPage);
         }
     }
+}
+
+export async function renderAllPagesWithProgress(container, data, onProgress) {
+    if (!container) return;
+    const isTokenMode = document.getElementById('mode-token')?.checked;
+    
+    if (!isTokenMode && (!data || data.length === 0)) return;
+
+    container.innerHTML = '';
+    const paper = document.getElementById('paper-size').value;
+    const cardSizeMm = parseFloat(document.getElementById('card-size').value) || 46;
+    
+    const pW = paper === 'A3' ? 277 : 190; 
+    const pH = paper === 'A3' ? 400 : 277; 
+    
+    const cols = Math.floor(pW / cardSizeMm);
+    const rows = Math.floor(pH / cardSizeMm);
+    const perPage = cols * rows;
+
+    if (cols < 1) return;
+
+    if (isTokenMode) {
+        const totalItems = perPage;
+        let processedItems = 0;
+        if (onProgress) onProgress(0, totalItems);
+
+        const tokenConfig = {
+            mainText: document.getElementById('token-main-text').value || "TOKEN",
+            subText: document.getElementById('token-sub-text').value || ""
+        };
+
+        const page1 = document.createElement('div');
+        page1.className = `page-container ${paper}`;
+        page1.style.gridTemplateColumns = `repeat(${cols}, ${cardSizeMm}mm)`;
+        
+        for(let i=0; i<perPage; i++) {
+             const wrap = document.createElement('div');
+             wrap.className = 'card-wrapper';
+             const card = createTokenCard(tokenConfig, false);
+             wrap.appendChild(card);
+             page1.appendChild(wrap);
+             adjustText(card.querySelector('.token-main'));
+             adjustText(card.querySelector('.token-sub'));
+             processedItems++;
+             if (onProgress) onProgress(processedItems, totalItems);
+             if (i % 10 === 0) await new Promise(r => setTimeout(r, 0));
+        }
+        container.appendChild(page1);
+        await new Promise(r => setTimeout(r, 0));
+
+        const page2 = document.createElement('div');
+        page2.className = `page-container ${paper}`;
+        page2.style.gridTemplateColumns = `repeat(${cols}, ${cardSizeMm}mm)`;
+        
+        for(let i=0; i<perPage; i++) {
+             const wrap = document.createElement('div');
+             wrap.className = 'card-wrapper';
+             const card = createTokenCard(tokenConfig, true);
+             card.style.borderColor = 'transparent';
+             wrap.appendChild(card);
+             page2.appendChild(wrap);
+             adjustText(card.querySelector('.token-main'));
+             adjustText(card.querySelector('.token-sub'));
+        }
+        container.appendChild(page2);
+
+    } else {
+        const totalItems = data.length;
+        let processedItems = 0;
+        if (onProgress) onProgress(0, totalItems);
+
+        for (let i = 0; i < data.length; i += perPage) {
+            const chunk = data.slice(i, i + perPage);
+            
+            const frontPage = document.createElement('div');
+            frontPage.className = `page-container ${paper}`;
+            frontPage.style.gridTemplateColumns = `repeat(${cols}, ${cardSizeMm}mm)`;
+            
+            for (const song of chunk) {
+                const wrap = document.createElement('div');
+                wrap.className = 'card-wrapper';
+                const card = createCard(song);
+                wrap.appendChild(card);
+                frontPage.appendChild(wrap);
+                adjustText(card.querySelector('.artist'));
+                adjustText(card.querySelector('.title'), true);
+                processedItems++;
+                if (onProgress) onProgress(processedItems, totalItems);
+            }
+            container.appendChild(frontPage);
+            await new Promise(r => setTimeout(r, 0));
+
+            const backPage = document.createElement('div');
+            backPage.className = `page-container ${paper}`;
+            backPage.style.gridTemplateColumns = `repeat(${cols}, ${cardSizeMm}mm)`;
+            
+            for (let r = 0; r < chunk.length; r += cols) {
+                const rowSongs = chunk.slice(r, r + cols);
+                rowSongs.reverse().forEach(song => {
+                    const wrap = document.createElement('div');
+                    wrap.className = 'card-wrapper';
+                    wrap.appendChild(createCard(song, true));
+                    backPage.appendChild(wrap);
+                });
+            }
+            container.appendChild(backPage);
+            await new Promise(r => setTimeout(r, 0));
+        }
+    }
+    if (onProgress) onProgress(isTokenMode ? perPage : data.length, isTokenMode ? perPage : data.length);
 }

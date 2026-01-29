@@ -27,7 +27,7 @@
             <button id="login-button">Belépés</button>
             <p id="error-message" class="hidden">Helytelen kód.</p>
             <footer class="landing-footer">
-                <p>v2.6.0 &copy; <span id="landing-year">2026</span></p>
+                <p>v2.7.0 &copy; <span id="landing-year">2026</span></p>
             </footer>
         </div>
     </div>
@@ -335,7 +335,7 @@
         </div>
         <footer class="app-footer">
             <div id="save-indicator" class="hidden">Beállítások mentve!</div>
-            <p>CardCraft v2.6.0 &copy; <span id="current-year">2026</span></p>
+            <p>CardCraft v2.7.0 &copy; <span id="current-year">2026</span></p>
         </footer>
     </aside>
 
@@ -356,6 +356,17 @@
                  <button id="cancel-validation-button" class="action-btn">Megszakítás</button>
                  <button id="close-modal-button" class="action-btn print-btn hidden">Bezárás</button>
             </div>
+        </div>
+    </div>
+    
+    <!-- Print Progress Modal -->
+    <div id="print-progress-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3>Nyomtatás előkészítése...</h3>
+            <div class="progress-bar">
+                <div id="print-progress-bar-fill"></div>
+            </div>
+            <p id="print-progress-text">Kártyák generálása...</p>
         </div>
     </div>
 

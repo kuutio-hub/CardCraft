@@ -1,6 +1,6 @@
 import { initializeUI, updateRecordCount, _uiFramework } from './modules/ui-controller.js';
 import { loadSampleData } from './modules/data-handler.js';
-import { renderAllPages, renderPreviewPair, _renderConfig } from './modules/card-generator.js';
+import { renderAllPages, renderPreviewPair, _renderConfig, renderAllPagesWithProgress } from './modules/card-generator.js';
 import { SpotifyHandler } from './modules/spotify-handler.js';
 
 // Suffix for unique instance identification.
@@ -104,6 +104,14 @@ const App = {
         }
     },
     
+    generateDataFilename() {
+        const source = this.sourceName.replace(/[^a-z0-9]/gi, '_').substring(0, 20);
+        const now = new Date();
+        const date = now.toLocaleDateString('hu-HU', { day: '2-digit', month: '2-digit', year: '2-digit' }).replace(/\.\s/g, '').replace(/\./g, '');
+        const time = now.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' }).replace(':', '');
+        return `${source}_data_${date}_${time}.xlsx`;
+    },
+
     downloadDataAsXLS() {
         if (!this.data || this.data.length === 0) {
             alert("Nincs adat a letöltéshez.");
@@ -123,7 +131,7 @@ const App = {
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "CardCraft Data");
 
-        XLSX.writeFile(workbook, "cardcraft_data.xlsx");
+        XLSX.writeFile(workbook, this.generateDataFilename());
     },
     
     async handleSpotifyImport(url) {
@@ -233,22 +241,47 @@ const App = {
         return `${source}_${paper}_${date}_${time}`;
     },
 
-    handlePrint() {
+    async handlePrint() {
+        const modal = document.getElementById('print-progress-modal');
+        const progressFill = document.getElementById('print-progress-bar-fill');
+        const progressText = document.getElementById('print-progress-text');
+        
+        modal.classList.remove('hidden');
+        progressFill.style.width = '0%';
+        progressText.textContent = 'Kártyák generálása...';
+
         document.body.classList.add('grid-view-active');
         document.body.classList.add('is-printing'); 
-        this.handleSettingsChange(true);
         
-        const originalTitle = document.title;
-        document.title = this.generatePrintFilename();
+        const printArea = document.getElementById('print-area');
+        printArea.innerHTML = ''; 
 
+        const progressCallback = (current, total) => {
+            const percent = total > 0 ? (current / total) * 100 : 0;
+            progressFill.style.width = `${percent}%`;
+            progressText.textContent = `Kártyák generálása: ${current} / ${total}`;
+        };
+
+        const isToken = document.getElementById('mode-token')?.checked;
+        if (isToken || (this.data && this.data.length > 0)) {
+            await renderAllPagesWithProgress(printArea, this.data, progressCallback);
+        }
+        
         setTimeout(() => {
-            window.print();
+            modal.classList.add('hidden');
+            
+            const originalTitle = document.title;
+            document.title = this.generatePrintFilename();
+
             setTimeout(() => {
-                document.body.classList.remove('is-printing');
-                document.title = originalTitle;
-                this.handleSettingsChange(true); 
-            }, 1000);
-        }, 800);
+                window.print();
+                setTimeout(() => {
+                    document.body.classList.remove('is-printing');
+                    document.title = originalTitle;
+                    this.handleSettingsChange(true);
+                }, 1000);
+            }, 200);
+        }, 500);
     },
 
     handleSettingsChange(fullReload = false) {
@@ -264,7 +297,6 @@ const App = {
         this.isExternalDataLoaded = newData.length > 0;
         
         if (source) {
-            // Remove file extension for cleaner name
             this.sourceName = source.includes('.') ? source.split('.').slice(0, -1).join('.') : source;
         } else if (!this.sourceName) {
             this.sourceName = 'CardCraft_Import';
@@ -284,6 +316,7 @@ const App = {
     updateStats() {
         const isToken = document.getElementById('mode-token')?.checked;
         if (isToken) {
+            updateRecordCount(0, false);
         } else {
              updateRecordCount(this.data.length, this.isExternalDataLoaded);
         }
