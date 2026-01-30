@@ -1,5 +1,5 @@
 {
-  "description": "CardCraft v0.3.6 BÉTA - Replaced non-persistent error notifications with modal alert dialogs to ensure critical error messages are not missed by the user.",
+  "description": "CardCraft v0.3.7 BÉTA - Fixed a critical login bug by simplifying the access code verification logic, ensuring the login button is responsive and reliable. The access code is now hardcoded as requested.",
   "requestFramePermissions": [],
-  "name": "CardCraft v0.3.6 BÉTA"
+  "name": "CardCraft v0.3.7 BÉTA"
 }
