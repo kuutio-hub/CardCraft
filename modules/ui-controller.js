@@ -4,8 +4,6 @@ const _uiFramework = { name: 'SGl0c3' };
 
 const STORAGE_KEY = 'cardcraft_v100_settings';
 const API_STORAGE = {
-    SPOTIFY_ID: 'cardcraft_spotify_id',
-    SPOTIFY_SECRET: 'cardcraft_spotify_secret',
     DISCOGS_KEY: 'cardcraft_discogs_key',
     DISCOGS_SECRET: 'cardcraft_discogs_secret'
 };
@@ -111,8 +109,6 @@ function updateModeVisibility(isExternalDataLoaded) {
 }
 
 function updateApiStatus() {
-    const spotifyId = localStorage.getItem(API_STORAGE.SPOTIFY_ID);
-    const spotifySecret = localStorage.getItem(API_STORAGE.SPOTIFY_SECRET);
     const discogsKey = localStorage.getItem(API_STORAGE.DISCOGS_KEY);
     const discogsSecret = localStorage.getItem(API_STORAGE.DISCOGS_SECRET);
 
@@ -120,39 +116,25 @@ function updateApiStatus() {
     const validateBtn = document.getElementById('validate-years-button');
     const exportArea = document.getElementById('export-keys-area');
     
-    const spotifyOk = spotifyId && spotifySecret;
     const discogsOk = discogsKey && discogsSecret;
     
     validateBtn.disabled = !discogsOk;
     validateBtn.title = discogsOk ? 'Évszámok ellenőrzése (Discogs)' : 'Discogs kulcsok nincsenek beállítva!';
 
-    if (spotifyOk) {
-        document.getElementById('spotify-client-id').value = spotifyId;
-        document.getElementById('spotify-client-secret').value = spotifySecret;
-    }
-     if (discogsOk) {
+    if (discogsOk) {
         document.getElementById('discogs-key').value = discogsKey;
         document.getElementById('discogs-secret').value = discogsSecret;
     }
 
-    let statusMessages = [];
-    if (spotifyOk) statusMessages.push('Spotify OK');
-    if (discogsOk) statusMessages.push('Discogs OK');
-
-    if (statusMessages.length === 2) {
-        statusEl.textContent = 'Státusz: Minden API kulcs mentve.';
-        statusEl.className = 'api-status-ok';
-    } else if (statusMessages.length > 0) {
-        statusEl.textContent = `Státusz: ${statusMessages.join(', ')}.`;
+    if (discogsOk) {
+        statusEl.textContent = 'Státusz: Discogs API kulcsok mentve.';
         statusEl.className = 'api-status-ok';
     } else {
-        statusEl.textContent = 'Státusz: Nincsenek kulcsok beállítva.';
+        statusEl.textContent = 'Státusz: Discogs kulcsok hiányoznak.';
         statusEl.className = 'api-status-error';
     }
     
     const exportableKeys = {
-        sId: spotifyId,
-        sSec: spotifySecret,
         dKey: discogsKey,
         dSec: discogsSecret
     };
@@ -169,7 +151,7 @@ function updateApiStatus() {
 }
 
 
-export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownload, isDataLoadedCheck, onPrint) {
+export function initializeUI(onSettingsChange, onDataLoaded, onSpotifyImport, onValidate, onDownload, isDataLoadedCheck, onPrint) {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
         try {
@@ -342,18 +324,8 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
     };
     
     document.getElementById('save-api-keys').onclick = () => {
-        const sId = document.getElementById('spotify-client-id').value.trim();
-        const sSec = document.getElementById('spotify-client-secret').value.trim();
         const dKey = document.getElementById('discogs-key').value.trim();
         const dSec = document.getElementById('discogs-secret').value.trim();
-
-        if (sId && sSec) {
-            localStorage.setItem(API_STORAGE.SPOTIFY_ID, sId);
-            localStorage.setItem(API_STORAGE.SPOTIFY_SECRET, sSec);
-        } else {
-            localStorage.removeItem(API_STORAGE.SPOTIFY_ID);
-            localStorage.removeItem(API_STORAGE.SPOTIFY_SECRET);
-        }
         
         if (dKey && dSec) {
             localStorage.setItem(API_STORAGE.DISCOGS_KEY, dKey);
@@ -384,11 +356,7 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
         try {
             const decoded = atob(importKey);
             const keys = JSON.parse(decoded);
-
-            if (keys.sId && keys.sSec) {
-                localStorage.setItem(API_STORAGE.SPOTIFY_ID, keys.sId);
-                localStorage.setItem(API_STORAGE.SPOTIFY_SECRET, keys.sSec);
-            }
+            
             if (keys.dKey && keys.dSec) {
                 localStorage.setItem(API_STORAGE.DISCOGS_KEY, keys.dKey);
                 localStorage.setItem(API_STORAGE.DISCOGS_SECRET, keys.dSec);
@@ -428,6 +396,7 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
         e.target.value = '';
     };
 
+    document.getElementById('spotify-import-button').onclick = () => { if(onSpotifyImport) onSpotifyImport(); };
     document.getElementById('validate-years-button').onclick = () => { if(onValidate) onValidate(); };
     document.getElementById('download-button').onclick = () => { if(onDownload) onDownload(); };
     document.getElementById('print-button').onclick = () => { if(onPrint) onPrint(); };

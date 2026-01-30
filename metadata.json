@@ -1,5 +1,5 @@
 {
-  "description": "CardCraft v0.4.1 BÉTA - Removed Spotify and YouTube import functionality to simplify data input. Data loading is now exclusively handled via local file upload. Discogs validation for loaded data remains.",
+  "description": "CardCraft v0.5.0 BÉTA - Re-introduced Spotify import functionality with a new, simplified handler using hardcoded API credentials as requested. The UI has been updated with a dedicated Spotify import button, and the API Keys tab is now streamlined for Discogs keys only.",
   "requestFramePermissions": [],
-  "name": "CardCraft v0.4.1 BÉTA"
+  "name": "CardCraft v0.5.0 BÉTA"
 }

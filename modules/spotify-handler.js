@@ -1,8 +1,24 @@
 // modules/spotify-handler.js
 
+// ===================================================================================
+// == FONTOS: IDE ÍRD BE A SAJÁT SPOTIFY API KULCSAIDAT A '...' HELYÉRE! ==
+// ===================================================================================
+// A kulcsokat a Spotify Developer Dashboard-on tudod létrehozni:
+// https://developer.spotify.com/dashboard/
+//
+// 1. Hozz létre egy új alkalmazást.
+// 2. Másold ki a "Client ID"-t és a "Client Secret"-et.
+// 3. Illeszd be őket az alábbi két sorba.
+//
+// Később ezt a megoldást egy biztonságosabbra cseréljük.
+// ===================================================================================
+const SPOTIFY_CLIENT_ID = 'HELYETTESITS_BE_A_CLIENT_ID_VEL';
+const SPOTIFY_CLIENT_SECRET = 'HELYETTESITS_BE_A_CLIENT_SECRET_TEL';
+// ===================================================================================
+
+
 /**
- * Extracts the Spotify ID from a URL, mimicking the provided Python script's logic.
- * This is more robust against URLs with query parameters.
+ * Extracts the Spotify ID from a URL, robustly handling query parameters.
  * @param {string} url - The Spotify URL for a playlist or album.
  * @returns {{type: string, id: string}|null}
  */
@@ -18,15 +34,14 @@ function getSpotifyId(url) {
             return { type: 'album', id };
         }
     } catch (e) {
-        console.error("Could not parse Spotify URL:", url, e);
+        console.error("Nem sikerült feldolgozni a Spotify URL-t:", url, e);
         return null;
     }
     return null;
 }
 
-
 /**
- * Cleans up track titles by removing common extra information like (Remastered), etc.
+ * Cleans up track titles by removing common extra information like (Remastered).
  * @param {string} name - The original track title.
  * @returns {string} The cleaned title.
  */
@@ -49,21 +64,18 @@ export class SpotifyHandler {
     }
 
     /**
-     * Retrieves a valid access token, requesting a new one if the old one is missing or expired.
+     * Retrieves a valid access token, requesting a new one if needed.
      */
     async getAccessToken() {
         if (this.accessToken && Date.now() < this.tokenExpiryTime) {
             return this.accessToken;
         }
         
-        const clientId = localStorage.getItem('cardcraft_spotify_id');
-        const clientSecret = localStorage.getItem('cardcraft_spotify_secret');
-
-        if (!clientId || !clientSecret) {
-            throw new Error('Nincsenek beállítva a Spotify API kulcsok. Kérlek, add meg őket a Beállítások > API Kulcsok fülön.');
+        if (SPOTIFY_CLIENT_ID === 'HELYETTESITS_BE_A_CLIENT_ID_VEL' || SPOTIFY_CLIENT_SECRET === 'HELYETTESITS_BE_A_CLIENT_SECRET_TEL') {
+            throw new Error('Hiányzó Spotify API kulcsok! Kérlek, add meg őket a modules/spotify-handler.js fájlban.');
         }
 
-        const authHeader = btoa(`${clientId}:${clientSecret}`);
+        const authHeader = btoa(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`);
 
         try {
             const response = await fetch('https://accounts.spotify.com/api/token', {
@@ -86,36 +98,27 @@ export class SpotifyHandler {
             return this.accessToken;
 
         } catch (error) {
-            console.error("Spotify Auth Error:", error);
+            console.error("Spotify Auth Hiba:", error);
             throw new Error(`Hálózati hiba a Spotify hitelesítés során. ${error.message}`);
         }
     }
 
     /**
-     * Fetches all items from a paginated Spotify API endpoint, with a retry mechanism for 404 errors.
+     * Fetches all items from a paginated Spotify API endpoint.
      * @param {string} initialUrl - The starting URL for the API endpoint.
      * @param {string} token - The Spotify access token.
-     * @param {number} retries - The number of times to retry on a 404 error.
-     * @returns {Promise<Array>} A promise that resolves to an array of all items.
+     * @param {function} progressCallback - Callback for progress updates.
+     * @returns {Promise<{items: Array, total: number}>} A promise resolving to all items and total count.
      */
-    async fetchAllPaginatedData(initialUrl, token, retries = 3) {
+    async fetchAllPaginatedData(initialUrl, token, progressCallback) {
         let allItems = [];
         let nextUrl = initialUrl;
+        let total = null;
 
         while (nextUrl) {
-            let response;
-            for (let attempt = 1; attempt <= retries; attempt++) {
-                response = await fetch(nextUrl, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                
-                if (response.status !== 404 || attempt === retries) {
-                    break;
-                }
-                
-                console.warn(`Spotify API 404-es hibát adott. Újrapróbálkozás... (${attempt}/${retries})`);
-                await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds before retrying
-            }
+            const response = await fetch(nextUrl, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
 
             if (!response.ok) {
                 const errorBody = await response.json().catch(() => ({ error: { message: "Ismeretlen hiba." } }));
@@ -127,20 +130,27 @@ export class SpotifyHandler {
             }
 
             const data = await response.json();
+            if (total === null) {
+                total = data.total;
+            }
             const items = data.items || [];
             allItems = allItems.concat(items);
             nextUrl = data.next;
+            if (progressCallback) {
+                progressCallback(allItems.length, total);
+            }
         }
-        return allItems;
+        return { items: allItems, total };
     }
 
 
     /**
-     * Main function to fetch and process data from a Spotify playlist or album URL.
+     * Main function to fetch and process data from a Spotify URL.
      * @param {string} url - The URL of the Spotify resource.
+     * @param {function} progressCallback - Callback for progress updates.
      * @returns {Promise<{tracks: Array, name: string}>}
      */
-    async fetchSpotifyData(url) {
+    async fetchSpotifyData(url, progressCallback) {
         const resource = getSpotifyId(url);
         if (!resource) {
             throw new Error("Érvénytelen Spotify URL. Kérlek, 'playlist' vagy 'album' linket használj.");
@@ -148,36 +158,29 @@ export class SpotifyHandler {
 
         const token = await this.getAccessToken();
         let resourceName = 'Spotify Lista';
-        let allItems = [];
 
         try {
             let tracksUrl, detailsUrl;
             if (resource.type === 'playlist') {
                 detailsUrl = `https://api.spotify.com/v1/playlists/${resource.id}?fields=name`;
-                tracksUrl = `https://api.spotify.com/v1/playlists/${resource.id}/tracks?limit=50`;
+                tracksUrl = `https://api.spotify.com/v1/playlists/${resource.id}/tracks?limit=50&fields=items(track(name,artists(name),album(release_date),external_urls,preview_url)),next,total`;
             } else { // album
                 detailsUrl = `https://api.spotify.com/v1/albums/${resource.id}?fields=name`;
-                tracksUrl = `https://api.spotify.com/v1/albums/${resource.id}/tracks?limit=50`;
+                tracksUrl = `https://api.spotify.com/v1/albums/${resource.id}/tracks?limit=50&fields=items(name,artists(name),external_urls,preview_url),next,total`;
             }
             
-            // Fetch resource name
             const detailsResponse = await fetch(detailsUrl, { headers: { 'Authorization': 'Bearer ' + token }});
             if (detailsResponse.ok) {
                  resourceName = (await detailsResponse.json()).name;
-            } else {
-                 console.warn("Could not fetch playlist/album name.");
             }
             
-            // Fetch all tracks
-            allItems = await this.fetchAllPaginatedData(tracksUrl, token);
+            const { items: allItems } = await this.fetchAllPaginatedData(tracksUrl, token, progressCallback);
             
             const tracks = allItems.map(item => {
                 const track = (resource.type === 'playlist') ? item.track : item;
                 if (!track || !track.artists || track.artists.length === 0) return null;
 
-                const album = (resource.type === 'playlist') ? item.track?.album : null;
-                // For albums, the track object doesn't contain the album details, so we can't get the year this way.
-                // We'll rely on Discogs for year validation anyway.
+                const album = (resource.type === 'playlist') ? track.album : null;
                 const year = album?.release_date ? album.release_date.substring(0, 4) : '????';
                 
                 const artist = track.artists.map(a => a.name).join(' & ');
@@ -190,8 +193,7 @@ export class SpotifyHandler {
             return { tracks, name: resourceName };
 
         } catch (error) {
-            console.error("Spotify Fetch Error:", error);
-            // Re-throw the specific, user-friendly error
+            console.error("Spotify Fetch Hiba:", error);
             throw error;
         }
     }

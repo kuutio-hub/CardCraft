@@ -2,6 +2,7 @@ import { initializeUI, updateRecordCount } from './modules/ui-controller.js';
 import { loadSampleData } from './modules/data-handler.js';
 import { renderAllPages, renderPreviewPair, renderAllPagesWithProgress } from './modules/card-generator.js';
 import { DiscogsHandler } from './modules/discogs-handler.js';
+import { SpotifyHandler } from './modules/spotify-handler.js';
 import { showNotification } from './modules/notifier.js';
 
 
@@ -43,14 +44,17 @@ const App = {
     currentPreviewIndex: 0, 
     isExternalDataLoaded: false,
     validationCancelled: false,
+    spotifyHandler: null,
 
     async init() {
         try {
             this.data = await loadSampleData();
+            this.spotifyHandler = new SpotifyHandler();
             
             initializeUI(
                 (fullReload) => this.handleSettingsChange(fullReload),
                 (d, source) => this.handleDataLoaded(d, source),
+                () => this.handleSpotifyImport(),
                 () => this.validateYearsWithDiscogs(),
                 () => this.downloadDataAsXLS(),
                 () => this.isExternalDataLoaded,
@@ -91,6 +95,45 @@ const App = {
         } catch (error) {
             console.error("Init error:", error);
             alert(`Inicializálási Hiba:\n\n${error.message}`);
+        }
+    },
+
+    async handleSpotifyImport() {
+        const url = prompt("Kérlek, illeszd be a Spotify lejátszási lista vagy album linkjét:");
+        if (!url) return;
+
+        showNotification('Spotify Import', 'Lejátszási lista feldolgozása...', 'info');
+        const modal = document.getElementById('progress-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const progressFill = document.getElementById('progress-bar-fill');
+        const progressText = document.getElementById('progress-text');
+        const progressBar = modal.querySelector('.progress-bar');
+        const cancelBtn = document.getElementById('cancel-validation-button');
+        const closeBtn = document.getElementById('close-modal-button');
+        
+        modalTitle.textContent = 'Spotify lista letöltése...';
+        progressText.textContent = 'Kapcsolódás...';
+        progressFill.style.width = '0%';
+        progressBar.classList.remove('hidden');
+        cancelBtn.classList.add('hidden');
+        closeBtn.classList.add('hidden');
+        modal.classList.remove('hidden');
+
+        try {
+            const progressCallback = (fetched, total) => {
+                const percent = total > 0 ? (fetched / total) * 100 : 0;
+                progressFill.style.width = `${percent}%`;
+                progressText.textContent = `Dalok letöltése: ${fetched} / ${total || 'ismeretlen'}`;
+            };
+
+            const result = await this.spotifyHandler.fetchSpotifyData(url, progressCallback);
+            this.handleDataLoaded(result.tracks, result.name);
+            showNotification('Spotify Import', `${result.tracks.length} dal sikeresen betöltve!`, 'success');
+        } catch (error) {
+            console.error(error);
+            showNotification('Spotify Hiba', error.message, 'error');
+        } finally {
+            modal.classList.add('hidden');
         }
     },
     

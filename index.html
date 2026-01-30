@@ -27,7 +27,7 @@
             <button id="login-button">Belépés</button>
             <p id="error-message" class="hidden">Helytelen kód.</p>
             <footer class="landing-footer">
-                <p>v0.4.1 BÉTA &copy; <span id="landing-year">2026</span></p>
+                <p>v0.5.0 BÉTA &copy; <span id="landing-year">2026</span></p>
             </footer>
         </div>
     </div>
@@ -63,6 +63,7 @@
                  <div class="action-group">
                     <h4 class="action-group-title">Adatkezelés</h4>
                     <div id="music-actions" class="button-row">
+                        <button id="spotify-import-button" class="action-btn" title="Spotify Lista Import"><i class="fa-brands fa-spotify"></i></button>
                         <label for="file-upload-button" class="action-btn upload-btn" title="Adatok betöltése"><i class="fa-solid fa-file-circle-plus"></i></label>
                         <input type="file" id="file-upload-button" accept=".xls, .xlsx, .csv" style="display: none;">
                         <button id="validate-years-button" class="action-btn hidden" title="Évszámok ellenőrzése (Discogs)" disabled><i class="fa-solid fa-wand-magic-sparkles"></i></button>
@@ -328,25 +329,6 @@
                     <h3>API Kulcsok</h3>
                     <div class="control-group">
                         <div class="api-group">
-                            <h4>Spotify</h4>
-                            <p class="help-text">Add meg a saját Spotify Developer kulcsaidat.</p>
-                            <div class="input-row">
-                                <label for="spotify-client-id">Client ID</label>
-                                <div class="password-wrapper">
-                                    <input type="password" id="spotify-client-id" class="full-width" placeholder="Spotify Client ID">
-                                    <span class="toggle-password no-select"><i class="fa-solid fa-eye"></i></span>
-                                </div>
-                            </div>
-                            <div class="input-row">
-                                <label for="spotify-client-secret">Client Secret</label>
-                                <div class="password-wrapper">
-                                    <input type="password" id="spotify-client-secret" class="full-width" placeholder="Spotify Client Secret">
-                                    <span class="toggle-password no-select"><i class="fa-solid fa-eye"></i></span>
-                                </div>
-                            </div>
-                        </div>
-                        <hr class="divider">
-                        <div class="api-group">
                             <h4>Discogs</h4>
                             <p class="help-text">Add meg a Discogs API kulcsaidat az évszámok validálásához.</p>
                             <div class="input-row">
@@ -404,7 +386,7 @@
         </div>
         <footer class="app-footer">
             <div id="save-indicator" class="hidden">Beállítások mentve!</div>
-            <p>CardCraft v0.4.1 BÉTA &copy; <span id="current-year">2026</span></p>
+            <p>CardCraft v0.5.0 BÉTA &copy; <span id="current-year">2026</span></p>
         </footer>
     </aside>
 
