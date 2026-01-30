@@ -49,6 +49,10 @@
   from { max-height: 0; opacity: 0; transform: translateY(-10px); }
   to { max-height: 500px; opacity: 1; transform: translateY(0); }
 }
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
 
 
 .fa-spin-slow { animation: spin 8s linear infinite; }
@@ -283,6 +287,46 @@ body.grid-view-active .card { background: #ffffff !important; transition: none !
 .help-accordion .help-item.active .help-q::after { transform: rotate(45deg); }
 .help-accordion .help-a { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out, padding 0.3s ease-out, opacity 0.3s; opacity: 0; padding: 0 15px; }
 .help-accordion .help-item.active .help-a { max-height: 1000px; opacity: 1; padding: 0 15px 20px 15px; animation: slideDownAnswer 0.5s ease-out; }
+
+/* NOTIFICATION SYSTEM */
+#notification-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 400px;
+}
+.notification {
+    background-color: #2a2a2a;
+    color: #fff;
+    padding: 15px 20px;
+    border-radius: 6px;
+    border-left: 5px solid var(--spotify-green);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    animation: slideIn 0.3s ease-out, fadeOut 0.5s ease-in forwards;
+    opacity: 0;
+    animation-delay: 0s, 9.5s;
+    cursor: pointer;
+}
+.notification.error {
+    border-left-color: #ff4d4d;
+}
+.notification h4 {
+    margin: 0 0 5px 0;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+.notification pre {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #ccc;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
 
 @media print {
     body, #main-content, #print-area, .page-container, .card, .card-wrapper { background: #ffffff !important; box-shadow: none !important; filter: none !important; }

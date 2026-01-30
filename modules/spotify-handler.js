@@ -60,8 +60,9 @@ export class SpotifyHandler {
         });
 
         if (!response.ok) {
-            console.error("Spotify Auth Error:", response.status, await response.text());
-            throw new Error('Nem sikerült hitelesíteni a Spotify-jal. Ellenőrizd a megadott API kulcsokat.');
+            const errorBody = await response.text();
+            console.error("Spotify Auth Error:", response.status, errorBody);
+            throw new Error(`Nem sikerült hitelesíteni a Spotify-jal. Ellenőrizd a megadott API kulcsokat.\n\nHiba (${response.status}): ${errorBody}`);
         }
 
         const data = await response.json();
@@ -157,7 +158,9 @@ export class SpotifyHandler {
                 });
 
                 if (!response.ok) {
-                    throw new Error("Spotify API hiba: " + response.statusText);
+                    const errorBody = await response.text();
+                    console.error("Spotify API Error:", response.status, errorBody);
+                    throw new Error(`Hiba a Spotify adatok lekérése közben.\n\nHiba (${response.status}): ${errorBody}`);
                 }
 
                 const data = await response.json();

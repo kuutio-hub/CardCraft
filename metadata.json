@@ -1,5 +1,5 @@
 {
-  "description": "CardCraft v2.7.0 - Added data download functionality (XLSX) and a progress indicator for print generation. Filenames for downloads and prints are now dynamically generated.",
+  "description": "CardCraft v0.2.1 BÉTA - Added a detailed notification system to display full API error messages for easier debugging.",
   "requestFramePermissions": [],
-  "name": "CardCraft v2.7.0"
+  "name": "CardCraft v0.2.1 BÉTA"
 }

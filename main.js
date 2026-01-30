@@ -2,6 +2,7 @@ import { initializeUI, updateRecordCount, _uiFramework } from './modules/ui-cont
 import { loadSampleData } from './modules/data-handler.js';
 import { renderAllPages, renderPreviewPair, _renderConfig, renderAllPagesWithProgress } from './modules/card-generator.js';
 import { SpotifyHandler } from './modules/spotify-handler.js';
+import { showNotification } from './modules/notifier.js';
 
 // Suffix for unique instance identification.
 const _appInstance = { id: 'MQ==' };
@@ -101,6 +102,7 @@ const App = {
             }
         } catch (error) {
             console.error("Init error:", error);
+            showNotification('Inicializálási Hiba', error.message, 'error');
         }
     },
     
@@ -114,7 +116,7 @@ const App = {
 
     downloadDataAsXLS() {
         if (!this.data || this.data.length === 0) {
-            alert("Nincs adat a letöltéshez.");
+            showNotification('Hiba', 'Nincs adat a letöltéshez.', 'error');
             return;
         }
 
@@ -135,19 +137,32 @@ const App = {
     },
     
     async handleSpotifyImport(url) {
+        const modal = document.getElementById('progress-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const progressText = document.getElementById('progress-text');
+        const progressBar = modal.querySelector('.progress-bar');
+        const cancelBtn = document.getElementById('cancel-validation-button');
+        const closeBtn = document.getElementById('close-modal-button');
         try {
-            document.body.classList.add('loading');
+            modalTitle.textContent = 'Spotify adatok betöltése...';
+            progressText.textContent = 'Kapcsolódás a Spotify API-hoz...';
+            progressBar.classList.add('hidden');
+            cancelBtn.classList.add('hidden');
+            closeBtn.classList.add('hidden');
+            modal.classList.remove('hidden');
+
             const { tracks, name } = await spotifyHandler.fetchSpotifyData(url);
             
             if (tracks && tracks.length > 0) {
                 this.handleDataLoaded(tracks, name);
+                showNotification('Sikeres Import', `${tracks.length} dal betöltve a(z) "${name}" listából.`, 'success');
             } else {
-                alert("Nem találhatóak számok ebben a listában, vagy a lista üres.");
+                showNotification('Hiba', 'Nem találhatóak számok ebben a listában, vagy a lista üres.', 'error');
             }
         } catch (e) {
-            alert("Hiba: " + e.message);
+            showNotification('Spotify Hiba', e.message, 'error', 10000);
         } finally {
-            document.body.classList.remove('loading');
+            modal.classList.add('hidden');
         }
     },
 
