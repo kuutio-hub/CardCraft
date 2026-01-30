@@ -63,7 +63,7 @@
                  <div class="action-group">
                     <h4 class="action-group-title">Adatkezelés</h4>
                     <div id="music-actions" class="button-row">
-                        <button id="spotify-import-button" class="action-btn" title="Spotify Lista Betöltése" style="border-color: #1DB954; color: #1DB954;"><i class="fa-brands fa-spotify"></i></button>
+                        <button id="spotify-import-button" class="action-btn" title="Spotify kulcsok nincsenek beállítva!" style="border-color: #1DB954; color: #1DB954;" disabled><i class="fa-brands fa-spotify"></i></button>
                         <label for="file-upload-button" class="action-btn upload-btn" title="Adatok betöltése"><i class="fa-solid fa-file-circle-plus"></i></label>
                         <input type="file" id="file-upload-button" accept=".xls, .xlsx, .csv" style="display: none;">
                         <button id="validate-years-button" class="action-btn hidden" title="Évszámok ellenőrzése (MusicBrainz)"><i class="fa-solid fa-wand-magic-sparkles"></i></button>
@@ -86,6 +86,7 @@
             <button class="tab-btn" data-tab="typography" title="Betűk"><i class="fa-solid fa-font"></i></button>
             <button class="tab-btn" data-tab="layout" title="Elhelyezés"><i class="fa-solid fa-arrows-to-dot"></i></button>
             <button class="tab-btn" data-tab="backside" title="Vinyl & QR"><i class="fa-solid fa-record-vinyl"></i></button>
+            <button class="tab-btn" data-tab="api" title="API Kulcsok"><i class="fa-solid fa-key"></i></button>
             <button id="help-button" class="tab-btn" data-tab="help" title="Súgó"><i class="fa-solid fa-circle-question"></i></button>
         </nav>
         
@@ -310,14 +311,54 @@
                                 <div class="input-row"><label>Keret Szín</label><input type="color" id="qr-border-color" value="#ffffff" data-css-var="--qr-border-color"></div>
                                 <div class="row wraps"><label class="checkbox-container"><input type="checkbox" id="glow-qr" data-toggle-target="glow-qr-settings"> Glow</label></div>
                                 <div id="glow-qr-settings" class="sub-panel hidden">
-                                    <div class="input-row"><label>Glow Szín</label><input type="color" id="glow-qr-color" value="#888888"></div>
-                                    <div class="input-row"><label>Elmosás (px)</label><input type="number" id="glow-qr-blur" value="8" min="0" max="30"></div>
+                                    <div class="input-row"><label>Glow Szín</label><input type="color" id="glow-qr-color" value="#888888"></div><div class="input-row"><label>Elmosás (px)</label><input type="number" id="glow-qr-blur" value="8" min="0" max="30"></div>
                                 </div>
                                 <hr class="divider">
                                 <div class="input-row"><label>Logó (max 3)</label><input type="text" id="qr-logo-text" value="" placeholder="pl. XYZ" maxlength="3" style="width: 80px;"></div>
                                 <div class="row wraps"><label class="checkbox-container"><input type="checkbox" id="qr-round"> Logó Kerek</label></div>
                                 <div class="row wraps"><label class="checkbox-container"><input type="checkbox" id="qr-invert"> Logó Inverz</label></div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API KEYS -->
+            <div class="tab-pane" id="tab-api">
+                <div class="settings-section">
+                    <h3>Spotify API Kulcsok</h3>
+                    <div class="control-group">
+                        <p class="help-text">Add meg a saját Spotify Developer kulcsaidat a Spotify funkciók használatához. A kulcsok a böngésződ helyi tárolójában lesznek elmentve.</p>
+                        <div class="input-row">
+                            <label for="spotify-client-id">Client ID</label>
+                            <input type="password" id="spotify-client-id" class="full-width" placeholder="Spotify Client ID">
+                        </div>
+                        <div class="input-row">
+                            <label for="spotify-client-secret">Client Secret</label>
+                            <input type="password" id="spotify-client-secret" class="full-width" placeholder="Spotify Client Secret">
+                        </div>
+                        <div class="button-row">
+                            <button id="save-api-keys" class="action-btn print-btn">Mentés</button>
+                        </div>
+                         <p id="api-status" class="api-status-error">Státusz: Nincsenek kulcsok beállítva.</p>
+                    </div>
+
+                    <h3 style="margin-top: 25px;">Import / Export</h3>
+                     <div class="control-group">
+                        <p class="help-text">Mentsd el ezt a kódot, hogy böngésző-előzmények törlése után vagy másik gépen könnyen visszaállíthasd a kulcsaidat.</p>
+                        <div class="input-row-column">
+                            <label for="export-keys-area">Export Kód</label>
+                            <div class="textarea-wrapper">
+                                <textarea id="export-keys-area" rows="3" readonly placeholder="Mentsd el a kulcsokat, hogy itt megjelenjen az export kód..."></textarea>
+                                <button id="copy-export-key" class="copy-btn" title="Másolás"><i class="fa-regular fa-copy"></i></button>
+                            </div>
+                        </div>
+                        <div class="input-row-column">
+                            <label for="import-keys-area">Import Kód</label>
+                            <textarea id="import-keys-area" rows="3" placeholder="Illeszd be az export kódot a visszaállításhoz..."></textarea>
+                        </div>
+                        <div class="button-row">
+                            <button id="import-key-button" class="action-btn">Betöltés</button>
                         </div>
                     </div>
                 </div>

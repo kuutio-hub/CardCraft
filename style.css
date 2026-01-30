@@ -154,6 +154,19 @@ body {
 .layout-group { margin-bottom: 20px; }
 .group-header { font-size: 0.7rem; color: #666; text-transform: uppercase; font-weight: 700; margin-bottom: 10px; }
 
+/* API Tab specific styles */
+.help-text { font-size: 0.75rem; color: #888; margin: -5px 0 10px 0; line-height: 1.5; }
+#api-status { font-size: 0.75rem; font-weight: bold; margin-top: 5px; text-align: center; }
+.api-status-ok { color: var(--spotify-green); }
+.api-status-error { color: #ff4d4d; }
+.input-row-column { display: flex; flex-direction: column; gap: 6px; }
+.textarea-wrapper { position: relative; width: 100%; }
+#tab-api textarea { width: 100%; background: #161616; border: 1px solid #333; color: #fff; padding: 8px; border-radius: 5px; font-size: 0.8rem; outline: none; transition: border 0.2s; resize: vertical; min-height: 60px; }
+#tab-api textarea:focus { border-color: var(--spotify-green); }
+.copy-btn { position: absolute; top: 5px; right: 5px; background: #222; border: 1px solid #444; color: #999; cursor: pointer; border-radius: 4px; padding: 3px 6px; }
+.copy-btn:hover { color: #fff; background: #333; }
+
+
 /* PROGRESSIVE UI (SUB-PANELS) */
 .sub-panel { background: #111; border-left: 2px solid #333; padding: 8px 8px 8px 12px; margin-top: 8px; margin-bottom: 5px; border-radius: 0 4px 4px 0; display: flex; flex-direction: column; gap: 8px; animation: slideDown 0.2s ease-out; }
 @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
@@ -181,6 +194,7 @@ body {
 .dual-input input { width: 45px !important; flex: 0 0 45px; }
 
 input[type="number"], select, input[type="text"], input[type="password"] { width: 65px; background: #161616; border: 1px solid #333; color: #fff; padding: 8px; border-radius: 5px; font-size: 0.8rem; outline: none; transition: border 0.2s; }
+input.full-width { width: 100%; }
 input[type="number"]:focus, input[type="text"]:focus, input[type="password"]:focus { border-color: var(--spotify-green); }
 input[type="text"] { width: 100px; }
 input[type="range"] { flex-grow: 1 !important; accent-color: var(--spotify-green); }

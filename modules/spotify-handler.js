@@ -1,12 +1,5 @@
 // modules/spotify-handler.js
 
-// --- Spotify API Kulcsok ---
-// FIGYELEM: Helyettesítsd be a saját, valós Spotify API kulcsaiddal!
-// A kulcsokat a Spotify Developer Dashboard-on találod: https://developer.spotify.com/dashboard/
-const SPOTIFY_CLIENT_ID = 'e5f987c007124a9c8ba8d86a18994777';
-const SPOTIFY_CLIENT_SECRET = 'e6f3890593284fea8efa11173dd0aa2d';
-// -------------------------
-
 // Helper to extract ID from URL
 function getSpotifyId(url) {
     if (!url) return null;
@@ -48,11 +41,14 @@ export class SpotifyHandler {
             return this.accessToken;
         }
         
-        if (SPOTIFY_CLIENT_ID.startsWith('HELYETTESÍTSD') || SPOTIFY_CLIENT_SECRET.startsWith('HELYETTESÍTSD')) {
-            throw new Error('Érvénytelen Spotify API kulcsok. Kérlek, add meg a saját kulcsaidat a modules/spotify-handler.js fájlban.');
+        const clientId = localStorage.getItem('cardcraft_spotify_id');
+        const clientSecret = localStorage.getItem('cardcraft_spotify_secret');
+
+        if (!clientId || !clientSecret) {
+            throw new Error('Nincsenek beállítva a Spotify API kulcsok. Kérlek, add meg őket a Beállítások > API Kulcsok menüpontban.');
         }
 
-        const authHeader = btoa(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`);
+        const authHeader = btoa(`${clientId}:${clientSecret}`);
 
         const response = await fetch('https://accounts.spotify.com/api/token', {
             method: 'POST',
@@ -65,7 +61,7 @@ export class SpotifyHandler {
 
         if (!response.ok) {
             console.error("Spotify Auth Error:", response.status, await response.text());
-            throw new Error('Nem sikerült hitelesíteni a Spotify-jal.');
+            throw new Error('Nem sikerült hitelesíteni a Spotify-jal. Ellenőrizd a megadott API kulcsokat.');
         }
 
         const data = await response.json();
