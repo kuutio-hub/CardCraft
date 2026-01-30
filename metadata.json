@@ -1,5 +1,5 @@
 {
-  "description": "CardCraft v0.3.7 BÉTA - Fixed a critical login bug by simplifying the access code verification logic, ensuring the login button is responsive and reliable. The access code is now hardcoded as requested.",
+  "description": "CardCraft v0.3.8 BÉTA - Rebuilt the Spotify API handler from scratch with a simplified, robust logic to fix a critical 404 error during playlist fetching. The new handler provides clearer error messages for invalid URLs or API keys.",
   "requestFramePermissions": [],
-  "name": "CardCraft v0.3.7 BÉTA"
+  "name": "CardCraft v0.3.8 BÉTA"
 }
