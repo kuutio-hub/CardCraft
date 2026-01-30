@@ -1,5 +1,5 @@
 {
-  "description": "CardCraft v0.2.1 BÉTA - Added a detailed notification system to display full API error messages for easier debugging.",
+  "description": "CardCraft v0.3.1 BÉTA - Added a show/hide toggle for API key password fields to improve usability and ease of input.",
   "requestFramePermissions": [],
-  "name": "CardCraft v0.2.1 BÉTA"
+  "name": "CardCraft v0.3.1 BÉTA"
 }

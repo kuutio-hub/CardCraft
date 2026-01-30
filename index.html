@@ -27,7 +27,7 @@
             <button id="login-button">Belépés</button>
             <p id="error-message" class="hidden">Helytelen kód.</p>
             <footer class="landing-footer">
-                <p>v0.2.1 BÉTA &copy; <span id="landing-year">2026</span></p>
+                <p>v0.3.1 BÉTA &copy; <span id="landing-year">2026</span></p>
             </footer>
         </div>
     </div>
@@ -64,6 +64,7 @@
                     <h4 class="action-group-title">Adatkezelés</h4>
                     <div id="music-actions" class="button-row">
                         <button id="spotify-import-button" class="action-btn" title="Spotify kulcsok nincsenek beállítva!" style="border-color: #1DB954; color: #1DB954;" disabled><i class="fa-brands fa-spotify"></i></button>
+                        <button id="youtube-import-button" class="action-btn" title="YouTube API kulcs nincs beállítva!" style="border-color: #FF0000; color: #FF0000;" disabled><i class="fa-brands fa-youtube"></i></button>
                         <label for="file-upload-button" class="action-btn upload-btn" title="Adatok betöltése"><i class="fa-solid fa-file-circle-plus"></i></label>
                         <input type="file" id="file-upload-button" accept=".xls, .xlsx, .csv" style="display: none;">
                         <button id="validate-years-button" class="action-btn hidden" title="Évszámok ellenőrzése (MusicBrainz)"><i class="fa-solid fa-wand-magic-sparkles"></i></button>
@@ -328,20 +329,39 @@
                 <div class="settings-section">
                     <h3>Spotify API Kulcsok</h3>
                     <div class="control-group">
-                        <p class="help-text">Add meg a saját Spotify Developer kulcsaidat a Spotify funkciók használatához. A kulcsok a böngésződ helyi tárolójában lesznek elmentve.</p>
+                        <p class="help-text">Add meg a saját Spotify Developer kulcsaidat. A kulcsok a böngésződ helyi tárolójában lesznek elmentve.</p>
                         <div class="input-row">
                             <label for="spotify-client-id">Client ID</label>
-                            <input type="password" id="spotify-client-id" class="full-width" placeholder="Spotify Client ID">
+                            <div class="password-wrapper">
+                                <input type="password" id="spotify-client-id" class="full-width" placeholder="Spotify Client ID">
+                                <span class="toggle-password"><i class="fa-solid fa-eye"></i></span>
+                            </div>
                         </div>
                         <div class="input-row">
                             <label for="spotify-client-secret">Client Secret</label>
-                            <input type="password" id="spotify-client-secret" class="full-width" placeholder="Spotify Client Secret">
+                            <div class="password-wrapper">
+                                <input type="password" id="spotify-client-secret" class="full-width" placeholder="Spotify Client Secret">
+                                <span class="toggle-password"><i class="fa-solid fa-eye"></i></span>
+                            </div>
                         </div>
-                        <div class="button-row">
-                            <button id="save-api-keys" class="action-btn print-btn">Mentés</button>
-                        </div>
-                         <p id="api-status" class="api-status-error">Státusz: Nincsenek kulcsok beállítva.</p>
                     </div>
+                    
+                    <h3 style="margin-top:25px;">YouTube API Kulcs</h3>
+                     <div class="control-group">
+                        <p class="help-text">Add meg a saját YouTube Data API v3 kulcsodat a YouTube funkciók használatához.</p>
+                        <div class="input-row">
+                            <label for="youtube-api-key">API Key</label>
+                             <div class="password-wrapper">
+                                <input type="password" id="youtube-api-key" class="full-width" placeholder="YouTube Data API v3 Key">
+                                <span class="toggle-password"><i class="fa-solid fa-eye"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="button-row" style="margin-top: 20px;">
+                        <button id="save-api-keys" class="action-btn print-btn">Mentés</button>
+                    </div>
+                    <p id="api-status" class="api-status-error">Státusz: Nincsenek kulcsok beállítva.</p>
 
                     <h3 style="margin-top: 25px;">Import / Export</h3>
                      <div class="control-group">
@@ -376,7 +396,7 @@
         </div>
         <footer class="app-footer">
             <div id="save-indicator" class="hidden">Beállítások mentve!</div>
-            <p>CardCraft v0.2.1 BÉTA &copy; <span id="current-year">2026</span></p>
+            <p>CardCraft v0.3.1 BÉTA &copy; <span id="current-year">2026</span></p>
         </footer>
     </aside>
 
@@ -432,4 +452,1239 @@
         setYear('landing-year');
     </script>
 </body>
-</html>
+</html>--- START OF FILE style.css ---
+
+:root {
+    --card-size: 46mm;
+    --card-radius: 2mm;
+    --card-padding: 4px;
+    --artist-margin: 9pt;
+    --title-margin: 9pt;
+    --code-side-margin: -3pt;
+    --page-padding: 10mm;
+    
+    --primary-color: #000000;
+    --border-width: 0.5px;
+    --border-color-rgba: rgba(0,0,0,0.5);
+    
+    --card-bg-color: #ffffff;
+    --spotify-green: #1DB954;
+
+    --font-family: 'Poppins', sans-serif;
+    --font-size-year: 30pt;
+    --font-weight-year: 800;
+    --font-size-artist: 12pt;
+    --font-weight-artist: 700;
+    --font-size-title: 10pt;
+    --font-weight-title: 700;
+    --font-weight-codes: 400;
+
+    --text-transform-artist: none;
+    --text-transform-title: none;
+    
+    --text-shadow-year: none;
+    --text-shadow-artist: none;
+    --text-shadow-title: none;
+
+    --token-glow-color: #ffffff;
+    --token-glow-size: 0px;
+
+    --qr-size: 40%;
+    --qr-border-width: 3px;
+    --qr-border-color: #ffffff;
+    --qr-box-shadow: none;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+@keyframes slideDownAnswer {
+  from { max-height: 0; opacity: 0; transform: translateY(-10px); }
+  to { max-height: 500px; opacity: 1; transform: translateY(0); }
+}
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+
+.fa-spin-slow { animation: spin 8s linear infinite; }
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: #000; color: #fff; display: flex; height: 100vh; overflow: hidden; margin: 0;
+}
+
+/* DYNAMIC LABELS */
+.app-mode-music .token-label,
+.app-mode-token .music-label {
+    display: none;
+}
+
+/* LANDING PAGE */
+#landing-page {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle at center, #1a1a1a, #000);
+    display: flex; align-items: center; justify-content: center; z-index: 1000;
+    transition: opacity 0.5s;
+}
+.login-box {
+    background: #0b0b0b; border: 1px solid #222; border-radius: 8px;
+    padding: 40px; text-align: center; box-shadow: 0 0 40px rgba(0,0,0,0.7);
+}
+.login-box .logo { justify-content: center; }
+.login-box p { font-size: 0.9rem; color: #888; margin: 15px 0; }
+#access-code-input {
+    width: 250px; text-align: center; font-size: 1rem; margin-bottom: 20px;
+}
+#login-button {
+    width: 100%; padding: 12px; font-weight: 700; font-size: 0.9rem;
+    background: var(--spotify-green); color: #000; border: none; border-radius: 6px;
+    cursor: pointer; transition: background 0.2s;
+}
+#login-button:hover { background: #1ed760; }
+#error-message { color: #ff4d4d; font-size: 0.8rem; margin-top: 10px; }
+.hidden { display: none !important; }
+.app-hidden { display: none !important; }
+
+.landing-footer {
+    margin-top: 30px;
+    padding-top: 15px;
+    border-top: 1px solid #222;
+}
+.landing-footer p { font-size: 0.7rem; color: #666; margin: 0; }
+
+
+/* MAIN APP - SIDEBAR LAYOUT */
+#settings-panel { width: 320px; background: #0b0b0b; border-right: 1px solid #222; display: flex; flex-direction: column; z-index: 100; flex-shrink: 0; box-shadow: 10px 0 30px rgba(0,0,0,0.8); }
+#settings-panel header { padding: 25px 20px; border-bottom: 1px solid #222; background: #000; }
+.logo { font-weight: 900; font-size: 1.4rem; color: var(--spotify-green); display: flex; align-items: center; gap: 12px; margin-bottom: 20px; letter-spacing: -0.5px; }
+
+.mode-switcher-container { display: flex; background: #1a1a1a; border-radius: 6px; padding: 4px; margin-bottom: 15px; border: 1px solid #333; }
+.mode-option { flex: 1; position: relative; }
+.mode-option input { position: absolute; opacity: 0; width: 0; height: 0; }
+.mode-option label { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 8px 0; font-size: 0.8rem; font-weight: 700; color: #666; cursor: pointer; border-radius: 4px; transition: all 0.2s; }
+.mode-option input:checked + label { background: var(--spotify-green); color: #000; }
+
+.top-actions { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
+.stats-bar { font-size: 0.75rem; color: #aaa; background: #1a1a1a; padding: 4px 10px; border-radius: 20px; display: flex; align-items: center; gap: 6px; }
+.stats-bar i { color: var(--spotify-green); }
+
+.main-actions { display: flex; flex-direction: column; gap: 15px; }
+.action-group-title { font-size: 0.7rem; color: #555; text-transform: uppercase; margin: 0 0 8px 0; font-weight: 700; }
+.button-row { display: flex; gap: 8px; }
+.action-btn { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 6px; cursor: pointer; font-size: 0.7rem; font-weight: 700; text-align: center; display: flex; flex: 1; justify-content: center; align-items: center; gap: 5px; transition: all 0.2s; }
+.action-btn i { font-size: 1.1rem; }
+.action-btn:hover { background: #252525; border-color: #444; }
+#music-actions .action-btn { flex: 0 1 auto; width: 48px; }
+.action-btn.print-btn { background: var(--spotify-green); border-color: var(--spotify-green); color: #000; }
+.action-btn.print-btn:hover { background: #1ed760; }
+#validate-years-button.loading i { animation: spin 1.5s linear infinite; }
+.action-btn:disabled { opacity: 0.6; cursor: not-allowed; background: #1a1a1a !important; border-color: #333 !important; color: #666 !important; }
+
+/* TAB NAVIGATION */
+.tab-nav { display: flex; background: #111; border-bottom: 1px solid #222; }
+.tab-btn { flex: 1; padding: 15px; border: none; background: none; color: #555; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s; }
+.tab-btn i { font-size: 1.1rem; }
+.tab-btn.active { color: var(--spotify-green); border-bottom-color: var(--spotify-green); background: #050505; }
+.tab-btn:hover:not(.active) { color: #888; }
+.scroll-container { flex: 1; overflow-y: auto; padding: 20px; scrollbar-width: thin; scrollbar-color: #333 #000; }
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+
+
+.settings-section h3 { font-size: 0.75rem; color: var(--spotify-green); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1.5px; border-left: 3px solid var(--spotify-green); padding-left: 10px; font-weight: 800; }
+.control-group { display: flex; flex-direction: column; gap: 14px; }
+#tab-layout .control-group { flex-direction: column; gap: 14px; }
+#tab-layout .input-row { flex-wrap: nowrap; }
+#tab-layout .input-row label { flex-basis: 90px; }
+#tab-layout .input-row select, #tab-layout .input-row input { flex-grow: 1; }
+#tab-layout .input-row .checkbox-container { width: 100%; }
+
+.input-row { display: flex; align-items: center; justify-content: flex-start; gap: 12px; flex-wrap: wrap; }
+.input-row label { font-size: 0.8rem; color: #bbb; flex: 1 1 80px; min-width: 80px; }
+.input-row input, .input-row select { flex: 1 1 65px; }
+.input-row .password-wrapper { flex: 1 1 65px; position: relative; display: flex; align-items: center; }
+.password-wrapper input { width: 100%; }
+.toggle-password { position: absolute; right: 10px; color: #666; cursor: pointer; }
+.toggle-password:hover { color: #fff; }
+
+
+.input-row.range-slider { align-items: center; }
+.input-row.range-slider span { font-size: 0.75rem; color: #888; min-width: 35px; text-align: right;}
+
+
+.layout-group { margin-bottom: 20px; }
+.group-header { font-size: 0.7rem; color: #666; text-transform: uppercase; font-weight: 700; margin-bottom: 10px; }
+
+/* API Tab specific styles */
+.help-text { font-size: 0.75rem; color: #888; margin: -5px 0 10px 0; line-height: 1.5; }
+#api-status { font-size: 0.75rem; font-weight: bold; margin-top: 5px; text-align: center; }
+.api-status-ok { color: var(--spotify-green); }
+.api-status-error { color: #ff4d4d; }
+.input-row-column { display: flex; flex-direction: column; gap: 6px; }
+.textarea-wrapper { position: relative; width: 100%; }
+#tab-api textarea { width: 100%; background: #161616; border: 1px solid #333; color: #fff; padding: 8px; border-radius: 5px; font-size: 0.8rem; outline: none; transition: border 0.2s; resize: vertical; min-height: 60px; }
+#tab-api textarea:focus { border-color: var(--spotify-green); }
+.copy-btn { position: absolute; top: 5px; right: 5px; background: #222; border: 1px solid #444; color: #999; cursor: pointer; border-radius: 4px; padding: 3px 6px; }
+.copy-btn:hover { color: #fff; background: #333; }
+
+
+/* PROGRESSIVE UI (SUB-PANELS) */
+.sub-panel { background: #111; border-left: 2px solid #333; padding: 8px 8px 8px 12px; margin-top: 8px; margin-bottom: 5px; border-radius: 0 4px 4px 0; display: flex; flex-direction: column; gap: 8px; animation: slideDown 0.2s ease-out; }
+@keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+.typo-list { display: flex; flex-direction: column; gap: 10px; }
+.typo-item { background: #111; border-radius: 4px; padding: 8px; border: 1px solid #222; }
+.typo-main-row { display: flex; align-items: center; gap: 10px; justify-content: flex-start; flex-wrap: wrap; }
+.typo-label { font-size: 0.75rem; color: #ccc; font-weight: 700; flex: 1 1 60px; }
+.typo-options { display: flex; gap: 10px; align-items: center; justify-content: flex-end; flex-grow: 1; }
+
+.tiny-input { width: 40px !important; padding: 4px !important; text-align: center; }
+.tiny-select { width: 50px !important; padding: 4px !important; font-size: 0.7rem !important; }
+
+.checkbox-container { display: flex; align-items: center; cursor: pointer; }
+.checkbox-container.mini { display: flex; align-items: center; gap: 4px; cursor: pointer; color: #888; font-size: 0.7rem; font-weight: 600; white-space: nowrap; }
+.checkbox-container.full-width-label { width: 100%; justify-content: flex-start; }
+.checkbox-container.mini input, .checkbox-container input { margin-right: 6px; }
+.checkbox-container.mini:hover { color: #fff; }
+.checkbox-container.mini input:checked, .checkbox-container input:checked { accent-color: var(--spotify-green); }
+.checkbox-container.mini input:checked + span { color: var(--spotify-green); }
+
+.dual-input { display: flex; align-items: center; gap: 5px; flex: 1 1 100%; justify-content: space-between; }
+.dual-input label { flex: 1 1 auto; }
+.dual-input span { font-size: 0.7rem; color: #555; }
+.dual-input input { width: 45px !important; flex: 0 0 45px; }
+
+input[type="number"], select, input[type="text"], input[type="password"] { width: 65px; background: #161616; border: 1px solid #333; color: #fff; padding: 8px; border-radius: 5px; font-size: 0.8rem; outline: none; transition: border 0.2s; }
+input.full-width { width: 100%; }
+input[type="number"]:focus, input[type="text"]:focus, input[type="password"]:focus { border-color: var(--spotify-green); }
+input[type="text"] { width: 100px; }
+input[type="range"] { flex-grow: 1 !important; accent-color: var(--spotify-green); }
+select.full-width { width: 100%; }
+.divider { border: none; border-top: 1px solid #222; margin: 15px 0; }
+
+.app-footer { text-align: center; padding: 20px; font-size: 0.7rem; color: #444; border-top: 1px solid #222; margin-top: auto; position: relative;}
+#save-indicator {
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--spotify-green);
+    color: #000;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    animation: fadeIn 0.3s ease-out, fadeOut 0.3s ease-in 2s forwards;
+}
+
+
+#main-content { flex: 1; background: radial-gradient(circle at center, #1a1a1a, #000); overflow-y: auto; position: relative; }
+#preview-area { display: flex; align-items: center; justify-content: center; min-height: 100%; gap: 0; padding: 40px; flex-wrap: wrap; }
+#preview-area .card-wrapper { width: var(--card-size); height: var(--card-size); transform: scale(1.6); margin: calc(var(--card-size) * 0.4); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), z-index 0s 0.4s; cursor: zoom-in; z-index: 1; }
+#preview-area .card-wrapper.zoomed-card { transform: scale(4.2); z-index: 1000; cursor: zoom-out; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), z-index 0s; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
+
+.card-wrapper { width: var(--card-size); height: var(--card-size); position: relative; flex-shrink: 0; }
+.card { width: 100%; height: 100%; background: var(--card-bg-color); border-radius: var(--card-radius); position: relative; overflow: hidden; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; border: var(--border-width) solid var(--border-color-rgba); z-index: 1; }
+.card.token .token-content { position: absolute; z-index: 20; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; pointer-events: none; text-align: center; }
+
+.token-main, .token-sub { font-family: var(--font-family); color: #000; line-height: 1.1; margin-bottom: 5px; }
+.token-main { font-size: var(--font-size-year); font-weight: var(--font-weight-year); text-shadow: var(--text-shadow-year); }
+.token-sub { font-size: var(--font-size-artist); font-weight: var(--font-weight-artist); text-transform: var(--text-transform-artist); text-shadow: var(--text-shadow-artist); }
+
+body.border-mode-front .card.back, body.border-mode-back .card.front, body.border-mode-none .card { border-color: transparent !important; }
+
+/* TEXT ELEMENTS (Music Mode) */
+.year { font-family: var(--font-family); font-size: var(--font-size-year); font-weight: var(--font-weight-year); color: #000; text-shadow: var(--text-shadow-year); position: absolute; z-index: 5; pointer-events: none; }
+.artist { position: absolute; top: var(--artist-margin); width: 100%; text-align: center; font-family: var(--font-family); font-size: var(--font-size-artist); font-weight: var(--font-weight-artist); text-transform: var(--text-transform-artist); text-shadow: var(--text-shadow-artist); padding: 0 4px; box-sizing: border-box; line-height: 1.1; color: #000; pointer-events: none; }
+.title { position: absolute; bottom: var(--title-margin); width: 100%; text-align: center; font-family: var(--font-family); font-size: var(--font-size-title); font-weight: var(--font-weight-title); text-transform: var(--text-transform-title); text-shadow: var(--text-shadow-title); padding: 0 4px; box-sizing: border-box; line-height: 1.1; color: #000; pointer-events: none; }
+.code1, .code2 { position: absolute; font-size: 6pt; color: #000; font-weight: var(--font-weight-codes); z-index: 10; pointer-events: none; }
+
+body.code-pos-center .code1 { top: 50%; left: var(--code-side-margin); transform: translateY(-50%) rotate(-90deg); transform-origin: center center; text-align: center; }
+body.code-pos-center .code2 { top: 50%; right: var(--code-side-margin); transform: translateY(-50%) rotate(-90deg); transform-origin: center center; text-align: center; }
+body.code-pos-corner .code1 { bottom: var(--code-side-margin); left: var(--code-side-margin); transform: none; text-align: left; }
+body.code-pos-corner .code2 { bottom: var(--code-side-margin); right: var(--code-side-margin); transform: none; text-align: right; }
+
+.vinyl-bg { position: absolute; width: 98%; height: 98%; opacity: 0.8; display: flex; align-items: center; justify-content: center; pointer-events: none; z-index: 2; }
+.qr-container { position: absolute; width: var(--qr-size); height: var(--qr-size); background: #fff; padding: 0; z-index: 10; display: flex; align-items: center; justify-content: center; border-radius: 0; overflow: hidden; pointer-events: none; border: var(--qr-border-width) solid var(--qr-border-color); box-shadow: var(--qr-box-shadow); }
+.qr-container canvas, .qr-container img { width: 100% !important; height: 100% !important; max-width: 100%; max-height: 100%; display: block; }
+.qr-logo-overlay { position: absolute; background: #fff; color: #000; font-weight: 900; font-size: 7px; z-index: 20; text-transform: uppercase; box-shadow: 0 0 0 1px #fff; display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 2px; border: 1px solid #000; }
+.qr-logo-overlay.rounded { border-radius: 50%; box-shadow: 0 0 0 1px #fff; }
+.qr-logo-overlay.inverted { background: #000; color: #fff; border: 1px solid #fff; }
+
+#print-area { display: none; padding: 0; background: #222; min-height: 100vh; padding-bottom: 50px; }
+body.grid-view-active #print-area { display: block; }
+body.grid-view-active #preview-area { display: none; }
+
+.page-container { background: #fff; width: 210mm; height: 297mm; display: grid; justify-content: center; align-content: center; padding: var(--page-padding); margin: 40px auto; box-sizing: border-box; page-break-after: always; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+.page-container:last-child { page-break-after: auto; margin-bottom: 0; }
+.page-container.A3 { width: 297mm; height: 420mm; }
+
+.card, .card-wrapper, .page-container, .year, .artist, .title, .code1, .code2, .token-main, .token-sub { box-shadow: none !important; filter: none !important; }
+body.grid-view-active .card { background: #ffffff !important; transition: none !important; }
+
+/* MODAL STYLES */
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); display: flex; align-items: center; justify-content: center; z-index: 2000; backdrop-filter: blur(5px); animation: fadeIn 0.3s ease-out; }
+.modal-content { background: #1a1a1a; padding: 30px; border-radius: 8px; border: 1px solid #333; box-shadow: 0 5px 25px rgba(0,0,0,0.5); width: 90%; max-width: 400px; text-align: center; position: relative; }
+.modal-content h3 { margin-top: 0; margin-bottom: 20px; color: var(--spotify-green); }
+.progress-bar { width: 100%; height: 12px; background: #000; border-radius: 6px; overflow: hidden; border: 1px solid #444; margin-bottom: 10px; }
+#progress-bar-fill { width: 0%; height: 100%; background: var(--spotify-green); border-radius: 6px; transition: width 0.3s ease; }
+#progress-text { font-size: 0.9rem; color: #b3b3b3; margin-bottom: 25px; min-height: 1.2em; }
+#modal-actions { display: flex; justify-content: center; gap: 15px; }
+#modal-actions .action-btn { min-width: 120px; flex-direction: row; gap: 8px; flex: 0 1 auto; }
+
+/* HELP MODAL */
+.help-modal-content { max-width: 800px; text-align: left; max-height: 80vh; display: flex; flex-direction: column; }
+#help-content-container { overflow-y: auto; padding-right: 15px; }
+.close-btn { position: absolute; top: 10px; right: 15px; font-size: 2rem; color: #666; background: none; border: none; cursor: pointer; line-height: 1; }
+.close-btn:hover { color: #fff; }
+
+.help-accordion .help-item { border-bottom: 1px solid #333; }
+.help-accordion .help-q { padding: 18px 0; font-weight: 700; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: #e0e0e0; }
+.help-accordion .help-q::after { content: '+'; font-size: 1.5rem; transition: transform 0.3s; color: var(--spotify-green); }
+.help-accordion .help-item.active .help-q::after { transform: rotate(45deg); }
+.help-accordion .help-a { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out, padding 0.3s ease-out, opacity 0.3s; opacity: 0; padding: 0 15px; }
+.help-accordion .help-item.active .help-a { max-height: 1000px; opacity: 1; padding: 0 15px 20px 15px; animation: slideDownAnswer 0.5s ease-out; }
+
+/* NOTIFICATION SYSTEM */
+#notification-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 400px;
+}
+.notification {
+    background-color: #2a2a2a;
+    color: #fff;
+    padding: 15px 20px;
+    border-radius: 6px;
+    border-left: 5px solid var(--spotify-green);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    animation: slideIn 0.3s ease-out, fadeOut 0.5s ease-in forwards;
+    opacity: 0;
+    animation-delay: 0s, 9.5s;
+    cursor: pointer;
+}
+.notification.error {
+    border-left-color: #ff4d4d;
+}
+.notification h4 {
+    margin: 0 0 5px 0;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+.notification pre {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #ccc;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+
+@media print {
+    body, #main-content, #print-area, .page-container, .card, .card-wrapper { background: #ffffff !important; box-shadow: none !important; filter: none !important; }
+    .token-main, .token-sub { color: #000000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .year, .artist, .title, .code1, .code2 { color: #000000 !important; }
+    .qr-logo-overlay.inverted { background-color: #000000 !important; color: #ffffff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #000 !important; box-shadow: none !important; }
+    .page-container { margin: 0 auto !important; border: none !important; }
+    @page { margin: 0; }
+    #settings-panel { display: none !important; }
+    #main-content { overflow: visible; }
+    #print-area { display: block !important; }
+}--- START OF FILE modules/ui-controller.js ---
+
+import { parseDataFile } from './data-handler.js';
+
+export const _uiFramework = { name: 'SGl0c3' };
+
+const STORAGE_KEY = 'cardcraft_v100_settings';
+const API_STORAGE = {
+    ID: 'cardcraft_spotify_id',
+    SECRET: 'cardcraft_spotify_secret',
+    YOUTUBE_KEY: 'cardcraft_youtube_key'
+};
+let saveIndicatorTimeout;
+
+function hexToRgba(hex, alphaPercent) {
+    let c;
+    if(/^#([A-Fa-f09]{3}){1,2}$/.test(hex)){
+        c= hex.substring(1).split('');
+        if(c.length== 3){ c= [c[0], c[0], c[1], c[1], c[2], c[2]]; }
+        c= '0x'+c.join('');
+        return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+','+(alphaPercent/100)+')';
+    }
+    return hex;
+}
+
+export function applyAllStyles() {
+    const controls = document.querySelectorAll('#settings-panel [data-css-var], #settings-panel select, #settings-panel input');
+    
+    controls.forEach(ctrl => {
+        const cssVar = ctrl.dataset.cssVar;
+        if (!cssVar) return;
+        const unit = ctrl.dataset.unit || '';
+        document.documentElement.style.setProperty(cssVar, ctrl.value + unit);
+    });
+
+    const borderColor = document.getElementById('primary-color').value;
+    const borderOpacity = document.getElementById('border-opacity').value;
+    document.documentElement.style.setProperty('--border-color-rgba', hexToRgba(borderColor, borderOpacity));
+
+    const boldConfigs = [
+        { id: 'bold-year', var: '--font-weight-year', weightId: 'weight-year' },
+        { id: 'bold-artist', var: '--font-weight-artist', weightId: 'weight-artist' },
+        { id: 'bold-title', var: '--font-weight-title', weightId: 'weight-title' },
+        { id: 'bold-codes', var: '--font-weight-codes' }
+    ];
+
+    boldConfigs.forEach(conf => {
+        const chk = document.getElementById(conf.id);
+        const weightInput = conf.weightId ? document.getElementById(conf.weightId) : null;
+        const val = chk && chk.checked ? (weightInput ? weightInput.value : '700') : '400';
+        document.documentElement.style.setProperty(conf.var, val);
+    });
+
+    ['year', 'artist', 'title'].forEach(type => {
+        const glowActive = document.getElementById(`glow-${type}`)?.checked;
+        if (glowActive) {
+            const color = document.getElementById(`glow-${type}-color`).value;
+            const blur = document.getElementById(`glow-${type}-blur`).value;
+            document.documentElement.style.setProperty(`--text-shadow-${type}`, `0 0 ${blur}px ${color}`);
+        } else {
+            document.documentElement.style.setProperty(`--text-shadow-${type}`, 'none');
+        }
+    });
+
+    const qrGlowActive = document.getElementById('glow-qr')?.checked;
+    if (qrGlowActive) {
+        const color = document.getElementById('glow-qr-color').value;
+        const blur = document.getElementById('glow-qr-blur').value;
+        document.documentElement.style.setProperty('--qr-box-shadow', `0 0 ${blur}px ${color}`);
+    } else {
+        document.documentElement.style.setProperty('--qr-box-shadow', 'none');
+    }
+    
+    const codePos = document.getElementById('code-position')?.value || 'center';
+    document.body.classList.remove('code-pos-center', 'code-pos-corner');
+    document.body.classList.add(`code-pos-${codePos}`);
+
+    const borderMode = document.getElementById('border-mode')?.value || 'both';
+    document.body.classList.remove('border-mode-both', 'border-mode-front', 'border-mode-back', 'border-mode-none');
+    document.body.classList.add(`border-mode-${borderMode}`);
+
+    document.querySelectorAll('[data-toggle-target]').forEach(toggle => {
+        const target = document.getElementById(toggle.dataset.toggleTarget);
+        if (target) target.classList.toggle('hidden', !toggle.checked);
+    });
+}
+
+function updateModeVisibility(isExternalDataLoaded) {
+    const isToken = document.getElementById('mode-token').checked;
+    
+    document.getElementById('music-actions').style.display = isToken ? 'none' : 'flex';
+    document.getElementById('token-settings-group').style.display = isToken ? 'block' : 'none';
+    
+    document.querySelectorAll('.music-only-option').forEach(el => {
+        el.style.display = isToken ? 'none' : 'block';
+    });
+
+    document.querySelectorAll('.token-only-msg').forEach(el => {
+        el.style.display = isToken ? 'block' : 'none';
+    });
+
+    document.body.classList.toggle('app-mode-token', isToken);
+    document.body.classList.toggle('app-mode-music', !isToken);
+
+    if (!isToken && isExternalDataLoaded()) {
+        document.getElementById('validate-years-button')?.classList.remove('hidden');
+        document.getElementById('download-button')?.classList.remove('hidden');
+    } else {
+        document.getElementById('validate-years-button')?.classList.add('hidden');
+        document.getElementById('download-button')?.classList.add('hidden');
+    }
+}
+
+function updateApiStatus() {
+    const id = localStorage.getItem(API_STORAGE.ID);
+    const secret = localStorage.getItem(API_STORAGE.SECRET);
+    const youtubeKey = localStorage.getItem(API_STORAGE.YOUTUBE_KEY);
+    
+    const statusEl = document.getElementById('api-status');
+    const spotifyBtn = document.getElementById('spotify-import-button');
+    const youtubeBtn = document.getElementById('youtube-import-button');
+    const exportArea = document.getElementById('export-keys-area');
+    
+    const spotifyOk = id && secret;
+    const youtubeOk = youtubeKey;
+
+    spotifyBtn.disabled = !spotifyOk;
+    spotifyBtn.title = spotifyOk ? 'Spotify Lista Betöltése' : 'Spotify kulcsok nincsenek beállítva!';
+    
+    youtubeBtn.disabled = !youtubeOk;
+    youtubeBtn.title = youtubeOk ? 'YouTube Lista Betöltése' : 'YouTube API kulcs nincs beállítva!';
+
+    if (spotifyOk) {
+        document.getElementById('spotify-client-id').value = id;
+        document.getElementById('spotify-client-secret').value = secret;
+    }
+     if (youtubeOk) {
+        document.getElementById('youtube-api-key').value = youtubeKey;
+    }
+
+    if (spotifyOk || youtubeOk) {
+        statusEl.textContent = 'Státusz: API kulcsok mentve.';
+        statusEl.className = 'api-status-ok';
+        try {
+            exportArea.value = btoa(JSON.stringify({ id, secret, youtubeKey }));
+        } catch (e) {
+            exportArea.value = 'Hiba a kód generálása közben.';
+        }
+    } else {
+        statusEl.textContent = 'Státusz: Nincsenek kulcsok beállítva.';
+        statusEl.className = 'api-status-error';
+        exportArea.value = '';
+    }
+}
+
+
+export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownload, isDataLoadedCheck, onSpotifyImport, onYouTubeImport, onPrint) {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+        try {
+            const settings = JSON.parse(saved);
+            Object.entries(settings).forEach(([id, value]) => {
+                const el = document.getElementById(id);
+                if (el) {
+                    if (el.type === 'radio' && el.name === 'app-mode') {
+                        if (settings['app-mode-val'] === el.value) {
+                           el.checked = true;
+                        }
+                    } else if (el.type === 'checkbox' || el.type === 'radio') {
+                        el.checked = value;
+                    } else {
+                        el.value = value;
+                    }
+                }
+            });
+        } catch (e) { console.error("Load error", e); }
+    }
+
+    applyAllStyles();
+    updateModeVisibility(isDataLoadedCheck);
+    updateApiStatus();
+    
+    const initialGlitchMode = document.getElementById('glitch-mode').value;
+    document.getElementById('glitch-angle-offset-row').classList.toggle('hidden', initialGlitchMode !== 'degree');
+
+
+    document.getElementById('code-position').addEventListener('change', (e) => {
+        document.getElementById('code-side-margin').value = e.target.value === 'center' ? 0 : 6;
+        applyAllStyles();
+        if (onSettingsChange) onSettingsChange(true);
+    });
+
+    document.querySelectorAll('input[name="app-mode"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+            updateModeVisibility(isDataLoadedCheck);
+            if (onSettingsChange) onSettingsChange(true);
+        });
+    });
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.onclick = (e) => {
+             if (e.currentTarget.id === 'help-button') return;
+             document.querySelectorAll('.tab-pane, .tab-btn').forEach(el => el.classList.remove('active'));
+             document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
+             btn.classList.add('active');
+        };
+    });
+    
+    document.getElementById('help-button').onclick = async () => {
+        const modal = document.getElementById('help-modal');
+        const contentContainer = document.getElementById('help-content-container');
+        
+        if (contentContainer.innerHTML.trim() === '') {
+            try {
+                const response = await fetch('user_manual.html');
+                if (!response.ok) throw new Error('Network response was not ok');
+                const html = await response.text();
+                
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                
+                const accordionWrapper = document.createElement('div');
+                accordionWrapper.className = 'help-accordion';
+
+                doc.querySelectorAll('h2').forEach(h2 => {
+                    const item = document.createElement('div');
+                    item.className = 'help-item';
+
+                    const q = document.createElement('div');
+                    q.className = 'help-q';
+                    q.textContent = h2.textContent;
+                    
+                    const a = document.createElement('div');
+                    a.className = 'help-a';
+                    
+                    let nextElem = h2.nextElementSibling;
+                    while(nextElem && nextElem.tagName !== 'H2') {
+                        a.appendChild(nextElem.cloneNode(true));
+                        nextElem = nextElem.nextElementSibling;
+                    }
+                    
+                    item.appendChild(q);
+                    item.appendChild(a);
+                    accordionWrapper.appendChild(item);
+                });
+
+                contentContainer.appendChild(accordionWrapper);
+
+                accordionWrapper.addEventListener('click', (e) => {
+                    const question = e.target.closest('.help-q');
+                    if (question) {
+                        const item = question.parentElement;
+                        const wasActive = item.classList.contains('active');
+
+                        accordionWrapper.querySelectorAll('.help-item').forEach(i => i.classList.remove('active'));
+                        
+                        if (!wasActive) {
+                            item.classList.add('active');
+                        }
+                    }
+                });
+
+            } catch (e) {
+                contentContainer.innerHTML = '<p>Hiba a súgó betöltése közben.</p>';
+                console.error("Help load error", e);
+            }
+        }
+        modal.classList.remove('hidden');
+    };
+
+    const helpModal = document.getElementById('help-modal');
+    document.getElementById('close-help-modal-button').onclick = () => helpModal.classList.add('hidden');
+    helpModal.onclick = (e) => {
+        if (e.target.id === 'help-modal') {
+            helpModal.classList.add('hidden');
+        }
+    };
+
+    document.getElementById('glitch-angle-offset').addEventListener('input', (e) => {
+        document.getElementById('glitch-angle-value').textContent = `${e.target.value}°`;
+    });
+
+
+    document.getElementById('settings-panel').oninput = (e) => {
+        // API key inputs are handled by their own save button, so we exclude them from the general oninput handler
+        if(e.target.id.includes('spotify-') || e.target.id.includes('youtube-') || e.target.id.includes('-keys-area')) {
+            return;
+        }
+
+        applyAllStyles();
+        
+        if (e.target.id === 'glitch-mode') {
+            document.getElementById('glitch-angle-offset-row').classList.toggle('hidden', e.target.value !== 'degree');
+        }
+
+        const settings = {};
+        document.querySelectorAll('#settings-panel input, #settings-panel select').forEach(el => {
+             if (el.id && !el.id.startsWith('spotify-') && !el.id.includes('youtube-') && !el.id.includes('-keys-')) {
+                 if (el.name === 'app-mode') {
+                     if(el.checked) settings['app-mode-val'] = el.value;
+                 } else {
+                     settings[el.id] = el.type === 'checkbox' ? el.checked : el.value;
+                 }
+             }
+        });
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+
+        const indicator = document.getElementById('save-indicator');
+        indicator.classList.remove('hidden');
+        if (saveIndicatorTimeout) clearTimeout(saveIndicatorTimeout);
+        saveIndicatorTimeout = setTimeout(() => indicator.classList.add('hidden'), 2000);
+        
+        const redrawIds = [
+            'paper-size', 'card-size', 'qr-size-percent', 'page-padding', 'max-lines',
+            'vinyl-spacing', 'vinyl-count', 'vinyl-variate', 'vinyl-thickness', 'vinyl-opacity',
+            'vinyl-color', 'vinyl-neon', 'vinyl-neon-blur', 'glitch-width-min', 'glitch-width-max', 'glitch-min', 'glitch-max',
+            'glitch-angle-offset', 'glitch-mode',
+            'border-mode', 'rotate-codes', 'qr-round', 'qr-invert', 'qr-logo-text', 'show-qr', 'qr-border-width', 'qr-border-color',
+            'glow-qr', 'glow-qr-color', 'glow-qr-blur', 'code-position', 'token-main-text', 'token-sub-text',
+            'glow-year', 'glow-year-color', 'glow-year-blur', 'glow-artist', 'glow-artist-color', 'glow-artist-blur',
+            'glow-title', 'glow-title-color', 'glow-title-blur'
+        ];
+        if (redrawIds.includes(e.target.id) || e.target.name === 'app-mode') {
+             if (onSettingsChange) onSettingsChange(true); 
+        } else {
+             if (onSettingsChange) onSettingsChange(false);
+        }
+    };
+    
+    // API Tab Logic
+    document.getElementById('save-api-keys').onclick = () => {
+        const id = document.getElementById('spotify-client-id').value.trim();
+        const secret = document.getElementById('spotify-client-secret').value.trim();
+        const youtubeKey = document.getElementById('youtube-api-key').value.trim();
+
+        if (id && secret) {
+            localStorage.setItem(API_STORAGE.ID, id);
+            localStorage.setItem(API_STORAGE.SECRET, secret);
+        } else {
+            localStorage.removeItem(API_STORAGE.ID);
+            localStorage.removeItem(API_STORAGE.SECRET);
+        }
+
+        if (youtubeKey) {
+            localStorage.setItem(API_STORAGE.YOUTUBE_KEY, youtubeKey);
+        } else {
+            localStorage.removeItem(API_STORAGE.YOUTUBE_KEY);
+        }
+
+        updateApiStatus();
+        alert('API kulcsok sikeresen mentve!');
+    };
+    
+    document.getElementById('copy-export-key').onclick = () => {
+        const exportArea = document.getElementById('export-keys-area');
+        if (exportArea.value) {
+            navigator.clipboard.writeText(exportArea.value)
+                .then(() => alert('Export kód a vágólapra másolva!'))
+                .catch(err => alert('Hiba a másolás során.'));
+        }
+    };
+    
+    document.getElementById('import-key-button').onclick = () => {
+        const importArea = document.getElementById('import-keys-area');
+        const importKey = importArea.value.trim();
+        if (!importKey) {
+            alert('Kérlek, illeszd be az import kódot.');
+            return;
+        }
+        try {
+            const decoded = atob(importKey);
+            const keys = JSON.parse(decoded);
+            if (keys.id && keys.secret) {
+                localStorage.setItem(API_STORAGE.ID, keys.id);
+                localStorage.setItem(API_STORAGE.SECRET, keys.secret);
+            }
+            if (keys.youtubeKey) {
+                localStorage.setItem(API_STORAGE.YOUTUBE_KEY, keys.youtubeKey);
+            }
+            updateApiStatus();
+            importArea.value = '';
+            alert('Kulcsok sikeresen importálva és mentve!');
+        } catch (e) {
+            alert('Hiba: Érvénytelen import kód. Kérlek, ellenőrizd, hogy a teljes kódot másoltad-e be.');
+        }
+    };
+    
+    document.querySelectorAll('.toggle-password').forEach(el => {
+        el.addEventListener('click', (e) => {
+            const icon = e.currentTarget.querySelector('i');
+            const input = e.currentTarget.previousElementSibling;
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+    });
+
+    document.getElementById('file-upload-button').onchange = async (e) => {
+        const file = e.target.files[0];
+        try {
+            const data = await parseDataFile(file);
+            if (data) onDataLoaded(data, file.name);
+        } catch(err) {
+            alert(err.message);
+        }
+        e.target.value = '';
+    };
+
+    document.getElementById('spotify-import-button').onclick = async () => {
+        const url = prompt("Másold be a Spotify Playlist vagy Album URL-t:");
+        if (url && onSpotifyImport) {
+            onSpotifyImport(url);
+        }
+    };
+    
+    document.getElementById('youtube-import-button').onclick = async () => {
+        const url = prompt("Másold be a YouTube Playlist URL-t:");
+        if (url && onYouTubeImport) {
+            onYouTubeImport(url);
+        }
+    };
+
+    document.getElementById('validate-years-button').onclick = () => { if(onValidate) onValidate(); };
+    document.getElementById('download-button').onclick = () => { if(onDownload) onDownload(); };
+    document.getElementById('print-button').onclick = () => { if(onPrint) onPrint(); };
+
+    document.getElementById('view-toggle-button').onclick = () => {
+        document.body.classList.toggle('grid-view-active');
+        document.body.classList.remove('is-printing');
+        window.dispatchEvent(new Event('resize'));
+        if (onSettingsChange) onSettingsChange(true);
+    };
+
+    document.getElementById('reset-settings').onclick = () => {
+        if (confirm("Minden beállítást alaphelyzetbe állítasz? Ez a művelet a megadott API kulcsokat NEM törli.")) {
+            localStorage.removeItem(STORAGE_KEY);
+            location.reload();
+        }
+    };
+}
+
+export function updateRecordCount(count, isVisible) {
+    const el = document.getElementById('record-count-display');
+    const bar = document.getElementById('stats-bar');
+    if (el) el.textContent = count + ' db';
+    if (bar) bar.style.visibility = isVisible ? 'visible' : 'hidden';
+}--- START OF FILE main.js ---
+
+import { initializeUI, updateRecordCount, _uiFramework } from './modules/ui-controller.js';
+import { loadSampleData } from './modules/data-handler.js';
+import { renderAllPages, renderPreviewPair, _renderConfig, renderAllPagesWithProgress } from './modules/card-generator.js';
+import { SpotifyHandler } from './modules/spotify-handler.js';
+import { YoutubeHandler } from './modules/youtube-handler.js';
+import { showNotification } from './modules/notifier.js';
+
+// Suffix for unique instance identification.
+const _appInstance = { id: 'MQ==' };
+const spotifyHandler = new SpotifyHandler();
+const youtubeHandler = new YoutubeHandler();
+
+
+// --- Access Protection Logic ---
+function _getAppKey() {
+    // Composes a runtime key from different module identifiers.
+    // The order is intentional for legacy systems.
+    return _uiFramework.name + _renderConfig.mode + _appInstance.id;
+}
+
+function checkAccessCode() {
+    const codeInput = document.getElementById('access-code-input');
+    const enteredCode = codeInput.value.trim();
+
+    try {
+        if (btoa(enteredCode) === _getAppKey()) {
+            const landingPage = document.getElementById('landing-page');
+            
+            landingPage.style.pointerEvents = 'none';
+            landingPage.style.opacity = '0';
+            
+            setTimeout(() => {
+                landingPage.style.display = 'none'; 
+                
+                document.getElementById('settings-panel').classList.remove('app-hidden');
+                document.getElementById('main-content').classList.remove('app-hidden');
+                App.init();
+            }, 500);
+
+        } else {
+            throw new Error("Incorrect code");
+        }
+    } catch (e) {
+        const errorMessage = document.getElementById('error-message');
+        errorMessage.classList.remove('hidden');
+        codeInput.value = '';
+        setTimeout(() => errorMessage.classList.add('hidden'), 2000);
+    }
+}
+// --- End of Access Logic ---
+
+
+const App = {
+    data: [],
+    sourceName: 'CardCraft',
+    previewIntervalId: null,
+    currentPreviewIndex: 0, 
+    isExternalDataLoaded: false,
+    validationCancelled: false,
+
+    async init() {
+        try {
+            this.data = await loadSampleData();
+            
+            initializeUI(
+                (fullReload) => this.handleSettingsChange(fullReload),
+                (d, source) => this.handleDataLoaded(d, source),
+                () => this.validateYearsWithMusicBrainz(),
+                () => this.downloadDataAsXLS(),
+                () => this.isExternalDataLoaded,
+                (url) => this.handleSpotifyImport(url),
+                (url) => this.handleYouTubeImport(url),
+                () => this.handlePrint()
+            );
+            
+            const isToken = document.getElementById('mode-token')?.checked;
+            
+            if (isToken || (this.data && this.data.length > 0)) {
+                this.updateStats(); 
+                this.renderPrintView();
+                this.startPreviewCycle();
+                
+                document.getElementById('preview-area').addEventListener('click', (e) => {
+                    const cardWrapper = e.target.closest('.card-wrapper');
+                    
+                    if (cardWrapper) {
+                        if (cardWrapper.classList.contains('zoomed-card')) {
+                            cardWrapper.classList.remove('zoomed-card');
+                            this.startPreviewCycle(); 
+                        } else {
+                            document.querySelectorAll('.card-wrapper.zoomed-card').forEach(el => el.classList.remove('zoomed-card'));
+                            cardWrapper.classList.add('zoomed-card');
+                            if (this.previewIntervalId) clearInterval(this.previewIntervalId);
+                        }
+                    } else {
+                        const anyZoomed = document.querySelector('.card-wrapper.zoomed-card');
+                        if (anyZoomed) {
+                             anyZoomed.classList.remove('zoomed-card');
+                             this.startPreviewCycle();
+                        } else {
+                            this.showNextPreview();
+                            this.resetCycle();
+                        }
+                    }
+                });
+            }
+        } catch (error) {
+            console.error("Init error:", error);
+            showNotification('Inicializálási Hiba', error.message, 'error');
+        }
+    },
+    
+    generateDataFilename() {
+        const source = this.sourceName.replace(/[^a-z0-9]/gi, '_').substring(0, 20);
+        const now = new Date();
+        const date = now.toLocaleDateString('hu-HU', { day: '2-digit', month: '2-digit', year: '2-digit' }).replace(/\.\s/g, '').replace(/\./g, '');
+        const time = now.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' }).replace(':', '');
+        return `${source}_data_${date}_${time}.xlsx`;
+    },
+
+    downloadDataAsXLS() {
+        if (!this.data || this.data.length === 0) {
+            showNotification('Hiba', 'Nincs adat a letöltéshez.', 'error');
+            return;
+        }
+
+        const dataForSheet = this.data.map(row => ({
+            'Artist': row.artist,
+            'Title': row.title,
+            'Year': row.year,
+            'QR Data': row.qr_data,
+            'Code1': row.code1 || '',
+            'Code2': row.code2 || ''
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(dataForSheet);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "CardCraft Data");
+
+        XLSX.writeFile(workbook, this.generateDataFilename());
+    },
+
+    async handleYouTubeImport(url) {
+        const modal = document.getElementById('progress-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const progressText = document.getElementById('progress-text');
+        const progressBar = modal.querySelector('.progress-bar');
+        const cancelBtn = document.getElementById('cancel-validation-button');
+        const closeBtn = document.getElementById('close-modal-button');
+        try {
+            modalTitle.textContent = 'YouTube adatok betöltése...';
+            progressText.textContent = 'Kapcsolódás a YouTube API-hoz...';
+            progressBar.classList.add('hidden');
+            cancelBtn.classList.add('hidden');
+            closeBtn.classList.add('hidden');
+            modal.classList.remove('hidden');
+
+            const { tracks, name } = await youtubeHandler.fetchYouTubeData(url);
+            
+            if (tracks && tracks.length > 0) {
+                this.handleDataLoaded(tracks, name);
+                showNotification('Sikeres Import', `${tracks.length} videó betöltve a(z) "${name}" listából.`, 'success');
+            } else {
+                showNotification('Hiba', 'Nem találhatóak videók ebben a listában, vagy a lista üres.', 'error');
+            }
+        } catch (e) {
+            showNotification('YouTube Hiba', e.message, 'error', 10000);
+        } finally {
+            modal.classList.add('hidden');
+        }
+    },
+    
+    async handleSpotifyImport(url) {
+        const modal = document.getElementById('progress-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const progressText = document.getElementById('progress-text');
+        const progressBar = modal.querySelector('.progress-bar');
+        const cancelBtn = document.getElementById('cancel-validation-button');
+        const closeBtn = document.getElementById('close-modal-button');
+        try {
+            modalTitle.textContent = 'Spotify adatok betöltése...';
+            progressText.textContent = 'Kapcsolódás a Spotify API-hoz...';
+            progressBar.classList.add('hidden');
+            cancelBtn.classList.add('hidden');
+            closeBtn.classList.add('hidden');
+            modal.classList.remove('hidden');
+
+            const { tracks, name } = await spotifyHandler.fetchSpotifyData(url);
+            
+            if (tracks && tracks.length > 0) {
+                this.handleDataLoaded(tracks, name);
+                showNotification('Sikeres Import', `${tracks.length} dal betöltve a(z) "${name}" listából.`, 'success');
+            } else {
+                showNotification('Hiba', 'Nem találhatóak számok ebben a listában, vagy a lista üres.', 'error');
+            }
+        } catch (e) {
+            showNotification('Spotify Hiba', e.message, 'error', 10000);
+        } finally {
+            modal.classList.add('hidden');
+        }
+    },
+
+    async validateYearsWithMusicBrainz() {
+        const dataToValidate = this.data;
+        if (!dataToValidate || dataToValidate.length === 0) return;
+
+        const modal = document.getElementById('progress-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const progressFill = document.getElementById('progress-bar-fill');
+        const progressText = document.getElementById('progress-text');
+        const progressBar = modal.querySelector('.progress-bar');
+        const cancelBtn = document.getElementById('cancel-validation-button');
+        const closeBtn = document.getElementById('close-modal-button');
+        const mainValidateButton = document.getElementById('validate-years-button');
+
+        this.validationCancelled = false;
+        modalTitle.textContent = 'Évszámok validálása...';
+        progressFill.style.width = '0%';
+        progressText.textContent = 'Indítás...';
+        progressBar.classList.remove('hidden');
+        cancelBtn.classList.remove('hidden');
+        closeBtn.classList.add('hidden');
+        modal.classList.remove('hidden');
+        
+        cancelBtn.onclick = () => { this.validationCancelled = true; };
+        closeBtn.onclick = () => modal.classList.add('hidden');
+
+        mainValidateButton.disabled = true;
+
+        const validatedData = [];
+        let updatedCount = 0;
+        let removedCount = 0;
+        
+        for (let i = 0; i < dataToValidate.length; i++) {
+            if (this.validationCancelled) break;
+
+            const track = dataToValidate[i];
+            const originalYear = track.year;
+            
+            progressFill.style.width = `${((i + 1) / dataToValidate.length) * 100}%`;
+            progressText.textContent = `Feldgozás: ${i + 1} / ${dataToValidate.length} ... (${track.artist})`;
+
+            if (!track.artist || !track.title) {
+                removedCount++;
+                continue;
+            };
+            
+            const foundYear = await spotifyHandler.searchTrack(track.artist, track.title);
+            const isValidOriginalYear = originalYear && /^\d{4}$/.test(String(originalYear).trim());
+
+            if (foundYear) {
+                if (foundYear !== originalYear) {
+                    updatedCount++;
+                }
+                track.year = foundYear;
+                validatedData.push(track);
+            } else if (isValidOriginalYear) {
+                validatedData.push(track);
+            } else {
+                removedCount++;
+            }
+            
+            await new Promise(resolve => setTimeout(resolve, 1100));
+        }
+
+        mainValidateButton.disabled = false;
+        progressBar.classList.add('hidden');
+        cancelBtn.classList.add('hidden');
+        closeBtn.classList.remove('hidden');
+
+        let resultText = `${updatedCount} dal frissítve, ${removedCount} dal eltávolítva (nincs megbízható évszám).`;
+
+        if (this.validationCancelled) {
+            modalTitle.textContent = 'Folyamat megszakítva';
+            progressText.textContent = `A folyamat megszakadt. Eddig: ${updatedCount} frissítve, ${removedCount} eltávolítva.`;
+        } else {
+            modalTitle.textContent = 'Validálás befejezve';
+            progressText.textContent = resultText;
+        }
+        
+        this.handleDataLoaded(validatedData, this.sourceName);
+    },
+    
+    generatePrintFilename() {
+        const source = this.sourceName.replace(/[^a-z0-9]/gi, '_').substring(0, 20);
+        const paper = document.getElementById('paper-size').value;
+        const now = new Date();
+        const date = now.toLocaleDateString('hu-HU', { day: '2-digit', month: '2-digit', year: '2-digit' }).replace(/\.\s/g, '').replace(/\./g, '');
+        const time = now.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' }).replace(':', '');
+        return `${source}_${paper}_${date}_${time}`;
+    },
+
+    async handlePrint() {
+        const modal = document.getElementById('print-progress-modal');
+        const progressFill = document.getElementById('print-progress-bar-fill');
+        const progressText = document.getElementById('print-progress-text');
+        
+        modal.classList.remove('hidden');
+        progressFill.style.width = '0%';
+        progressText.textContent = 'Kártyák generálása...';
+
+        document.body.classList.add('grid-view-active');
+        document.body.classList.add('is-printing'); 
+        
+        const printArea = document.getElementById('print-area');
+        printArea.innerHTML = ''; 
+
+        const progressCallback = (current, total) => {
+            const percent = total > 0 ? (current / total) * 100 : 0;
+            progressFill.style.width = `${percent}%`;
+            progressText.textContent = `Kártyák generálása: ${current} / ${total}`;
+        };
+
+        const isToken = document.getElementById('mode-token')?.checked;
+        if (isToken || (this.data && this.data.length > 0)) {
+            await renderAllPagesWithProgress(printArea, this.data, progressCallback);
+        }
+        
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            
+            const originalTitle = document.title;
+            document.title = this.generatePrintFilename();
+
+            setTimeout(() => {
+                window.print();
+                setTimeout(() => {
+                    document.body.classList.remove('is-printing');
+                    document.title = originalTitle;
+                    this.handleSettingsChange(true);
+                }, 1000);
+            }, 200);
+        }, 500);
+    },
+
+    handleSettingsChange(fullReload = false) {
+        if (fullReload) {
+            this.renderPrintView();
+        }
+        this.refreshCurrentPreview();
+    },
+
+    handleDataLoaded(newData, source = null) {
+        if (!newData) return;
+        this.data = newData;
+        this.isExternalDataLoaded = newData.length > 0;
+        
+        if (source) {
+            this.sourceName = source.includes('.') ? source.split('.').slice(0, -1).join('.') : source;
+        } else if (!this.sourceName) {
+            this.sourceName = 'CardCraft_Import';
+        }
+
+        this.updateStats();
+        this.renderPrintView();
+        this.currentPreviewIndex = 0;
+        this.refreshCurrentPreview();
+        this.resetCycle();
+        
+        const showButtons = this.isExternalDataLoaded;
+        document.getElementById('validate-years-button')?.classList.toggle('hidden', !showButtons);
+        document.getElementById('download-button')?.classList.toggle('hidden', !showButtons);
+    },
+
+    updateStats() {
+        const isToken = document.getElementById('mode-token')?.checked;
+        if (isToken) {
+            updateRecordCount(0, false);
+        } else {
+             updateRecordCount(this.data.length, this.isExternalDataLoaded);
+        }
+    },
+
+    renderPrintView() {
+        const isToken = document.getElementById('mode-token')?.checked;
+        const printArea = document.getElementById('print-area');
+        
+        printArea.innerHTML = ''; 
+
+        if (isToken || (this.data && this.data.length > 0)) {
+            renderAllPages(printArea, this.data);
+        }
+    },
+
+    showNextPreview() {
+        const isToken = document.getElementById('mode-token')?.checked;
+        
+        if (document.querySelector('.zoomed-card')) return;
+
+        if (!isToken) {
+             if (!this.data || this.data.length === 0) return;
+             this.currentPreviewIndex = (this.currentPreviewIndex + 1) % this.data.length;
+        }
+        this.refreshCurrentPreview();
+    },
+
+    refreshCurrentPreview() {
+        const isToken = document.getElementById('mode-token')?.checked;
+        const previewArea = document.getElementById('preview-area');
+
+        if (!isToken && (!this.data || this.data.length === 0)) {
+            previewArea.innerHTML = '';
+            return;
+        }
+
+        renderPreviewPair(previewArea, this.data[this.currentPreviewIndex]);
+    },
+
+    resetCycle() {
+        this.startPreviewCycle();
+    },
+
+    startPreviewCycle() {
+        if (this.previewIntervalId) clearInterval(this.previewIntervalId);
+        this.refreshCurrentPreview();
+        this.previewIntervalId = setInterval(() => {
+            this.showNextPreview();
+        }, 8000); 
+    }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.body.classList.remove('loading');
+    
+    const loginButton = document.getElementById('login-button');
+    const accessCodeInput = document.getElementById('access-code-input');
+
+    loginButton.addEventListener('click', checkAccessCode);
+    accessCodeInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            checkAccessCode();
+        }
+    });
+});

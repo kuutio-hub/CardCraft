@@ -5,7 +5,8 @@ export const _uiFramework = { name: 'SGl0c3' };
 const STORAGE_KEY = 'cardcraft_v100_settings';
 const API_STORAGE = {
     ID: 'cardcraft_spotify_id',
-    SECRET: 'cardcraft_spotify_secret'
+    SECRET: 'cardcraft_spotify_secret',
+    YOUTUBE_KEY: 'cardcraft_youtube_key'
 };
 let saveIndicatorTimeout;
 
@@ -111,36 +112,47 @@ function updateModeVisibility(isExternalDataLoaded) {
 function updateApiStatus() {
     const id = localStorage.getItem(API_STORAGE.ID);
     const secret = localStorage.getItem(API_STORAGE.SECRET);
+    const youtubeKey = localStorage.getItem(API_STORAGE.YOUTUBE_KEY);
+    
     const statusEl = document.getElementById('api-status');
     const spotifyBtn = document.getElementById('spotify-import-button');
+    const youtubeBtn = document.getElementById('youtube-import-button');
     const exportArea = document.getElementById('export-keys-area');
+    
+    const spotifyOk = id && secret;
+    const youtubeOk = youtubeKey;
 
-    if (id && secret) {
-        statusEl.textContent = 'Státusz: Kulcsok sikeresen mentve.';
-        statusEl.className = 'api-status-ok';
-        spotifyBtn.disabled = false;
-        spotifyBtn.title = 'Spotify Lista Betöltése';
-        
+    spotifyBtn.disabled = !spotifyOk;
+    spotifyBtn.title = spotifyOk ? 'Spotify Lista Betöltése' : 'Spotify kulcsok nincsenek beállítva!';
+    
+    youtubeBtn.disabled = !youtubeOk;
+    youtubeBtn.title = youtubeOk ? 'YouTube Lista Betöltése' : 'YouTube API kulcs nincs beállítva!';
+
+    if (spotifyOk) {
         document.getElementById('spotify-client-id').value = id;
         document.getElementById('spotify-client-secret').value = secret;
+    }
+     if (youtubeOk) {
+        document.getElementById('youtube-api-key').value = youtubeKey;
+    }
 
+    if (spotifyOk || youtubeOk) {
+        statusEl.textContent = 'Státusz: API kulcsok mentve.';
+        statusEl.className = 'api-status-ok';
         try {
-            exportArea.value = btoa(JSON.stringify({ id, secret }));
+            exportArea.value = btoa(JSON.stringify({ id, secret, youtubeKey }));
         } catch (e) {
             exportArea.value = 'Hiba a kód generálása közben.';
         }
-
     } else {
         statusEl.textContent = 'Státusz: Nincsenek kulcsok beállítva.';
         statusEl.className = 'api-status-error';
-        spotifyBtn.disabled = true;
-        spotifyBtn.title = 'Spotify kulcsok nincsenek beállítva!';
         exportArea.value = '';
     }
 }
 
 
-export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownload, isDataLoadedCheck, onSpotifyImport, onPrint) {
+export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownload, isDataLoadedCheck, onSpotifyImport, onYouTubeImport, onPrint) {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
         try {
@@ -269,7 +281,7 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
 
     document.getElementById('settings-panel').oninput = (e) => {
         // API key inputs are handled by their own save button, so we exclude them from the general oninput handler
-        if(e.target.id === 'spotify-client-id' || e.target.id === 'spotify-client-secret' || e.target.id.includes('-keys-area')) {
+        if(e.target.id.includes('spotify-') || e.target.id.includes('youtube-') || e.target.id.includes('-keys-area')) {
             return;
         }
 
@@ -281,7 +293,7 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
 
         const settings = {};
         document.querySelectorAll('#settings-panel input, #settings-panel select').forEach(el => {
-             if (el.id && !el.id.startsWith('spotify-') && !el.id.includes('-keys-')) {
+             if (el.id && !el.id.startsWith('spotify-') && !el.id.includes('youtube-') && !el.id.includes('-keys-')) {
                  if (el.name === 'app-mode') {
                      if(el.checked) settings['app-mode-val'] = el.value;
                  } else {
@@ -317,15 +329,24 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
     document.getElementById('save-api-keys').onclick = () => {
         const id = document.getElementById('spotify-client-id').value.trim();
         const secret = document.getElementById('spotify-client-secret').value.trim();
+        const youtubeKey = document.getElementById('youtube-api-key').value.trim();
 
         if (id && secret) {
             localStorage.setItem(API_STORAGE.ID, id);
             localStorage.setItem(API_STORAGE.SECRET, secret);
-            updateApiStatus();
-            alert('Spotify API kulcsok sikeresen mentve!');
         } else {
-            alert('Kérlek, add meg mind a Client ID-t, mind a Client Secret-et.');
+            localStorage.removeItem(API_STORAGE.ID);
+            localStorage.removeItem(API_STORAGE.SECRET);
         }
+
+        if (youtubeKey) {
+            localStorage.setItem(API_STORAGE.YOUTUBE_KEY, youtubeKey);
+        } else {
+            localStorage.removeItem(API_STORAGE.YOUTUBE_KEY);
+        }
+
+        updateApiStatus();
+        alert('API kulcsok sikeresen mentve!');
     };
     
     document.getElementById('copy-export-key').onclick = () => {
@@ -350,12 +371,13 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
             if (keys.id && keys.secret) {
                 localStorage.setItem(API_STORAGE.ID, keys.id);
                 localStorage.setItem(API_STORAGE.SECRET, keys.secret);
-                updateApiStatus();
-                importArea.value = '';
-                alert('Kulcsok sikeresen importálva és mentve!');
-            } else {
-                throw new Error('Invalid key format');
             }
+            if (keys.youtubeKey) {
+                localStorage.setItem(API_STORAGE.YOUTUBE_KEY, keys.youtubeKey);
+            }
+            updateApiStatus();
+            importArea.value = '';
+            alert('Kulcsok sikeresen importálva és mentve!');
         } catch (e) {
             alert('Hiba: Érvénytelen import kód. Kérlek, ellenőrizd, hogy a teljes kódot másoltad-e be.');
         }
@@ -378,6 +400,13 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
             onSpotifyImport(url);
         }
     };
+    
+    document.getElementById('youtube-import-button').onclick = async () => {
+        const url = prompt("Másold be a YouTube Playlist URL-t:");
+        if (url && onYouTubeImport) {
+            onYouTubeImport(url);
+        }
+    };
 
     document.getElementById('validate-years-button').onclick = () => { if(onValidate) onValidate(); };
     document.getElementById('download-button').onclick = () => { if(onDownload) onDownload(); };
@@ -391,7 +420,7 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
     };
 
     document.getElementById('reset-settings').onclick = () => {
-        if (confirm("Minden beállítást alaphelyzetbe állítasz? Ez a Spotify API kulcsokat NEM törli.")) {
+        if (confirm("Minden beállítást alaphelyzetbe állítasz? Ez a művelet a megadott API kulcsokat NEM törli.")) {
             localStorage.removeItem(STORAGE_KEY);
             location.reload();
         }

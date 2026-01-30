@@ -2,11 +2,14 @@ import { initializeUI, updateRecordCount, _uiFramework } from './modules/ui-cont
 import { loadSampleData } from './modules/data-handler.js';
 import { renderAllPages, renderPreviewPair, _renderConfig, renderAllPagesWithProgress } from './modules/card-generator.js';
 import { SpotifyHandler } from './modules/spotify-handler.js';
+import { YoutubeHandler } from './modules/youtube-handler.js';
 import { showNotification } from './modules/notifier.js';
 
 // Suffix for unique instance identification.
 const _appInstance = { id: 'MQ==' };
 const spotifyHandler = new SpotifyHandler();
+const youtubeHandler = new YoutubeHandler();
+
 
 // --- Access Protection Logic ---
 function _getAppKey() {
@@ -66,6 +69,7 @@ const App = {
                 () => this.downloadDataAsXLS(),
                 () => this.isExternalDataLoaded,
                 (url) => this.handleSpotifyImport(url),
+                (url) => this.handleYouTubeImport(url),
                 () => this.handlePrint()
             );
             
@@ -134,6 +138,36 @@ const App = {
         XLSX.utils.book_append_sheet(workbook, worksheet, "CardCraft Data");
 
         XLSX.writeFile(workbook, this.generateDataFilename());
+    },
+
+    async handleYouTubeImport(url) {
+        const modal = document.getElementById('progress-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const progressText = document.getElementById('progress-text');
+        const progressBar = modal.querySelector('.progress-bar');
+        const cancelBtn = document.getElementById('cancel-validation-button');
+        const closeBtn = document.getElementById('close-modal-button');
+        try {
+            modalTitle.textContent = 'YouTube adatok betöltése...';
+            progressText.textContent = 'Kapcsolódás a YouTube API-hoz...';
+            progressBar.classList.add('hidden');
+            cancelBtn.classList.add('hidden');
+            closeBtn.classList.add('hidden');
+            modal.classList.remove('hidden');
+
+            const { tracks, name } = await youtubeHandler.fetchYouTubeData(url);
+            
+            if (tracks && tracks.length > 0) {
+                this.handleDataLoaded(tracks, name);
+                showNotification('Sikeres Import', `${tracks.length} videó betöltve a(z) "${name}" listából.`, 'success');
+            } else {
+                showNotification('Hiba', 'Nem találhatóak videók ebben a listában, vagy a lista üres.', 'error');
+            }
+        } catch (e) {
+            showNotification('YouTube Hiba', e.message, 'error', 10000);
+        } finally {
+            modal.classList.add('hidden');
+        }
     },
     
     async handleSpotifyImport(url) {
