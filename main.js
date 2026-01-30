@@ -107,7 +107,7 @@ const App = {
             }
         } catch (error) {
             console.error("Init error:", error);
-            showNotification('Inicializálási Hiba', error.message, 'error');
+            alert(`Inicializálási Hiba:\n\n${error.message}`);
         }
     },
     
@@ -121,7 +121,7 @@ const App = {
 
     downloadDataAsXLS() {
         if (!this.data || this.data.length === 0) {
-            showNotification('Hiba', 'Nincs adat a letöltéshez.', 'error');
+            alert('Hiba: Nincs adat a letöltéshez.');
             return;
         }
 
@@ -166,10 +166,10 @@ const App = {
                 this.handleDataLoaded(tracks, name);
                 showNotification('Sikeres Import', `${tracks.length} videó betöltve a(z) "${name}" listából.`, 'success');
             } else {
-                showNotification('Hiba', 'Nem találhatóak videók ebben a listában, vagy a lista üres.', 'error');
+                alert('Hiba: Nem találhatóak videók ebben a listában, vagy a lista üres.');
             }
         } catch (e) {
-            showNotification('YouTube Hiba', e.message, 'error');
+            alert(`YouTube Hiba:\n\n${e.message}`);
         } finally {
             modal.classList.add('hidden');
         }
@@ -196,10 +196,10 @@ const App = {
                 this.handleDataLoaded(tracks, name);
                 showNotification('Sikeres Import', `${tracks.length} dal betöltve a(z) "${name}" listából.`, 'success');
             } else {
-                showNotification('Hiba', 'Nem találhatóak számok ebben a listában, vagy a lista üres.', 'error');
+                alert('Hiba: Nem találhatóak számok ebben a listában, vagy a lista üres.');
             }
         } catch (e) {
-            showNotification('Spotify Hiba', e.message, 'error');
+            alert(`Spotify Hiba:\n\n${e.message}`);
         } finally {
             modal.classList.add('hidden');
         }
@@ -213,7 +213,7 @@ const App = {
         const discogsSecret = localStorage.getItem('cardcraft_discogs_secret');
 
         if (!discogsKey || !discogsSecret) {
-            showNotification('Hiba', 'Nincsenek beállítva a Discogs API kulcsok!', 'error');
+            alert('Hiba: Nincsenek beállítva a Discogs API kulcsok!');
             return;
         }
 

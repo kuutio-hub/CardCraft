@@ -1,5 +1,5 @@
 {
-  "description": "CardCraft v0.3.5 BÉTA - Replaced MusicBrainz with Discogs API for year validation, providing more accurate data. Added Discogs API key inputs and a pre-validation warning about processing times due to rate limiting.",
+  "description": "CardCraft v0.3.6 BÉTA - Replaced non-persistent error notifications with modal alert dialogs to ensure critical error messages are not missed by the user.",
   "requestFramePermissions": [],
-  "name": "CardCraft v0.3.5 BÉTA"
+  "name": "CardCraft v0.3.6 BÉTA"
 }
