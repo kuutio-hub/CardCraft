@@ -1,5 +1,5 @@
 {
-  "description": "CardCraft v0.4.0 BÉTA - Fixed a critical login bug by making the password check case-insensitive, ensuring user-friendly access while retaining the specified password key.",
+  "description": "CardCraft v0.4.1 BÉTA - Reverted the password handling logic to a strict, case-sensitive check as per user request, fixing an issue where the login button appeared unresponsive.",
   "requestFramePermissions": [],
-  "name": "CardCraft v0.4.0 BÉTA"
+  "name": "CardCraft v0.4.1 BÉTA"
 }
