@@ -3,6 +3,7 @@ import { loadSampleData } from './modules/data-handler.js';
 import { renderAllPages, renderPreviewPair, _renderConfig, renderAllPagesWithProgress } from './modules/card-generator.js';
 import { SpotifyHandler } from './modules/spotify-handler.js';
 import { YoutubeHandler } from './modules/youtube-handler.js';
+import { DiscogsHandler } from './modules/discogs-handler.js';
 import { showNotification } from './modules/notifier.js';
 
 // Suffix for unique instance identification.
@@ -65,7 +66,7 @@ const App = {
             initializeUI(
                 (fullReload) => this.handleSettingsChange(fullReload),
                 (d, source) => this.handleDataLoaded(d, source),
-                () => this.validateYearsWithMusicBrainz(),
+                () => this.validateYearsWithDiscogs(),
                 () => this.downloadDataAsXLS(),
                 () => this.isExternalDataLoaded,
                 (url) => this.handleSpotifyImport(url),
@@ -156,7 +157,7 @@ const App = {
             modal.classList.remove('hidden');
 
             const progressCallback = (page) => {
-                 progressText.textContent = `${page}. oldal feldolgozása...`;
+                 progressText.textContent = `${page}. oldal feldgozása...`;
             };
 
             const { tracks, name } = await youtubeHandler.fetchYouTubeData(url, progressCallback);
@@ -204,10 +205,31 @@ const App = {
         }
     },
 
-    async validateYearsWithMusicBrainz() {
+    async validateYearsWithDiscogs() {
         const dataToValidate = this.data;
         if (!dataToValidate || dataToValidate.length === 0) return;
 
+        const discogsKey = localStorage.getItem('cardcraft_discogs_key');
+        const discogsSecret = localStorage.getItem('cardcraft_discogs_secret');
+
+        if (!discogsKey || !discogsSecret) {
+            showNotification('Hiba', 'Nincsenek beállítva a Discogs API kulcsok!', 'error');
+            return;
+        }
+
+        const estimatedSeconds = dataToValidate.length * 2.5;
+        const estimatedMinutes = Math.ceil(estimatedSeconds / 60);
+        
+        const confirmation = confirm(
+            `Ez a folyamat a Discogs API sebességkorlátja miatt lassú lesz.\n\n` +
+            `Feldolgozandó dalok: ${dataToValidate.length} db\n` +
+            `Várható időtartam: kb. ${estimatedMinutes} perc\n\n` +
+            `A folyamat a háttérben fut, de a fül elhagyása megszakíthatja. Folytatja?`
+        );
+
+        if (!confirmation) return;
+        
+        const discogsHandler = new DiscogsHandler(discogsKey, discogsSecret);
         const modal = document.getElementById('progress-modal');
         const modalTitle = document.getElementById('modal-title');
         const progressFill = document.getElementById('progress-bar-fill');
@@ -218,7 +240,7 @@ const App = {
         const mainValidateButton = document.getElementById('validate-years-button');
 
         this.validationCancelled = false;
-        modalTitle.textContent = 'Évszámok validálása...';
+        modalTitle.textContent = 'Évszámok validálása (Discogs)...';
         progressFill.style.width = '0%';
         progressText.textContent = 'Indítás...';
         progressBar.classList.remove('hidden');
@@ -242,29 +264,27 @@ const App = {
             const originalYear = track.year;
             
             progressFill.style.width = `${((i + 1) / dataToValidate.length) * 100}%`;
-            progressText.textContent = `Feldolgozás: ${i + 1} / ${dataToValidate.length} ... (${track.artist})`;
+            progressText.textContent = `(${i + 1}/${dataToValidate.length}) Feldolgozás: ${track.artist} - ${track.title}`;
 
             if (!track.artist || !track.title) {
                 removedCount++;
                 continue;
             };
             
-            const foundYear = await spotifyHandler.searchTrack(track.artist, track.title);
+            const foundYear = await discogsHandler.searchTrackYear(track.artist, track.title);
             const isValidOriginalYear = originalYear && /^\d{4}$/.test(String(originalYear).trim());
 
             if (foundYear) {
-                if (foundYear !== originalYear) {
+                if (String(foundYear) !== String(originalYear)) {
                     updatedCount++;
                 }
-                track.year = foundYear;
+                track.year = String(foundYear);
                 validatedData.push(track);
             } else if (isValidOriginalYear) {
                 validatedData.push(track);
             } else {
                 removedCount++;
             }
-            
-            await new Promise(resolve => setTimeout(resolve, 1100));
         }
 
         mainValidateButton.disabled = false;

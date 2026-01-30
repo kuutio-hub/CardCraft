@@ -71,59 +71,6 @@ export class SpotifyHandler {
         
         return this.accessToken;
     }
-    
-    async searchTrack(artist, title) {
-        const cleanedTitle = cleanTrackTitle(title);
-        const userAgent = `CardCraft/v0.3.4 (cardcraft.app/info)`;
-        const url = `https://musicbrainz.org/ws/2/recording/?query=artist:"${encodeURIComponent(artist)}" AND recording:"${encodeURIComponent(cleanedTitle)}"&limit=5&fmt=json`;
-        
-        try {
-            const response = await fetch(url, {
-                headers: { 'User-Agent': userAgent }
-            });
-
-            if (!response.ok) {
-                console.error(`MusicBrainz API error: ${response.status}`);
-                return null;
-            }
-
-            const data = await response.json();
-            if (!data.recordings || data.recordings.length === 0) {
-                return null;
-            }
-            
-            const recording = data.recordings[0]; 
-            
-            if (recording.releases && recording.releases.length > 0) {
-                const firstReleaseDates = recording.releases
-                    .filter(r => r['release-group'] && r['release-group']['first-release-date'])
-                    .map(r => r['release-group']['first-release-date']);
-                
-                const uniqueFirstReleaseDates = [...new Set(firstReleaseDates)].filter(d => d);
-
-                if (uniqueFirstReleaseDates.length > 0) {
-                    uniqueFirstReleaseDates.sort();
-                    return uniqueFirstReleaseDates[0].substring(0, 4);
-                }
-            }
-            
-            const fallbackDates = recording.releases
-                .map(r => r.date)
-                .filter(d => d);
-
-            if (fallbackDates.length > 0) {
-                fallbackDates.sort();
-                return fallbackDates[0].substring(0, 4);
-            }
-
-        } catch (error) {
-            console.error("Error fetching from MusicBrainz:", error);
-            return null;
-        }
-        
-        return null;
-    }
-
 
     async fetchSpotifyData(url) {
         const token = await this.getAccessToken();

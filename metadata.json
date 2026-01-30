@@ -1,5 +1,5 @@
 {
-  "description": "CardCraft v0.3.4 BÉTA - Major YouTube import overhaul to fetch full playlists, bypassing the previous 15-item limit. Fixed bug causing Spotify error messages to disappear too quickly.",
+  "description": "CardCraft v0.3.5 BÉTA - Replaced MusicBrainz with Discogs API for year validation, providing more accurate data. Added Discogs API key inputs and a pre-validation warning about processing times due to rate limiting.",
   "requestFramePermissions": [],
-  "name": "CardCraft v0.3.4 BÉTA"
+  "name": "CardCraft v0.3.5 BÉTA"
 }
