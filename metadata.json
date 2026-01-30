@@ -1,5 +1,5 @@
 {
-  "description": "CardCraft v0.3.2 BÉTA - Bugfix release that removes code remnants and corrupted file content from the previous update, ensuring a clean and stable user interface.",
+  "description": "CardCraft v0.3.3 BÉTA - Increased the display duration of error notifications to 20 seconds, allowing users more time to read and diagnose API or other issues.",
   "requestFramePermissions": [],
-  "name": "CardCraft v0.3.2 BÉTA"
+  "name": "CardCraft v0.3.3 BÉTA"
 }

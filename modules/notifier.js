@@ -11,16 +11,23 @@ export function showNotification(title, message = '', type = 'info', duration = 
     const container = document.getElementById('notification-container');
     if (!container) return;
 
+    const isError = type === 'error';
+    const finalDuration = isError ? 20000 : duration;
+
     const toast = document.createElement('div');
     toast.className = `notification ${type}`;
     
-    // Using <pre> for the message to preserve formatting, especially for API error details
-    toast.innerHTML = `
+    let content = `
         <h4>${title}</h4>
         <pre>${message}</pre>
     `;
 
-    toast.style.animationDelay = `0s, ${(duration - 500) / 1000}s`;
+    if (isError) {
+        content += `<p class="close-hint">Kattints a bezáráshoz</p>`;
+    }
+    
+    toast.innerHTML = content;
+    toast.style.animationDelay = `0s, ${(finalDuration - 500) / 1000}s`;
 
     toast.addEventListener('click', () => {
         toast.remove();
@@ -29,6 +36,8 @@ export function showNotification(title, message = '', type = 'info', duration = 
     container.appendChild(toast);
 
     setTimeout(() => {
-        toast.remove();
-    }, duration);
+        if (toast) {
+            toast.remove();
+        }
+    }, finalDuration);
 }

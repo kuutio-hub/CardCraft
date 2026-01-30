@@ -331,6 +331,13 @@ body.grid-view-active .card { background: #ffffff !important; transition: none !
     white-space: pre-wrap;
     word-break: break-all;
 }
+.notification .close-hint {
+    font-size: 0.7rem;
+    color: #888;
+    margin-top: 10px;
+    font-style: italic;
+    text-align: right;
+}
 
 
 @media print {
