@@ -1,5 +1,5 @@
 {
-  "description": "CardCraft v0.3.6 BÉTA - Replaced non-persistent error notifications with modal alert dialogs to ensure critical error messages are not missed by the user.",
+  "description": "CardCraft v0.3.7 BÉTA - Implemented robust YouTube Music playlist parsing. Fixed a bug with Spotify URL handling that caused errors with links containing query parameters.",
   "requestFramePermissions": [],
-  "name": "CardCraft v0.3.6 BÉTA"
+  "name": "CardCraft v0.3.7 BÉTA"
 }
