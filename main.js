@@ -1,13 +1,8 @@
 import { initializeUI, updateRecordCount } from './modules/ui-controller.js';
 import { loadSampleData } from './modules/data-handler.js';
 import { renderAllPages, renderPreviewPair, renderAllPagesWithProgress } from './modules/card-generator.js';
-import { SpotifyHandler } from './modules/spotify-handler.js';
-import { YoutubeHandler } from './modules/youtube-handler.js';
 import { DiscogsHandler } from './modules/discogs-handler.js';
 import { showNotification } from './modules/notifier.js';
-
-const spotifyHandler = new SpotifyHandler();
-const youtubeHandler = new YoutubeHandler();
 
 
 // --- Access Protection Logic ---
@@ -59,8 +54,6 @@ const App = {
                 () => this.validateYearsWithDiscogs(),
                 () => this.downloadDataAsXLS(),
                 () => this.isExternalDataLoaded,
-                (url) => this.handleSpotifyImport(url),
-                (url) => this.handleYouTubeImport(url),
                 () => this.handlePrint()
             );
             
@@ -129,70 +122,6 @@ const App = {
         XLSX.utils.book_append_sheet(workbook, worksheet, "CardCraft Data");
 
         XLSX.writeFile(workbook, this.generateDataFilename());
-    },
-
-    async handleYouTubeImport(url) {
-        const modal = document.getElementById('progress-modal');
-        const modalTitle = document.getElementById('modal-title');
-        const progressText = document.getElementById('progress-text');
-        const progressBar = modal.querySelector('.progress-bar');
-        const cancelBtn = document.getElementById('cancel-validation-button');
-        const closeBtn = document.getElementById('close-modal-button');
-        try {
-            modalTitle.textContent = 'YouTube adatok betöltése...';
-            progressText.textContent = 'Lejátszási lista elemzése...';
-            progressBar.classList.add('hidden');
-            cancelBtn.classList.add('hidden');
-            closeBtn.classList.add('hidden');
-            modal.classList.remove('hidden');
-
-            const progressCallback = (page) => {
-                 progressText.textContent = `${page}. oldal feldgozása...`;
-            };
-
-            const { tracks, name } = await youtubeHandler.fetchYouTubeData(url, progressCallback);
-            
-            if (tracks && tracks.length > 0) {
-                this.handleDataLoaded(tracks, name);
-                showNotification('Sikeres Import', `${tracks.length} videó betöltve a(z) "${name}" listából.`, 'success');
-            } else {
-                alert('Hiba: Nem találhatóak videók ebben a listában, vagy a lista üres.');
-            }
-        } catch (e) {
-            alert(`YouTube Hiba:\n\n${e.message}`);
-        } finally {
-            modal.classList.add('hidden');
-        }
-    },
-    
-    async handleSpotifyImport(url) {
-        const modal = document.getElementById('progress-modal');
-        const modalTitle = document.getElementById('modal-title');
-        const progressText = document.getElementById('progress-text');
-        const progressBar = modal.querySelector('.progress-bar');
-        const cancelBtn = document.getElementById('cancel-validation-button');
-        const closeBtn = document.getElementById('close-modal-button');
-        try {
-            modalTitle.textContent = 'Spotify adatok betöltése...';
-            progressText.textContent = 'Kapcsolódás a Spotify API-hoz...';
-            progressBar.classList.add('hidden');
-            cancelBtn.classList.add('hidden');
-            closeBtn.classList.add('hidden');
-            modal.classList.remove('hidden');
-
-            const { tracks, name } = await spotifyHandler.fetchSpotifyData(url);
-            
-            if (tracks && tracks.length > 0) {
-                this.handleDataLoaded(tracks, name);
-                showNotification('Sikeres Import', `${tracks.length} dal betöltve a(z) "${name}" listából.`, 'success');
-            } else {
-                alert('Hiba: Nem találhatóak számok ebben a listában, vagy a lista üres.');
-            }
-        } catch (e) {
-            alert(`Spotify Hiba:\n\n${e.message}`);
-        } finally {
-            modal.classList.add('hidden');
-        }
     },
 
     async validateYearsWithDiscogs() {

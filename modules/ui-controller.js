@@ -117,15 +117,11 @@ function updateApiStatus() {
     const discogsSecret = localStorage.getItem(API_STORAGE.DISCOGS_SECRET);
 
     const statusEl = document.getElementById('api-status');
-    const spotifyBtn = document.getElementById('spotify-import-button');
     const validateBtn = document.getElementById('validate-years-button');
     const exportArea = document.getElementById('export-keys-area');
     
     const spotifyOk = spotifyId && spotifySecret;
     const discogsOk = discogsKey && discogsSecret;
-
-    spotifyBtn.disabled = !spotifyOk;
-    spotifyBtn.title = spotifyOk ? 'Spotify Lista Betöltése' : 'Spotify kulcsok nincsenek beállítva!';
     
     validateBtn.disabled = !discogsOk;
     validateBtn.title = discogsOk ? 'Évszámok ellenőrzése (Discogs)' : 'Discogs kulcsok nincsenek beállítva!';
@@ -173,7 +169,7 @@ function updateApiStatus() {
 }
 
 
-export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownload, isDataLoadedCheck, onSpotifyImport, onYouTubeImport, onPrint) {
+export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownload, isDataLoadedCheck, onPrint) {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
         try {
@@ -430,20 +426,6 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
             alert(err.message);
         }
         e.target.value = '';
-    };
-
-    document.getElementById('spotify-import-button').onclick = async () => {
-        const url = prompt("Másold be a Spotify Playlist vagy Album URL-t:");
-        if (url && onSpotifyImport) {
-            onSpotifyImport(url);
-        }
-    };
-    
-    document.getElementById('youtube-import-button').onclick = async () => {
-        const url = prompt("Másold be a YouTube Playlist URL-t:");
-        if (url && onYouTubeImport) {
-            onYouTubeImport(url);
-        }
     };
 
     document.getElementById('validate-years-button').onclick = () => { if(onValidate) onValidate(); };
