@@ -1,5 +1,5 @@
 {
-  "description": "CardCraft v0.3.8 BÉTA - Rebuilt the Spotify API handler from scratch with a simplified, robust logic to fix a critical 404 error during playlist fetching. The new handler provides clearer error messages for invalid URLs or API keys.",
+  "description": "CardCraft v0.4.0 BÉTA - The Spotify handler has been completely rewritten based on a working Python script to fix the persistent 404 error. The new logic correctly parses Spotify URLs with query parameters and implements a retry mechanism for increased stability. This addresses the core issue of failed playlist/album fetching.",
   "requestFramePermissions": [],
-  "name": "CardCraft v0.3.8 BÉTA"
+  "name": "CardCraft v0.4.0 BÉTA"
 }
