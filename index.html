@@ -27,7 +27,7 @@
             <button id="login-button">Belépés</button>
             <p id="error-message" class="hidden">Helytelen kód.</p>
             <footer class="landing-footer">
-                <p>v0.3.2 BÉTA &copy; <span id="landing-year">2026</span></p>
+                <p>v0.3.3 BÉTA &copy; <span id="landing-year">2026</span></p>
             </footer>
         </div>
     </div>
@@ -64,7 +64,7 @@
                     <h4 class="action-group-title">Adatkezelés</h4>
                     <div id="music-actions" class="button-row">
                         <button id="spotify-import-button" class="action-btn" title="Spotify kulcsok nincsenek beállítva!" style="border-color: #1DB954; color: #1DB954;" disabled><i class="fa-brands fa-spotify"></i></button>
-                        <button id="youtube-import-button" class="action-btn" title="YouTube API kulcs nincs beállítva!" style="border-color: #FF0000; color: #FF0000;" disabled><i class="fa-brands fa-youtube"></i></button>
+                        <button id="youtube-import-button" class="action-btn" title="YouTube Lista Betöltése" style="border-color: #FF0000; color: #FF0000;"><i class="fa-brands fa-youtube"></i></button>
                         <label for="file-upload-button" class="action-btn upload-btn" title="Adatok betöltése"><i class="fa-solid fa-file-circle-plus"></i></label>
                         <input type="file" id="file-upload-button" accept=".xls, .xlsx, .csv" style="display: none;">
                         <button id="validate-years-button" class="action-btn hidden" title="Évszámok ellenőrzése (MusicBrainz)"><i class="fa-solid fa-wand-magic-sparkles"></i></button>
@@ -346,18 +346,6 @@
                         </div>
                     </div>
                     
-                    <h3 style="margin-top:25px;">YouTube API Kulcs</h3>
-                     <div class="control-group">
-                        <p class="help-text">Add meg a saját YouTube Data API v3 kulcsodat a YouTube funkciók használatához.</p>
-                        <div class="input-row">
-                            <label for="youtube-api-key">API Key</label>
-                             <div class="password-wrapper">
-                                <input type="password" id="youtube-api-key" class="full-width" placeholder="YouTube Data API v3 Key">
-                                <span class="toggle-password no-select"><i class="fa-solid fa-eye"></i></span>
-                            </div>
-                        </div>
-                    </div>
-                    
                     <div class="button-row" style="margin-top: 20px;">
                         <button id="save-api-keys" class="action-btn print-btn">Mentés</button>
                     </div>
@@ -396,7 +384,7 @@
         </div>
         <footer class="app-footer">
             <div id="save-indicator" class="hidden">Beállítások mentve!</div>
-            <p>CardCraft v0.3.2 BÉTA &copy; <span id="current-year">2026</span></p>
+            <p>CardCraft v0.3.3 BÉTA &copy; <span id="current-year">2026</span></p>
         </footer>
     </aside>
 

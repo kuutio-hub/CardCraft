@@ -5,8 +5,7 @@ export const _uiFramework = { name: 'SGl0c3' };
 const STORAGE_KEY = 'cardcraft_v100_settings';
 const API_STORAGE = {
     ID: 'cardcraft_spotify_id',
-    SECRET: 'cardcraft_spotify_secret',
-    YOUTUBE_KEY: 'cardcraft_youtube_key'
+    SECRET: 'cardcraft_spotify_secret'
 };
 let saveIndicatorTimeout;
 
@@ -112,7 +111,6 @@ function updateModeVisibility(isExternalDataLoaded) {
 function updateApiStatus() {
     const id = localStorage.getItem(API_STORAGE.ID);
     const secret = localStorage.getItem(API_STORAGE.SECRET);
-    const youtubeKey = localStorage.getItem(API_STORAGE.YOUTUBE_KEY);
     
     const statusEl = document.getElementById('api-status');
     const spotifyBtn = document.getElementById('spotify-import-button');
@@ -120,27 +118,23 @@ function updateApiStatus() {
     const exportArea = document.getElementById('export-keys-area');
     
     const spotifyOk = id && secret;
-    const youtubeOk = youtubeKey;
 
     spotifyBtn.disabled = !spotifyOk;
     spotifyBtn.title = spotifyOk ? 'Spotify Lista Betöltése' : 'Spotify kulcsok nincsenek beállítva!';
     
-    youtubeBtn.disabled = !youtubeOk;
-    youtubeBtn.title = youtubeOk ? 'YouTube Lista Betöltése' : 'YouTube API kulcs nincs beállítva!';
+    youtubeBtn.disabled = false;
+    youtubeBtn.title = 'YouTube Lista Betöltése';
 
     if (spotifyOk) {
         document.getElementById('spotify-client-id').value = id;
         document.getElementById('spotify-client-secret').value = secret;
     }
-     if (youtubeOk) {
-        document.getElementById('youtube-api-key').value = youtubeKey;
-    }
 
-    if (spotifyOk || youtubeOk) {
-        statusEl.textContent = 'Státusz: API kulcsok mentve.';
+    if (spotifyOk) {
+        statusEl.textContent = 'Státusz: Spotify API kulcsok mentve.';
         statusEl.className = 'api-status-ok';
         try {
-            exportArea.value = btoa(JSON.stringify({ id, secret, youtubeKey }));
+            exportArea.value = btoa(JSON.stringify({ id, secret }));
         } catch (e) {
             exportArea.value = 'Hiba a kód generálása közben.';
         }
@@ -280,8 +274,7 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
 
 
     document.getElementById('settings-panel').oninput = (e) => {
-        // API key inputs are handled by their own save button, so we exclude them from the general oninput handler
-        if(e.target.id.includes('spotify-') || e.target.id.includes('youtube-') || e.target.id.includes('-keys-area')) {
+        if(e.target.id.includes('spotify-') || e.target.id.includes('-keys-area')) {
             return;
         }
 
@@ -293,7 +286,7 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
 
         const settings = {};
         document.querySelectorAll('#settings-panel input, #settings-panel select').forEach(el => {
-             if (el.id && !el.id.startsWith('spotify-') && !el.id.includes('youtube-') && !el.id.includes('-keys-')) {
+             if (el.id && !el.id.startsWith('spotify-') && !el.id.includes('-keys-')) {
                  if (el.name === 'app-mode') {
                      if(el.checked) settings['app-mode-val'] = el.value;
                  } else {
@@ -329,7 +322,6 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
     document.getElementById('save-api-keys').onclick = () => {
         const id = document.getElementById('spotify-client-id').value.trim();
         const secret = document.getElementById('spotify-client-secret').value.trim();
-        const youtubeKey = document.getElementById('youtube-api-key').value.trim();
 
         if (id && secret) {
             localStorage.setItem(API_STORAGE.ID, id);
@@ -337,12 +329,6 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
         } else {
             localStorage.removeItem(API_STORAGE.ID);
             localStorage.removeItem(API_STORAGE.SECRET);
-        }
-
-        if (youtubeKey) {
-            localStorage.setItem(API_STORAGE.YOUTUBE_KEY, youtubeKey);
-        } else {
-            localStorage.removeItem(API_STORAGE.YOUTUBE_KEY);
         }
 
         updateApiStatus();
@@ -371,9 +357,6 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
             if (keys.id && keys.secret) {
                 localStorage.setItem(API_STORAGE.ID, keys.id);
                 localStorage.setItem(API_STORAGE.SECRET, keys.secret);
-            }
-            if (keys.youtubeKey) {
-                localStorage.setItem(API_STORAGE.YOUTUBE_KEY, keys.youtubeKey);
             }
             updateApiStatus();
             importArea.value = '';
