@@ -1,5 +1,5 @@
 {
-  "description": "CardCraft v0.4.1 BÉTA - Reverted the password handling logic to a strict, case-sensitive check as per user request, fixing an issue where the login button appeared unresponsive.",
+  "description": "CardCraft v0.3.6 BÉTA - Replaced non-persistent error notifications with modal alert dialogs to ensure critical error messages are not missed by the user.",
   "requestFramePermissions": [],
-  "name": "CardCraft v0.4.1 BÉTA"
+  "name": "CardCraft v0.3.6 BÉTA"
 }

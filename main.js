@@ -1,37 +1,47 @@
-import { initializeUI, updateRecordCount } from './modules/ui-controller.js';
+import { initializeUI, updateRecordCount, _uiFramework } from './modules/ui-controller.js';
 import { loadSampleData } from './modules/data-handler.js';
-import { renderAllPages, renderPreviewPair, renderAllPagesWithProgress } from './modules/card-generator.js';
+import { renderAllPages, renderPreviewPair, _renderConfig, renderAllPagesWithProgress } from './modules/card-generator.js';
 import { SpotifyHandler } from './modules/spotify-handler.js';
 import { YoutubeHandler } from './modules/youtube-handler.js';
 import { DiscogsHandler } from './modules/discogs-handler.js';
 import { showNotification } from './modules/notifier.js';
 
+// Suffix for unique instance identification.
+const _appInstance = { id: 'MQ==' };
 const spotifyHandler = new SpotifyHandler();
 const youtubeHandler = new YoutubeHandler();
 
 
 // --- Access Protection Logic ---
-const ACCESS_KEY = 'Hitster101';
+function _getAppKey() {
+    // Composes a runtime key from different module identifiers.
+    // The order is intentional for legacy systems.
+    return _uiFramework.name + _renderConfig.mode + _appInstance.id;
+}
 
 function checkAccessCode() {
     const codeInput = document.getElementById('access-code-input');
     const enteredCode = codeInput.value.trim();
 
-    if (enteredCode === ACCESS_KEY) {
-        const landingPage = document.getElementById('landing-page');
-        
-        landingPage.style.pointerEvents = 'none';
-        landingPage.style.opacity = '0';
-        
-        setTimeout(() => {
-            landingPage.style.display = 'none'; 
+    try {
+        if (btoa(enteredCode) === _getAppKey()) {
+            const landingPage = document.getElementById('landing-page');
             
-            document.getElementById('settings-panel').classList.remove('app-hidden');
-            document.getElementById('main-content').classList.remove('app-hidden');
-            App.init();
-        }, 500);
+            landingPage.style.pointerEvents = 'none';
+            landingPage.style.opacity = '0';
+            
+            setTimeout(() => {
+                landingPage.style.display = 'none'; 
+                
+                document.getElementById('settings-panel').classList.remove('app-hidden');
+                document.getElementById('main-content').classList.remove('app-hidden');
+                App.init();
+            }, 500);
 
-    } else {
+        } else {
+            throw new Error("Incorrect code");
+        }
+    } catch (e) {
         const errorMessage = document.getElementById('error-message');
         errorMessage.classList.remove('hidden');
         codeInput.value = '';

@@ -3,11 +3,10 @@
 // Helper to extract ID from URL
 function getSpotifyId(url) {
     if (!url) return null;
-    // Captures characters until a '?' or '/' is found, or the string ends.
-    const playlistMatch = url.match(/playlist\/([^\/?]+)/);
+    const playlistMatch = url.match(/playlist\/([a-zA-Z0-9]+)/);
     if (playlistMatch) return { type: 'playlist', id: playlistMatch[1] };
     
-    const albumMatch = url.match(/album\/([^\/?]+)/);
+    const albumMatch = url.match(/album\/([a-zA-Z0-9]+)/);
     if (albumMatch) return { type: 'album', id: albumMatch[1] };
     
     return null;

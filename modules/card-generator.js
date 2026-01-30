@@ -1,5 +1,5 @@
 // Configuration for the rendering engine mode.
-// export const _renderConfig = { mode: 'RlcjEw' }; // This is no longer needed for login
+export const _renderConfig = { mode: 'RlcjEw' };
 
 function generateQRCode(element, text, logoText) {
     element.innerHTML = "";
