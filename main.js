@@ -17,7 +17,7 @@ function checkAccessCode() {
     const codeInput = document.getElementById('access-code-input');
     const enteredCode = codeInput.value.trim();
 
-    if (enteredCode === ACCESS_KEY) {
+    if (enteredCode.toLowerCase() === ACCESS_KEY.toLowerCase()) {
         const landingPage = document.getElementById('landing-page');
         
         landingPage.style.pointerEvents = 'none';

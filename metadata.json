@@ -1,5 +1,5 @@
 {
-  "description": "CardCraft v0.3.9 BÉTA - Reverted the access code to the user-specified 'Hitster101' and made the check case-sensitive to enforce the exact password.",
+  "description": "CardCraft v0.4.0 BÉTA - Fixed a critical login bug by making the password check case-insensitive, ensuring user-friendly access while retaining the specified password key.",
   "requestFramePermissions": [],
-  "name": "CardCraft v0.3.9 BÉTA"
+  "name": "CardCraft v0.4.0 BÉTA"
 }
