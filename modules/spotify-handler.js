@@ -1,11 +1,11 @@
 // modules/spotify-handler.js
 
-// Obfuscated dedicated API key for Spotify client credentials flow.
-const _keyPartA = 'ZTVmOTg3YzAwNzEyNGE5YzhiYThkODZh';
-const _keyPartB = 'MTg5OTQ3NzcyZTYzODkwNTkzMjg0Zm';
-const _keyPartC = 'VhOGVmYTExMTczZGQwYWEyZA==';
-const _getAuthKey = () => _keyPartA + _keyPartB + _keyPartC;
-
+// --- Spotify API Kulcsok ---
+// FIGYELEM: Helyettesítsd be a saját, valós Spotify API kulcsaiddal!
+// A kulcsokat a Spotify Developer Dashboard-on találod: https://developer.spotify.com/dashboard/
+const SPOTIFY_CLIENT_ID = 'e5f987c007124a9c8ba8d86a18994777';
+const SPOTIFY_CLIENT_SECRET = 'e6f3890593284fea8efa11173dd0aa2d';
+// -------------------------
 
 // Helper to extract ID from URL
 function getSpotifyId(url) {
@@ -47,11 +47,17 @@ export class SpotifyHandler {
         if (this.accessToken && Date.now() < this.tokenExpiryTime) {
             return this.accessToken;
         }
+        
+        if (SPOTIFY_CLIENT_ID.startsWith('HELYETTESÍTSD') || SPOTIFY_CLIENT_SECRET.startsWith('HELYETTESÍTSD')) {
+            throw new Error('Érvénytelen Spotify API kulcsok. Kérlek, add meg a saját kulcsaidat a modules/spotify-handler.js fájlban.');
+        }
+
+        const authHeader = btoa(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`);
 
         const response = await fetch('https://accounts.spotify.com/api/token', {
             method: 'POST',
             headers: {
-                'Authorization': `Basic ${_getAuthKey()}`,
+                'Authorization': `Basic ${authHeader}`,
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
             body: 'grant_type=client_credentials'
