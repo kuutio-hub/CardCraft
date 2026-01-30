@@ -18,7 +18,7 @@ function parseTitle(fullTitle) {
         if (parts.length > 1) {
             const artist = parts[0].trim();
             const title = parts.slice(1).join(sep).trim();
-            if (artist.length < 35) { // Avoid cases where a long sentence is misinterpreted as the artist
+            if (artist.length < 35) {
                  return { artist, title };
             }
         }
@@ -27,76 +27,114 @@ function parseTitle(fullTitle) {
     return { artist: '', title: cleanTitle };
 }
 
+function extractTracks(contents) {
+    const tracks = [];
+    if (!contents) return tracks;
+
+    const items = contents.sectionListRenderer?.contents?.[0]?.itemSectionRenderer?.contents ||
+                  contents.playlistVideoListRenderer?.contents || [];
+
+    for (const item of items) {
+        const video = item.playlistVideoRenderer;
+        if (!video || !video.videoId || !video.title) continue;
+
+        const fullTitle = video.title.runs?.[0]?.text || video.title.simpleText || 'Ismeretlen';
+        let { artist, title } = parseTitle(fullTitle);
+
+        if (!artist) {
+            artist = video.shortBylineText?.runs?.[0]?.text || 'Ismeretlen';
+        }
+
+        const qr = `https://www.youtube.com/watch?v=${video.videoId}`;
+        tracks.push({ artist, title, year: '????', qr_data: qr, source: 'youtube' });
+    }
+    return tracks;
+}
+
+
 export class YoutubeHandler {
     constructor() {
-        // No API key needed.
+        this.proxyUrl = 'https://api.allorigins.win/raw?url=';
     }
 
-    async fetchYouTubeData(url) {
+    async fetchYouTubeData(url, progressCallback = () => {}) {
         const playlistId = getPlaylistId(url);
-
         if (!playlistId) {
             throw new Error('Érvénytelen YouTube Playlist URL. A linknek tartalmaznia kell egy "list=..." paramétert.');
         }
 
-        const rssUrl = `https://www.youtube.com/feeds/videos.xml?playlist_id=${playlistId}`;
-        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(rssUrl)}`;
-        
+        let allTracks = [];
         let playlistName = 'YouTube_Lista';
+        let page = 1;
 
         try {
-            const response = await fetch(proxyUrl);
-            if (!response.ok) {
-                throw new Error(`Nem sikerült lekérni a lejátszási lista adatait. A lista lehet privát, nem létező, vagy a proxy szolgáltatás nem elérhető. (Státusz: ${response.status})`);
-            }
-            const xmlText = await response.text();
+            // 1. Initial page load to get ytInitialData and first continuation token
+            progressCallback(page);
+            const initialUrl = `https://www.youtube.com/playlist?list=${playlistId}`;
+            const response = await fetch(`${this.proxyUrl}${encodeURIComponent(initialUrl)}`);
+            if (!response.ok) throw new Error(`Nem sikerült elérni a YouTube oldalt. (Státusz: ${response.status})`);
             
-            const parser = new DOMParser();
-            const xmlDoc = parser.parseFromString(xmlText, "application/xml");
+            const html = await response.text();
             
-            const errorNode = xmlDoc.querySelector("parsererror");
-            if (errorNode) {
-                console.error("XML Parsing Error:", errorNode.textContent);
-                throw new Error("Hiba a YouTube-tól kapott adat (XML) feldolgozása közben.");
-            }
+            const match = html.match(/var ytInitialData = (.*?);<\/script>/);
+            if (!match || !match[1]) throw new Error('Nem sikerült a lejátszási lista adatait kinyerni az oldalról. A lista lehet privát vagy nem létező.');
             
-            const playlistTitleNode = xmlDoc.querySelector("feed > title");
-            if (playlistTitleNode) {
-                playlistName = playlistTitleNode.textContent;
+            const initialData = JSON.parse(match[1]);
+            
+            playlistName = initialData.metadata?.playlistMetadataRenderer?.title || playlistName;
+            
+            let contents = initialData.contents?.twoColumnBrowseResultsRenderer?.tabs?.[0]?.tabRenderer?.content;
+            allTracks.push(...extractTracks(contents));
+            
+            // 2. Paginate using continuation tokens
+            let continuations = contents?.sectionListRenderer?.contents?.[0]?.itemSectionRenderer?.contents
+                .find(c => c.continuationItemRenderer)?.continuationItemRenderer?.continuationEndpoint;
+
+            while (continuations) {
+                page++;
+                if (progressCallback) progressCallback(page);
+
+                const continuationUrl = `https://www.youtube.com/browse_ajax`;
+                const continuationBody = {
+                    context: { client: { clientName: 'WEB', clientVersion: '2.20210721.00.00' }},
+                    continuation: continuations.continuationCommand.token
+                };
+
+                const continuationResponse = await fetch(`${this.proxyUrl}${encodeURIComponent(continuationUrl)}`, {
+                    method: 'POST',
+                    body: JSON.stringify(continuationBody)
+                });
+
+                if (!continuationResponse.ok) break;
+
+                const continuationJson = await continuationResponse.json();
+                
+                const newItems = continuationJson.onResponseReceivedActions?.[0]?.appendContinuationItemsAction?.continuationItems || [];
+                
+                const newTracks = newItems.map(item => {
+                    const video = item.playlistVideoRenderer;
+                    if (!video || !video.videoId || !video.title) return null;
+
+                    const fullTitle = video.title.runs?.[0]?.text || video.title.simpleText || 'Ismeretlen';
+                     let { artist, title } = parseTitle(fullTitle);
+
+                    if (!artist) {
+                        artist = video.shortBylineText?.runs?.[0]?.text || 'Ismeretlen';
+                    }
+
+                    const qr = `https://www.youtube.com/watch?v=${video.videoId}`;
+                    return { artist, title, year: '????', qr_data: qr, source: 'youtube' };
+                }).filter(Boolean);
+
+                allTracks.push(...newTracks);
+
+                continuations = newItems.find(c => c.continuationItemRenderer)?.continuationItemRenderer?.continuationEndpoint;
             }
-
-            const entries = xmlDoc.querySelectorAll("entry");
-            if (entries.length === 0) {
-                 return { tracks: [], name: playlistName };
-            }
-
-            const allTracks = Array.from(entries).map(entry => {
-                const videoIdNode = entry.querySelector("videoId");
-                const titleNode = entry.querySelector("title");
-                const authorNode = entry.querySelector("author > name");
-
-                if (!videoIdNode || !titleNode) return null;
-                
-                const videoId = videoIdNode.textContent;
-                const fullTitle = titleNode.textContent;
-                
-                let { artist, title } = parseTitle(fullTitle);
-                
-                if (!artist && authorNode) {
-                    artist = authorNode.textContent;
-                } else if (!artist) {
-                    artist = 'Ismeretlen';
-                }
-
-                const qr = `https://www.youtube.com/watch?v=${videoId}`;
-
-                return { artist, title, year: '????', qr_data: qr, source: 'youtube' };
-            }).filter(Boolean);
 
             return { tracks: allTracks, name: playlistName };
 
         } catch (err) {
-            console.error(err);
+            console.error("YouTube Fetch Error:", err);
             throw err;
         }
     }

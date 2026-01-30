@@ -149,13 +149,17 @@ const App = {
         const closeBtn = document.getElementById('close-modal-button');
         try {
             modalTitle.textContent = 'YouTube adatok betöltése...';
-            progressText.textContent = 'Kapcsolódás a YouTube API-hoz...';
+            progressText.textContent = 'Lejátszási lista elemzése...';
             progressBar.classList.add('hidden');
             cancelBtn.classList.add('hidden');
             closeBtn.classList.add('hidden');
             modal.classList.remove('hidden');
 
-            const { tracks, name } = await youtubeHandler.fetchYouTubeData(url);
+            const progressCallback = (page) => {
+                 progressText.textContent = `${page}. oldal feldolgozása...`;
+            };
+
+            const { tracks, name } = await youtubeHandler.fetchYouTubeData(url, progressCallback);
             
             if (tracks && tracks.length > 0) {
                 this.handleDataLoaded(tracks, name);
@@ -164,7 +168,7 @@ const App = {
                 showNotification('Hiba', 'Nem találhatóak videók ebben a listában, vagy a lista üres.', 'error');
             }
         } catch (e) {
-            showNotification('YouTube Hiba', e.message, 'error', 10000);
+            showNotification('YouTube Hiba', e.message, 'error');
         } finally {
             modal.classList.add('hidden');
         }
@@ -194,7 +198,7 @@ const App = {
                 showNotification('Hiba', 'Nem találhatóak számok ebben a listában, vagy a lista üres.', 'error');
             }
         } catch (e) {
-            showNotification('Spotify Hiba', e.message, 'error', 10000);
+            showNotification('Spotify Hiba', e.message, 'error');
         } finally {
             modal.classList.add('hidden');
         }

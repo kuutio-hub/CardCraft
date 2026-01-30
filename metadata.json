@@ -1,5 +1,5 @@
 {
-  "description": "CardCraft v0.3.3 BÉTA - Increased the display duration of error notifications to 20 seconds, allowing users more time to read and diagnose API or other issues.",
+  "description": "CardCraft v0.3.4 BÉTA - Major YouTube import overhaul to fetch full playlists, bypassing the previous 15-item limit. Fixed bug causing Spotify error messages to disappear too quickly.",
   "requestFramePermissions": [],
-  "name": "CardCraft v0.3.3 BÉTA"
+  "name": "CardCraft v0.3.4 BÉTA"
 }
