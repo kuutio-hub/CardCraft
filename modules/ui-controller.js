@@ -1,7 +1,5 @@
 import { parseDataFile } from './data-handler.js';
 
-export const _uiFramework = { name: 'SGl0c3' };
-
 const STORAGE_KEY = 'cardcraft_v100_settings';
 const API_STORAGE = {
     SPOTIFY_ID: 'cardcraft_spotify_id',

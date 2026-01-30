@@ -21,7 +21,7 @@ export class DiscogsHandler {
     constructor(consumerKey, consumerSecret) {
         this.key = consumerKey;
         this.secret = consumerSecret;
-        this.userAgent = `CardCraft/v0.3.7 (https://github.com/CardCraft/app)`;
+        this.userAgent = `CardCraft/v0.3.9 (https://github.com/CardCraft/app)`;
     }
 
     async getEarliestYearFromMaster(masterId) {

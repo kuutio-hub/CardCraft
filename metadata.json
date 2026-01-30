@@ -1,5 +1,5 @@
 {
-  "description": "CardCraft v0.3.7 BÉTA - Implemented robust YouTube Music playlist parsing. Fixed a bug with Spotify URL handling that caused errors with links containing query parameters.",
+  "description": "CardCraft v0.3.9 BÉTA - Reverted the access code to the user-specified 'Hitster101' and made the check case-sensitive to enforce the exact password.",
   "requestFramePermissions": [],
-  "name": "CardCraft v0.3.7 BÉTA"
+  "name": "CardCraft v0.3.9 BÉTA"
 }
