@@ -1,5 +1,5 @@
 {
-  "description": "CardCraft v0.3.1 BÉTA - Added a show/hide toggle for API key password fields to improve usability and ease of input.",
+  "description": "CardCraft v0.3.2 BÉTA - Bugfix release that removes code remnants and corrupted file content from the previous update, ensuring a clean and stable user interface.",
   "requestFramePermissions": [],
-  "name": "CardCraft v0.3.1 BÉTA"
+  "name": "CardCraft v0.3.2 BÉTA"
 }

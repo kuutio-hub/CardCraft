@@ -169,6 +169,11 @@ body {
 #tab-api textarea:focus { border-color: var(--spotify-green); }
 .copy-btn { position: absolute; top: 5px; right: 5px; background: #222; border: 1px solid #444; color: #999; cursor: pointer; border-radius: 4px; padding: 3px 6px; }
 .copy-btn:hover { color: #fff; background: #333; }
+.password-wrapper { flex: 1 1 65px; position: relative; display: flex; align-items: center; }
+.password-wrapper input { width: 100%; padding-right: 35px !important; }
+.toggle-password { position: absolute; right: 10px; color: #666; cursor: pointer; }
+.toggle-password:hover { color: #fff; }
+.no-select { user-select: none; -webkit-user-select: none; }
 
 
 /* PROGRESSIVE UI (SUB-PANELS) */

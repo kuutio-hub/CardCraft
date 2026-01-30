@@ -382,6 +382,22 @@ export function initializeUI(onSettingsChange, onDataLoaded, onValidate, onDownl
             alert('Hiba: Érvénytelen import kód. Kérlek, ellenőrizd, hogy a teljes kódot másoltad-e be.');
         }
     };
+    
+    document.querySelectorAll('.toggle-password').forEach(el => {
+        el.addEventListener('click', (e) => {
+            const icon = e.currentTarget.querySelector('i');
+            const input = e.currentTarget.parentElement.querySelector('input');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+    });
 
     document.getElementById('file-upload-button').onchange = async (e) => {
         const file = e.target.files[0];

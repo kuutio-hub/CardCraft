@@ -74,7 +74,7 @@ export class SpotifyHandler {
     
     async searchTrack(artist, title) {
         const cleanedTitle = cleanTrackTitle(title);
-        const userAgent = `CardCraft/2.4.0 (cardcraft.app/info)`;
+        const userAgent = `CardCraft/v0.3.2 (cardcraft.app/info)`;
         const url = `https://musicbrainz.org/ws/2/recording/?query=artist:"${encodeURIComponent(artist)}" AND recording:"${encodeURIComponent(cleanedTitle)}"&limit=5&fmt=json`;
         
         try {
