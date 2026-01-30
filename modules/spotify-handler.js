@@ -1,9 +1,9 @@
 // modules/spotify-handler.js
 
 // Obfuscated dedicated API key for Spotify client credentials flow.
-const _keyPartA = 'ZTVmOTg3YzAwNzEyNGE5YzhiYThkODZhMTg5OTQ';
-const _keyPartB = '3NzcyZTYzODkwNTkzMjg0ZmVhOGVmYTExMTcz';
-const _keyPartC = 'ZGQwYWEyZA==';
+const _keyPartA = 'ZTVmOTg3YzAwNzEyNGE5YzhiYThkODZh';
+const _keyPartB = 'MTg5OTQ3NzcyZTYzODkwNTkzMjg0Zm';
+const _keyPartC = 'VhOGVmYTExMTczZGQwYWEyZA==';
 const _getAuthKey = () => _keyPartA + _keyPartB + _keyPartC;
 
 

@@ -1,22 +1,22 @@
-# MusicStencil v6.5.8 Master Prompt - Phase 3: Integrity & Checkpoint
+# CardCraft v2.7.0 Master Prompt - Phase 3: Integrity & QA Checkpoint
 
 **SZEREPKÖR:** QA Engineer.
-**FELADAT:** Validáld a rendszert az alábbi integritási pontok alapján.
+**FELADAT:** Validáld a rendszert az alábbi integritási pontok alapján (v2.7.0 Release Candidate).
 
-### 1. Geometriai Teszt
-- [ ] A kártyaméret mm-ben történő változtatása azonnal újraszámolja a nyomtatási rácsot (A4/A3).
-- [ ] A QR kód mérete 10% és 90% között is a kártya határain belül marad és olvasható.
-- [ ] Az elforgatott kódok soha nem csúsznak a kártya közepe felé.
+### 1. Adat Integritás
+- [ ] **Access Control:** A Landing Page sikeresen blokkolja a hozzáférést helytelen kód esetén, és feloldja helyes kódnál.
+- [ ] **Spotify Import:** A Client Credentials Flow működik, a playlistek betöltődnek, a 100+ dalos listák lapozása (pagination) hibátlan.
+- [ ] **Validation:** A MusicBrainz validálás helyesen javítja az évszámokat, és eltávolítja a nem azonosítható dalokat. A megszakítás gomb működik.
+- [ ] **XLS Export:** A letöltött fájl tartalmazza a validált adatokat, és a fájlnév dinamikus (dátum/idő bélyegzett).
 
-### 2. Funkcionális Teszt
-- [ ] Az Excel parser felismeri a fejléceket (artist, title, year, qr_data).
-- [ ] Ha nincs fejléc, a sorrend: 0=Előadó, 1=Cím, 2=Év, 3=QR.
-- [ ] A LocalStorage minden beállítást (beleértve a pipákat és színeket) megjegyez frissítés után is.
-- [ ] A nyomtatási kép hátlap-oldala tükrözött (invertált sorrend).
+### 2. Generálás és Megjelenítés
+- [ ] **Token Mód:** Zseton módban a generálás szétválasztja az előlapokat (1. oldal) és hátlapokat (2. oldal) tömeges nyomtatáshoz.
+- [ ] **Music Mód:** Zene módban a hátlapok sorrendje tükrözött (az A3/A4 lapon belül), hogy a kétoldalas nyomtatás helyes legyen.
+- [ ] **Vinyl Effektek:** A Neon és Glitch beállítások vizuálisan megjelennek az SVG-ben.
+- [ ] **Progress Bar:** A nyomtatás előkészítésekor a progress bar valós időben mutatja a generálás állapotát, a UI nem fagy le.
 
-### 3. Vizuális Teszt
-- [ ] A "Shadow-Kill" funkció aktív rácsnézetben (nincs elmosódott nyomtatás).
-- [ ] Az `adjustText` algoritmus megakadályozza a szöveg-túlcsordulást.
-- [ ] A Vinyl barázdák nem hagynak üres köröket (glitch számítás validálása).
+### 3. Stabilitás
+- [ ] **LocalStorage:** Az oldal újratöltésekor minden beállítás (színek, méretek, mód) visszaáll a legutóbbi állapotra.
+- [ ] **Hibakezelés:** Helytelen fájlformátum vagy hibás Spotify URL esetén a rendszer hibaüzenetet ad, nem omlik össze.
 
-**ÁLLAPOT:** v6.5.8 "Precision Master" - Validálva és kész a stabil üzemre.
+**ÁLLAPOT:** v2.7.0 "Feature Complete" - Validálva és kész a stabil üzemre.

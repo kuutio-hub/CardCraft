@@ -1,23 +1,33 @@
-# MusicStencil v6.5.8 Master Prompt - Phase 1: Engine & Mathematics
+# CardCraft v2.7.0 Master Prompt - Phase 1: Engine & Mathematics
 
-**SZEREPKÖR:** Senior Software Engineer (Algorithms).
-**FELADAT:** Implementáld a kártyagenerálás matematikai és logikai motorját.
+**SZEREPKÖR:** Senior Software Engineer (Algorithms & Data).
+**FELADAT:** Implementáld a kártyagenerálás, adatkezelés és a külső API integrációk logikáját.
 
-### 1. Szöveg-illesztési Algoritmus (`adjustText`)
-- **Cél:** A szöveg soha nem lóg ki a kártyáról.
-- **Logika:** Indulj a beállított méretről. `while` ciklussal csökkentsd a betűméretet 0.5pt lépésekben (minimum 4pt-ig), amíg a `scrollHeight` > `maxHeight` vagy `scrollWidth` > `clientWidth`.
-- **Intelligens tördelés:** Címeknél 15 karakter felett keress szóközt, és szúrd be a `<br>`-t a két soros megjelenítéshez.
+### 1. Adatkezelés és Validálás
+- **Spotify Integráció (`SpotifyHandler`):** 
+  - OAuth Client Credentials Flow implementálása.
+  - Playlist és Album URL-ek feldolgozása, lapozható (`next`) lekérdezések kezelése.
+- **MusicBrainz Validálás:**
+  - Aszinkron folyamat (`validateYearsWithMusicBrainz`) progress bar-ral.
+  - `artist` és `title` alapján keresés a MusicBrainz API-n.
+  - Évszámok intelligens javítása és a nem validálható dalok szűrése.
+- **XLS Export (`downloadDataAsXLS`):**
+  - A jelenlegi adatállomány (validált adatok) exportálása `.xlsx` formátumba dinamikus fájlnévvel (`CardCraft_data_YYMMDD_HHMM.xlsx`).
 
-### 2. Vinyl SVG Generátor (Generative Art)
-- **Struktúra:** Koncentrikus körök. A sugár (`r`) a `spacing` és `grooveCount` alapján csökken.
-- **Glitch Technika:** Használj `stroke-dasharray`-t. A szakadások száma körönként véletlenszerű (`glitch-min` - `glitch-max`). 
-- **Véletlen Szélesség:** Minden egyes szakadás szélessége legyen véletlenszerű a megadott `glitch-width-min` és `glitch-width-max` tartományon belül.
-- **Randomitás:** Minden kör kapjon véletlenszerű elforgatást (`Math.random() * circ`).
+### 2. Kártya Generálás Motor (`card-generator.js`)
+- **Szöveg-illesztés (`adjustText`):** Rekurzív font-méret csökkentés, amíg a tartalom belefér a konténerbe. Címeknél intelligens sortörés.
+- **Vinyl SVG Generátor (`generateVinyl`):**
+  - Koncentrikus körök generálása paraméterezhető sűrűséggel és vastagsággal.
+  - **Glitch logika:** Véletlenszerű szakadások (`stroke-dasharray`) generálása a köríveken. Támogatni kell a 'random' és 'degree' (fokozatos eltolás) módokat.
+  - **Neon mód:** SVG filterek (drop-shadow) dinamikus alkalmazása véletlenszerű színekkel.
+- **Üzemmódok:**
+  - **Music Mode:** Egyedi adatok (Artist, Title, Year, QR) megjelenítése. Előlap + Hátlap (tükrözött sorrendben).
+  - **Token Mode:** Egységes szöveg (Main + Sub) minden kártyán. Külön generál egy teljes ív előlapot és egy teljes ív hátlapot a tömeges gyártáshoz.
 
-### 3. QR Precision Fix
-- **Generálás:** Mindig fix 400x400px méretű standard QR-t generálj (magas felbontás).
-- **Skálázás:** A konténert a CSS `--qr-size` változóval méretezd a kártyához képest (10-90%). Kényszerítsd a belső canvas/img elemet a `width: 100% !important` stílussal.
+### 3. Aszinkron Nyomtatás (`renderAllPagesWithProgress`)
+- A nyomtatási DOM generálása nagy adatmennyiség esetén blokkolhatja a UI-t.
+- Implementálj egy `chunk` alapú generálást `setTimeout(..., 0)` megszakításokkal, hogy a UI (és a progress bar) frissülni tudjon a generálás közben.
+- A böngésző `window.print()` hívását csak a DOM teljes felépülése után hívd meg.
 
-### 4. Nyomtatási Tükrözés (Double-Sided Logic)
-- **Grid számítás:** Dinamikus oszlop/sor számítás a papír (A4/A3) és kártyaméret (mm) alapján.
-- **Invertálás:** A hátlapokat (Back Page) generáló ciklusban a soron belüli dalokat meg kell fordítani (`rowSongs.reverse()`), hogy a kétoldalas nyomtatásnál a hátlap az előlap mögé kerüljön.
+### 4. Biztonság
+- **Access Code:** A `main.js` induláskor ellenőrizze a felhasználói kódot egy Base64 kódolt kulccsal szemben. Helytelen kód esetén tiltsa a hozzáférést.
